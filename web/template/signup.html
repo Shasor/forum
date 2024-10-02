@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Créer un compte</title>
     <link rel="stylesheet" href="/web/static/css/styles.css">
+
+    <script>
+        function showError(message) {
+            alert(message);
+        }
+    </script>
+
 </head>
 <body>
     <div class="signup-container">
@@ -17,6 +24,12 @@
             <button type="submit">S'inscrire</button>
         </form>
     </div>
+
+    {{ if .ErrorMessage }}
+    <script>
+        showError("{{ .ErrorMessage }}");
+    </script>
+    {{ end }}
 
 </body>
 </html>
