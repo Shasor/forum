@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="web/static/css/styles.css">
 </head>
 <header id="header">
-    <img src="/web/img/home_logo.png" alt="home" id="home_logo">
+   <a href="/dashboard"><img src="/web/img/home_logo.png" alt="home" id="home_logo"></a> 
     <h1 id="raddit">RADDIT</h1>
     <div id="right_section">
         <input type="text" id="search_input" placeholder="Search...">
@@ -16,21 +16,45 @@
     
 </header>
 <body>
-    <div class="container">
-        <h1>Bienvenue sur le Dashboard {{.Username}} </h1>
-        <p>Vous êtes connecté !</p>
-
-
-        
-        <nav>
-            <ul>
-                <li><a href="/logout">Se déconnecter</a></li>
-                <li>
-                    <form action="/delete-account" method="POST">
-                    <input type="submit" value="Supprimer mon compte" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cela est irréversible.');">
-                </form></li>
-            </ul>
-        </nav>
+    <div id="settings_panel" class="settings-panel">
+        <h2>Paramètres</h2>
+        <label>
+            <input type="checkbox" id="setting1"> Paramètre 1
+        </label>
+        <label>
+            <input type="checkbox" id="setting2"> Paramètre 2
+        </label>
+        <button id="toggle_settings">Réduire</button>
     </div>
+    
+    <div id="main_content">
+        <h1>Bienvenue sur le Dashboard {{.Username}} </h1>
+        <div class="container" id="popup">
+            <p>Vous êtes connecté !</p>        
+            <nav>
+                <ul>
+                    <li><a href="/logout">Se déconnecter</a></li>
+                    <li>
+                        <form action="/delete-account" method="POST">
+                        <input type="submit" value="Supprimer mon compte" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cela est irréversible.');">
+                    </form></li>
+                </ul>
+            </nav>
+        </div>
+        <button id="create_post">+</button>
+        <div id="new_post">
+            <form action="/dashboard" method="post">
+                <p id="sender_post" name="sender_post">{{.Username}}</p>
+                <input type="text" id="categorie_post" name="categorie_post" placeholder="Categorie" maxlength="25" required>
+                <input type="text" id="title_post" name="title_post" placeholder="Title" required>
+                <textarea id="content_post" name="content_post" placeholder="I love radish ..." required></textarea>
+                <input type="file" name="image_post" id="image_post">   
+                <button type="submit">Post</button>
+            </form>
+        </div>
+        
+    </div>
+    
+    <script src="/web/static/css/dashboard.js"></script>
 </body>
 </html>
