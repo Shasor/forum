@@ -6,10 +6,21 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="web/static/css/styles.css">
 </head>
+<header id="header">
+    <img src="/web/img/home_logo.png" alt="home" id="home_logo">
+    <h1 id="raddit">RADDIT</h1>
+    <div id="right_section">
+        <input type="text" id="search_input" placeholder="Search...">
+        <img src="/web/img/default_profile_picture.png" alt="home" id="avatar">
+    </div>
+    
+</header>
 <body>
     <div class="container">
         <h1>Bienvenue sur le Dashboard {{.Username}} </h1>
         <p>Vous êtes connecté !</p>
+
+
         
         <nav>
             <ul>

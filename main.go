@@ -49,6 +49,7 @@ func main() {
 
 	// Servir les fichiers statiques (CSS)
 	http.Handle("/web/static/css/", http.StripPrefix("/web/static/css/", http.FileServer(http.Dir("./web/static/css/"))))
+	http.Handle("/web/img/", http.StripPrefix("/web/img/", http.FileServer(http.Dir("./web/img/"))))
 
 	server := &http.Server{
 		Addr:              ":8080",
