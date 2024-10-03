@@ -31,8 +31,14 @@ func LoginHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		// Retrieve the user from the database
 		user, err := models.SelectUser(db, username)
 		if err != nil || models.CheckPassword(user.Password, password) != nil {
-			http.Error(w, "Nom d'utilisateur ou mot de passe incorrect", http.StatusUnauthorized)
+			// Passer un message d'erreur au template
+			data := map[string]interface{}{
+				"ErrorMessage": "Nom d'utilisateur ou mot de passe incorrect",
+			}
+			tmpl := template.Must(template.ParseFiles("./web/template/login.html"))
+			tmpl.Execute(w, data)
 			return
+
 		}
 
 		// Create a session for the valid login

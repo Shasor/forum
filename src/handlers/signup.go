@@ -27,7 +27,12 @@ func SignupPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		// Créer un nouvel utilisateur
 		err := models.CreateUser(db, Email, Pseudo, Password, "User", "default.jpg", "no-follow")
 		if err != nil {
-			http.Error(w, "Erreur lors de la création du compte", http.StatusInternalServerError)
+			// Passer un message d'erreur au template
+			data := map[string]interface{}{
+				"ErrorMessage": "Erreur lors de la création du compte.",
+			}
+			tmpl := template.Must(template.ParseFiles("./web/template/signup.html"))
+			tmpl.Execute(w, data)
 			return
 		}
 

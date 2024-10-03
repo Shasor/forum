@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="web/static/css/styles.css" >
+
+    <script>
+        function showError(message) {
+            alert(message);
+        }
+    </script>
+
 </head>
 <body>
     <div class="login-container">
@@ -25,5 +32,14 @@
         </div>
 
     </div>
+
+
+    
+    {{ if .ErrorMessage }}
+    <script>
+        showError("{{ .ErrorMessage }}");
+    </script>
+    {{ end }}
+
 </body>
 </html>
