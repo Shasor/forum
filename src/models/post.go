@@ -2,7 +2,9 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"log"
+	"login/src/database"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -31,4 +33,18 @@ func DeletePost(db *sql.DB, PostID int) error {
 		return err
 	}
 	return nil
+}
+
+// Récupère un post par son id
+func SelectPost(db *sql.DB, PoID int) (database.Post, error) {
+	var post database.Post
+	err := db.QueryRow("SELECT id, Title, Content, Date, Sender, Image, Like, Dislike FROM Post WHERE id = ?", PoID).Scan(
+		&post.PostID, &post.Title, &post.Content, &post.Date, &post.Sender, &post.Image, &post.Like, &post.Dislike)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return post, errors.New("post non trouvé")
+		}
+		return post, err
+	}
+	return post, nil
 }

@@ -4,25 +4,16 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"login/src/database"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Structure représentant un utilisateur
-type User struct {
-	id             int
-	Email          string
-	Pseudo         string
-	Password       string
-	Role           string
-	ProfilePicture string
-	FollowID       string
-}
-
 // Récupère un utilisateur par son nom d'utilisateur
-func GetUserByUsername(db *sql.DB, username string) (User, error) {
-	var user User
-	err := db.QueryRow("SELECT id, Email, Pseudo, Password, Role, ProfilePicture, FollowID FROM Users WHERE Pseudo = ?", username).Scan(&user.id, &user.Email, &user.Pseudo, &user.Password, &user.Role, &user.ProfilePicture, &user.FollowID)
+func SelectUser(db *sql.DB, Pseudo string) (database.User, error) {
+	var user database.User
+	err := db.QueryRow("SELECT id, Email, Pseudo, Password, Role, ProfilePicture, FollowID FROM Users WHERE Pseudo = ?", Pseudo).Scan(
+		&user.UserID, &user.Email, &user.Pseudo, &user.Password, &user.Role, &user.ProfilePicture, &user.FollowID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return user, errors.New("utilisateur non trouvé")
