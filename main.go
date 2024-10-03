@@ -65,6 +65,6 @@ func main() {
 		WriteTimeout:      10 * time.Second,
 	}
 
-	fmt.Println("Serveur démarré sur le port 8080")
+	fmt.Println("Serveur démarré : http://localhost:8080")
 	log.Fatal(server.ListenAndServe())
 }
