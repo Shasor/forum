@@ -18,13 +18,3 @@ func InitDB(filepath string) (*sql.DB, error) {
 	}
 	return db, nil
 }
-
-// Crée la table des utilisateurs si elle n'existe pas encore
-func CreateTable(db *sql.DB) {
-	statement, _ := db.Prepare(`CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL
-    )`)
-	statement.Exec()
-}

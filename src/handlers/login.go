@@ -29,7 +29,7 @@ func LoginHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		password := r.FormValue("password")
 
 		// Retrieve the user from the database
-		user, err := models.GetUserByUsername(db, username)
+		user, err := models.SelectUser(db, username)
 		if err != nil || models.CheckPassword(user.Password, password) != nil {
 			http.Error(w, "Nom d'utilisateur ou mot de passe incorrect", http.StatusUnauthorized)
 			return

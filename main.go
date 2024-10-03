@@ -13,14 +13,14 @@ import (
 
 func main() {
 	// Initialiser la base de données
-	db, err := database.InitDB("db/users.db")
+	db, err := database.InitDB("db/database.db")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
 
 	// Créer la table des utilisateurs
-	database.CreateTable(db)
+	database.InitAllDB(db)
 
 	// Configurer les routes
 	http.HandleFunc("/", handlers.LoginPage)
