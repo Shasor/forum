@@ -1,12 +1,18 @@
 package handlers
 
 import (
+	"bytes"
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"html/template"
+	"image"
+	"image/jpeg"
 	"log"
 	"login/src/models"
+	"mime/multipart"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -39,7 +45,13 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	sender := r.FormValue("sender_post")
 	title := r.FormValue("title_post")
 	content := r.FormValue("content_post")
-	image := r.FormValue("image_post")
+	file, _, err := r.FormFile("image_post")
+	ErrorsHandler(err)
+	encodedString, err := compressAndEncodeImage(file)
+	ErrorsHandler(err)
+	fmt.Println(len(encodedString))
+	// finished here last time
+
 	date := time.Now().Format(layout)
 
 	senderObject, err := models.SelectUser(db, sender)
@@ -49,7 +61,7 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Call your model function to insert the post
-	err = models.CreatePost(db, title, content, date, senderObject.UserID, image, "0", "0")
+	err = models.CreatePost(db, title, content, date, senderObject.UserID, encodedString, "0", "0")
 	if err != nil {
 		// Log the error for debugging
 		log.Println("Error creating post:", err)
@@ -57,4 +69,43 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+}
+
+func compressAndEncodeImage(file multipart.File) (string, error) {
+	// Décode l'image
+	img, _, err := image.Decode(file)
+	if err != nil {
+		return "", err
+	}
+
+	// Prépare un buffer pour l'image compressée
+	buf := new(bytes.Buffer)
+
+	// Compresse l'image en JPEG avec une qualité réduite
+	err = jpeg.Encode(buf, img, &jpeg.Options{Quality: 50})
+	if err != nil {
+		return "", err
+	}
+
+	// Encode en base64
+	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
+}
+
+// func compressString(s string) (string, error) {
+// 	var b bytes.Buffer
+// 	gz := gzip.NewWriter(&b)
+// 	if _, err := gz.Write([]byte(s)); err != nil {
+// 		return "", err
+// 	}
+// 	if err := gz.Close(); err != nil {
+// 		return "", err
+// 	}
+// 	return base64.StdEncoding.EncodeToString(b.Bytes()), nil
+// }
+
+func ErrorsHandler(err error) {
+	if err != nil {
+		log.Print(err)
+		os.Exit(1)
+	}
 }
