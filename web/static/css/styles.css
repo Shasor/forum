@@ -25,6 +25,8 @@ body {
     background-color: var(--BODY-COLOR);
     height: 100vh;
     padding: 0 0px;
+    display: grid;
+    grid-column: 2;
 }
 
 /* Style du header */
@@ -32,7 +34,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative;
+    width: 100;
     background-color: var(--HEADER-COLOR);
     height: 10vh; /* Utilisation d'une hauteur relative */
     padding: 0 1vw; 
@@ -222,7 +224,7 @@ body {
 }
 
 
-
+/*Popup quand on clique sur l'avatar*/
 .container {
     display: none;
     position: absolute; /* Positionner le pop-up */
@@ -236,7 +238,7 @@ body {
 }
 
 .settings-panel {
-    width: 250px; /* Largeur du panneau */
+    width: 20vw; /* Largeur du panneau */
     height: 100vh; /* Prend toute la hauteur de la fenêtre */
     background-color: var(--BODY-COLOR);
     border-right: 2px solid var(--BORDER-SLIDER);
@@ -246,11 +248,12 @@ body {
 
 .settings-panel.collapsed {
     width: 0; /* Réduit la largeur à 0 quand il est caché */
-    overflow: hidden; /* Cache le contenu */
+    content-visibility:hidden; /* Cache le contenu */
 }
 
 #main_content {
-    flex-grow: 1; /* Prend le reste de l'espace */
+    display: flex;
+    flex-grow: 1;
     padding: 20px;
     transition: margin-left 0.3s ease; /* Pour l'animation du contenu */
 }
@@ -263,9 +266,46 @@ body {
     margin-left: 250px; /* Décalage du contenu quand le panneau est ouvert */
 }
 
+#follow{
+    height: 47%;
+    border-bottom-color: var(--INPUT-BORDER-COLOR);
+    box-shadow: 0px 1px 0px var(--INPUT-BORDER-COLOR);
+    margin-bottom: 10px;
+}
+
+#discover{
+    height: 50%;
+}
+
+#side_bar{
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 20vw;
+    height: 100vh;
+    transition: left 0.3s ease;
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+}
+
+#side_bar.collapsed{
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 40px;
+    height: 100vh;
+    transition: left 0.3s ease;
+}
+
 #toggle_settings {
-    display: block;
-    margin-top: 20px;
+    position: absolute;
+    top: 0;
+    right: 5px;
+    transition: left 0.3s ease;
+    background: none;
+    border: none;
 }
 
 
@@ -298,6 +338,16 @@ body {
         max-width: 30px;
         max-height: 30px;
     }
+
+    .settings-panel{
+        width: 100vw;
+    }
+
+    #side_bar{
+        width: 100vw;
+    }
+
+
 }
 
 @media (max-width: 480px) {

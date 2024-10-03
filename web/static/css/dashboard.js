@@ -39,9 +39,11 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener("DOMContentLoaded", function() {
     const settingsPanel = document.getElementById("settings_panel");
     const toggleButton = document.getElementById("toggle_settings");
+    const sidebar = document.getElementById("side_bar");
     
     toggleButton.addEventListener("click", function() {
         settingsPanel.classList.toggle("collapsed");
-        toggleButton.textContent = settingsPanel.classList.contains("collapsed") ? "Afficher" : "Réduire";
+        sidebar.classList.toggle("collapsed");
+        toggleButton.textContent = settingsPanel.classList.contains("collapsed") ? ">>" : "<<";
     });
 });
