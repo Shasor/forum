@@ -6,6 +6,12 @@
     --CREATE-POST-COLOR:#d97ae6;
     --CREATE-POST-HOVER-COLOR:#772188;
     --BORDER-SLIDER: #bdbdbd;
+    --TEXT-COLOR: #333;
+    --INPUT-BORDER-COLOR: #ccc;
+    --BUTTON-BG-COLOR: var(--CREATE-POST-COLOR);
+    --BUTTON-HOVER-COLOR: rgb(255, 150, 230);
+    --BUTTON-TEXT-COLOR: white;
+    --BACKGROUND-COLOR: #f9f9f9;
 }
 
 * {
@@ -303,4 +309,148 @@ body {
         max-width: 25px;
         max-height: 25px;
     }
+}
+
+/* Conteneur principal de connexion */
+#login_connexion {
+    width: 100%;
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: var(--BACKGROUND-COLOR);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* LOGIN*/
+#h2_connexion {
+    color: var(--CREATE-POST-COLOR);
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+#login_connexion input[type="text"],
+#login_connexion input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid var(--INPUT-BORDER-COLOR);
+    border-radius: 5px;
+    font-size: 1em;
+    color: var(--TEXT-COLOR);
+    transition: border-color 0.3s ease;
+}
+
+#login_connexion input[type="text"]:focus,
+#login_connexion input[type="password"]:focus {
+    border-color: var(--HEADER-COLOR);
+    outline: none;
+}
+
+#login_connexion button[type="submit"] {
+    background-color: var(--BUTTON-BG-COLOR);
+    color: var(--BUTTON-TEXT-COLOR);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+    width: 100%;
+}
+
+#login_connexion button[type="submit"]:hover {
+    background-color: var(--BUTTON-HOVER-COLOR);
+    transform: scale(1.05);
+}
+
+#login_redirect_signup {
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+#login_redirect_signup p {
+    color: var(--TEXT-COLOR);
+}
+
+#login_redirect_signup a {
+    text-decoration: none;
+}
+
+#login_redirect_signup .signup-btn {
+    background-color: var(--BUTTON-BG-COLOR);
+    color: var(--BUTTON-TEXT-COLOR);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
+}
+
+#login_redirect_signup .signup-btn:hover {
+    background-color: var(--BUTTON-HOVER-COLOR);
+    transform: scale(1.05);
+}
+
+.signup-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: var(--BACKGROUND-COLOR);
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Titre de la section Inscription */
+#h2_signup {
+    color: var(--CREATE-POST-COLOR);
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+/* Champs de saisie */
+.signup-container input[type="email"],
+.signup-container input[type="text"],
+.signup-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid var(--INPUT-BORDER-COLOR);
+    border-radius: 5px;
+    font-size: 1em;
+    color: var(--TEXT-COLOR);
+    transition: border-color 0.3s ease;
+}
+
+.signup-container input[type="email"]:focus,
+.signup-container input[type="text"]:focus,
+.signup-container input[type="password"]:focus {
+    border-color: var(--CREATE-POST-COLOR);
+    outline: none;
+}
+
+/* Bouton de soumission */
+.signup-container button[type="submit"] {
+    background-color: var(--BUTTON-BG-COLOR);
+    color: var(--BUTTON-TEXT-COLOR);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.signup-container button[type="submit"]:hover {
+    background-color: var(--BUTTON-HOVER-COLOR);
+    transform: scale(1.05);
 }

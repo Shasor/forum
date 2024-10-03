@@ -14,8 +14,8 @@
 
 </head>
 <body>
-    <div class="login-container">
-        <h2>Connexion</h2>
+    <div class="login-container" id="login_connexion">
+        <h2 id="h2_connexion">Connexion</h2>
         <form action="/login" method="post">
             <label for="username">Nom d'utilisateur</label>
             <input type="text" id="username" name="username" required>
@@ -24,7 +24,7 @@
             <button type="submit">Se connecter</button>
         </form>
 
-        <div class="signup-redirect"></div>
+        <div class="signup-redirect" id="login_redirect_signup"></div>
             <p>Pas encore de compte ?</p>
             <a href="/signup">
                 <button type="button" class="signup-btn">Créer un compte</button>
