@@ -6,8 +6,12 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+var (
+	filepath = "db/database.db"
+)
+
 // Initialise la base de données
-func InitDB(filepath string) (*sql.DB, error) {
+func GetDB() (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", filepath)
 	if err != nil {
 		return nil, err

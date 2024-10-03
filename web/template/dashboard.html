@@ -44,7 +44,7 @@
         <button id="create_post">+</button>
         <div id="new_post">
             <form action="/create-post" method="post">
-                <p id="sender_post" name="sender_post">{{.Username}}</p>
+                <input type=hidden id="sender_post" name="sender_post" value="{{.Username}}">
                 <input type="text" id="categorie_post" name="categorie_post" placeholder="Categorie" maxlength="25" required>
                 <input type="text" id="title_post" name="title_post" placeholder="Title" maxlength="75" required>
                 <textarea id="content_post" name="content_post" placeholder="I love radish ..." required></textarea>
