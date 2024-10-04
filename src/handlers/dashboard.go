@@ -10,6 +10,7 @@ import (
 	"image/jpeg"
 	"log"
 	"login/src/models"
+	"math"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -45,11 +46,12 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	sender := r.FormValue("sender_post")
 	title := r.FormValue("title_post")
 	content := r.FormValue("content_post")
+
 	file, _, err := r.FormFile("image_post")
 	ErrorsHandler(err)
-	encodedString, err := compressAndEncodeImage(file)
+	defer file.Close()
+	base64image, err := base64Image(file)
 	ErrorsHandler(err)
-	fmt.Println(len(encodedString))
 	// finished here last time
 
 	date := time.Now().Format(layout)
@@ -61,7 +63,7 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Call your model function to insert the post
-	err = models.CreatePost(db, title, content, date, senderObject.UserID, encodedString, "0", "0")
+	err = models.CreatePost(db, title, content, date, senderObject.UserID, base64image, "0", "0")
 	if err != nil {
 		// Log the error for debugging
 		log.Println("Error creating post:", err)
@@ -71,37 +73,61 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 }
 
-func compressAndEncodeImage(file multipart.File) (string, error) {
-	// Décode l'image
+// Convert image file into string in base64
+func base64Image(file multipart.File) (string, error) {
+	// Décodez l'image
 	img, _, err := image.Decode(file)
 	if err != nil {
 		return "", err
 	}
 
-	// Prépare un buffer pour l'image compressée
-	buf := new(bytes.Buffer)
+	// Redimensionnez l'image
+	resizedImg := resizeImage(img)
 
-	// Compresse l'image en JPEG avec une qualité réduite
-	err = jpeg.Encode(buf, img, &jpeg.Options{Quality: 50})
+	// Encodez l'image redimensionnée en JPEG
+	buf := new(bytes.Buffer)
+	err = jpeg.Encode(buf, resizedImg, nil)
 	if err != nil {
 		return "", err
 	}
 
-	// Encode en base64
 	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
 }
 
-// func compressString(s string) (string, error) {
-// 	var b bytes.Buffer
-// 	gz := gzip.NewWriter(&b)
-// 	if _, err := gz.Write([]byte(s)); err != nil {
-// 		return "", err
-// 	}
-// 	if err := gz.Close(); err != nil {
-// 		return "", err
-// 	}
-// 	return base64.StdEncoding.EncodeToString(b.Bytes()), nil
-// }
+// Resize img to 1920x1080
+func resizeImage(img image.Image) image.Image {
+	bounds := img.Bounds()
+	width := bounds.Dx()
+	maxWidth := 1920
+	height := bounds.Dy()
+	maxHeight := 1080
+
+	// Calculez le ratio pour redimensionner
+	ratioW := float64(maxWidth) / float64(width)
+	ratioH := float64(maxHeight) / float64(height)
+	ratio := math.Min(ratioW, ratioH)
+
+	if ratio >= 1 {
+		return img
+	}
+
+	newWidth := int(float64(width) * ratio)
+	newHeight := int(float64(height) * ratio)
+
+	// Créez une nouvelle image redimensionnée
+	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
+
+	// Redimensionnez l'image manuellement
+	for y := 0; y < newHeight; y++ {
+		for x := 0; x < newWidth; x++ {
+			srcX := int(float64(x) / ratio)
+			srcY := int(float64(y) / ratio)
+			dst.Set(x, y, img.At(srcX, srcY))
+		}
+	}
+
+	return dst
+}
 
 func ErrorsHandler(err error) {
 	if err != nil {
