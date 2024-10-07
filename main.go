@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"time"
@@ -36,21 +35,14 @@ func main() {
 	http.HandleFunc("/logout", handlers.LogoutHandler)
 
 	http.HandleFunc("/delete-account", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "POST" {
-			handlers.DeleteAccountHandler(db, w, r)
-		} else {
-			http.Error(w, "Méthode non autorisée", http.StatusMethodNotAllowed)
-		}
+		handlers.DeleteAccountHandler(db, w, r)
 	})
 
-	http.HandleFunc("/account-deleted", func(w http.ResponseWriter, r *http.Request) {
-		if !handlers.IsLoggedIn(r) {
-			handlers.LoginHandler(db, w, r)
-		} else {
-			tmpl := template.Must(template.ParseFiles("./web/template/account-deleted.html"))
-			tmpl.Execute(w, nil)
-		}
-	})
+	// http.HandleFunc("/account-deleted", func(w http.ResponseWriter, r *http.Request) {
+	// 	if !handlers.IsCookieExist(r) || r.Method != http.MethodPost {
+	// 		handlers.LoginHandler(db, w, r)
+	// 	}
+	// })
 
 	// New route to handle post creation
 	http.HandleFunc("/create-post", func(w http.ResponseWriter, r *http.Request) {

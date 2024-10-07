@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"html/template"
 	"log"
 	"login/src/models" // Remplace par le chemin correct vers tes modèles
 	"net/http"
@@ -15,8 +16,8 @@ func DeleteAccountHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, ok := GetSessionUsername(r)
-	if !ok {
+	username, err := GetSessionUsername(r)
+	if err != nil {
 		log.Println("Aucun utilisateur connecté.")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -26,7 +27,7 @@ func DeleteAccountHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	log.Println("Suppression de l'utilisateur :", username)
 
 	// Suppression de l'utilisateur de la base de données
-	err := models.DeleteUserByUsername(db, username)
+	err = models.DeleteUserByUsername(db, username)
 	if err != nil {
 		log.Println("Erreur lors de la suppression du compte :", err)
 		http.Error(w, "Impossible de supprimer le compte", http.StatusInternalServerError)
@@ -39,6 +40,7 @@ func DeleteAccountHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	// Supprimer la session de l'utilisateur
 	ClearSession(w, r)
 
-	// Rediriger vers la page de confirmation
-	http.Redirect(w, r, "/account-deleted", http.StatusSeeOther)
+	// Afficher la page de confirmation
+	tmpl := template.Must(template.ParseFiles("./web/template/account-deleted.html"))
+	tmpl.Execute(w, nil)
 }

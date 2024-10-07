@@ -11,7 +11,7 @@ import (
 // Affiche la page d'inscription
 func SignupPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
-	if IsLoggedIn(r) {
+	if IsCookieExist(r) {
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 		return
 	}
