@@ -13,18 +13,23 @@ import (
 	"math"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"time"
 )
 
 // Page du dashboard avec le nom d'utilisateur
 func DashboardPage(w http.ResponseWriter, r *http.Request) {
-	if !IsLoggedIn(r) {
+	if !IsCookieExist(r) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
-	username, exists := GetSessionUsername(r)
-	if !exists {
+
+	username, err := GetSessionUsername(r)
+	if err != nil {
+		if err == ErrInvalidCookie {
+			ClearSession(w, r) // If the Cookie hash is incorrect, delete the cookie
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
 		http.Redirect(w, r, "/", http.StatusSeeOther) // If no session, redirect to login
 		return
 	}
@@ -47,18 +52,18 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title_post")
 	content := r.FormValue("content_post")
 
+	// image management
 	file, _, err := r.FormFile("image_post")
-	ErrorsHandler(err)
+	ErrorsExit(err)
 	defer file.Close()
 	base64image, err := base64Image(file)
-	ErrorsHandler(err)
-	// finished here last time
+	ErrorsExit(err)
 
 	date := time.Now().Format(layout)
 
 	senderObject, err := models.SelectUser(db, sender)
 	if err != nil {
-		fmt.Println("Error SELECTING user in CreatePostHandler")
+		fmt.Println(err.Error())
 		return
 	}
 
@@ -127,11 +132,4 @@ func resizeImage(img image.Image) image.Image {
 	}
 
 	return dst
-}
-
-func ErrorsHandler(err error) {
-	if err != nil {
-		log.Print(err)
-		os.Exit(1)
-	}
 }
