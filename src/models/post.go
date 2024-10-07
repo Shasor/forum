@@ -11,7 +11,7 @@ import (
 
 func CreatePost(db *sql.DB, Title, Content, Date string, Sender int, Image, Like, Dislike string) error {
 	// Insertion dans la base de données
-	statement, err := db.Prepare("INSERT INTO Users (Title, Content, Date, Sender, Image, Like, Dislike) VALUES (?, ?, ?, ?, ?, ?, ?)")
+	statement, err := db.Prepare("INSERT INTO Post (Title, Content, Date, Sender, Image, Like, Dislike) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
@@ -47,4 +47,14 @@ func SelectPost(db *sql.DB, PoID int) (database.Post, error) {
 		return post, err
 	}
 	return post, nil
+}
+
+// Function to get UserID based on Username
+func GetUserIDByUsername(db *sql.DB, username string) (int, error) {
+	var userID int
+	err := db.QueryRow("SELECT id FROM Users WHERE Pseudo = ?", username).Scan(&userID)
+	if err != nil {
+		return 0, err
+	}
+	return userID, nil
 }

@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// Initialiser la base de données
-	db, err := database.InitDB("db/database.db")
+	db, err := database.GetDB()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,6 +49,15 @@ func main() {
 		} else {
 			tmpl := template.Must(template.ParseFiles("./web/template/account-deleted.html"))
 			tmpl.Execute(w, nil)
+		}
+	})
+
+	// New route to handle post creation
+	http.HandleFunc("/create-post", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			handlers.CreatePostHandler(db, w, r)
+		} else {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
 	})
 

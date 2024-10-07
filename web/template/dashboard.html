@@ -48,8 +48,8 @@
         </div>
         <button id="create_post">+</button>
         <div id="new_post">
-            <form action="/create-post" method="post">
-                <input type="hidden" id="sender_post" name="sender_post" value="{{.Username}}">
+            <form enctype="multipart/form-data" action="/create-post" method="post" autocomplete="off">
+                <input type=hidden id="sender_post" name="sender_post" value="{{.Username}}">
                 <input type="text" id="categorie_post" name="categorie_post" placeholder="Categorie" maxlength="25" required>
                 <input type="text" id="title_post" name="title_post" placeholder="Title" maxlength="75" required>
                 <textarea id="content_post" name="content_post" placeholder="I love radish ..." required></textarea>
@@ -57,9 +57,7 @@
                 <button type="submit">Post</button>
             </form>
         </div>
-        
     </div>
-    
     <script src="/web/static/css/dashboard.js"></script>
 </body>
 </html>
