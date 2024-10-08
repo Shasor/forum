@@ -62,12 +62,21 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	title := r.FormValue("title_post")
 	content := r.FormValue("content_post")
 
-	// image management
-	file, _, err := r.FormFile("image_post")
-	ErrorsExit(err)
-	defer file.Close()
-	base64image, err := base64Image(file)
-	ErrorsExit(err)
+	// Initialize base64image to an empty string
+	var base64image string
+
+	// Check if the form has a file for image_post
+	if file, header, err := r.FormFile("image_post"); err == nil {
+		defer file.Close() // Ensure file is closed after processing
+		// If header is not empty, encode the image
+		if header.Size > 0 {
+			base64image, err = base64Image(file)
+			ErrorsExit(err)
+		}
+	} else if err != http.ErrMissingFile {
+		// Handle the error if it's not about a missing file
+		ErrorsExit(err)
+	}
 
 	date := time.Now().Format(layout)
 
