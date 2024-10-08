@@ -20,13 +20,21 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 body {
     font-family: Arial, sans-serif;
     background-color: var(--BODY-COLOR);
     height: 100vh;
-    padding: 0 0px;
-    display: grid;
-    grid-column: 2;
+
+    display: flex;
+    flex-direction: column;
+    /* display: grid;
+    grid-column: 2; */
 }
 
 /* Style du header */
@@ -77,6 +85,12 @@ body {
     margin-right: 1vw;
     border-style: none;
     font-size: 1rem; /* Taille de police relative */
+}
+
+#main-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
 }
 
 /* Bouton pour ouvrir le pop-up de création de post */
@@ -239,7 +253,7 @@ body {
 
 .settings-panel {
     width: 20vw; /* Largeur du panneau */
-    height: 100vh; /* Prend toute la hauteur de la fenêtre */
+    height: 100%; /*Prend toute la hauteur de la fenêtre */
     background-color: var(--BODY-COLOR);
     border-right: 2px solid var(--BORDER-SLIDER);
     padding: 20px;
@@ -252,10 +266,10 @@ body {
 }
 
 #main_content {
-    display: flex;
-    flex-grow: 1;
+    flex: 1;
     padding: 20px;
     transition: margin-left 0.3s ease; /* Pour l'animation du contenu */
+    overflow-y: auto;
 }
 
 .settings-panel.collapsed + #main_content {
@@ -282,12 +296,13 @@ body {
     top: 0px;
     left: 0px;
     width: 20vw;
-    height: 100vh;
+    height: 100%;
     transition: left 0.3s ease;
     background: none;
     border: none;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 #side_bar.collapsed{
@@ -506,16 +521,27 @@ body {
 }
 
 .no-bullets {
-    list-style-type: none; /* Remove bullet points */   
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
 }
 
 .no-bullets li {
-    list-style-type: none; /* Remove bullet points */   
-    color:rgb(68, 68, 201);
-    margin-top: 25px;
-    display: flex; /* Enable flexbox */
-    align-items: center; /* Center items vertically */
-    margin: 20px 0; /* Space between list items */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.no-bullets li span {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    flex: 1;
+    margin-right: 10px;
+    width: 100%;
 }
 
 /* Styles for the profile image */

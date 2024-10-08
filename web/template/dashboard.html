@@ -7,64 +7,63 @@
     <link rel="stylesheet" href="web/static/css/styles.css">
 </head>
 
-<header id="header">
-    <a href="/dashboard"><img src="/web/img/home_logo.png" alt="home" id="home_logo"></a> 
-     <h1 id="raddit">RADDIT</h1>
-     <div id="right_section">
-         <input type="text" id="search_input" placeholder="Search...">
-         <img src="/web/img/default_profile_picture.png" alt="home" id="avatar">
-     </div>
-    
-</header>
-
 <body> 
-    <div id="side_bar">
-        <div id="settings_panel" class="settings-panel">
-            <div id="follow">
-                <h2>Followed :</h2>
+    <header id="header">
+        <a href="/dashboard"><img src="/web/img/home_logo.png" alt="home" id="home_logo"></a> 
+         <h1 id="raddit">RADDIT</h1>
+         <div id="right_section">
+             <input type="text" id="search_input" placeholder="Search...">
+             <img src="/web/img/default_profile_picture.png" alt="home" id="avatar">
+         </div>
+    </header>
+    <div id="main-container">
+        <div id="side_bar">
+            <div id="settings_panel" class="settings-panel">
+                <div id="follow">
+                    <h2>Followed :</h2>
+                </div>
+                <div id="Discover">
+                    <h2>Discover :</h2>
+                        <ul class="no-bullets">
+                            {{ range .Categories }}
+                            <li>
+                                <span>{{ .Name }}</span>
+                            </li>
+                            {{ else }}
+                            <li>No categorie found</li>
+                            {{ end }}
+                        </ul>
+                </div>
             </div>
-            <div id="Discover">
-                <h2>Discover :</h2>
-                <ul class="no-bullets">
-                    {{ range .Categories }}
-                    <li>
-                        <span>{{ .Name }}</span>
-                    </li>
-                    {{ else }}
-                    <li>No categorie found</li>
-                    {{ end }}
-                </ul>
+            <button id="toggle_settings"><<</button> 
+        </div>
+        
+        
+        <div id="main_content">
+            <h1>Bienvenue sur le Dashboard {{.Username}} </h1>
+            <div class="container" id="popup">
+                <p>Vous êtes connecté !</p>        
+                <nav>
+                    <ul>
+                        <li><a href="/logout">Se déconnecter</a></li>
+                        <li>
+                            <form action="/delete-account" method="POST">
+                            <input type="submit" value="Supprimer mon compte" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cela est irréversible.');">
+                        </form></li>
+                    </ul>
+                </nav>
             </div>
-            
-        </div>
-        <button id="toggle_settings"><<</button> 
-    </div>
-    
-    
-    <div id="main_content">
-        <h1>Bienvenue sur le Dashboard {{.Username}} </h1>
-        <div class="container" id="popup">
-            <p>Vous êtes connecté !</p>        
-            <nav>
-                <ul>
-                    <li><a href="/logout">Se déconnecter</a></li>
-                    <li>
-                        <form action="/delete-account" method="POST">
-                        <input type="submit" value="Supprimer mon compte" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cela est irréversible.');">
-                    </form></li>
-                </ul>
-            </nav>
-        </div>
-        <button id="create_post">+</button>
-        <div id="new_post">
-            <form enctype="multipart/form-data" action="/create-post" method="post" autocomplete="off">
-                <input type=hidden id="sender_post" name="sender_post" value="{{.Username}}">
-                <input type="text" id="categorie_post" name="categorie_post" placeholder="Categorie" maxlength="25" required>
-                <input type="text" id="title_post" name="title_post" placeholder="Title" maxlength="75" required>
-                <textarea id="content_post" name="content_post" placeholder="I love radish ..." required></textarea>
-                <input type="file" name="image_post" id="image_post" accept=".jpg, .jpeg, .png">   
-                <button type="submit">Post</button>
-            </form>
+            <button id="create_post">+</button>
+            <div id="new_post">
+                <form enctype="multipart/form-data" action="/create-post" method="post" autocomplete="off">
+                    <input type=hidden id="sender_post" name="sender_post" value="{{.Username}}">
+                    <input type="text" id="categorie_post" name="categorie_post" placeholder="Categorie" maxlength="25" required>
+                    <input type="text" id="title_post" name="title_post" placeholder="Title" maxlength="75" required>
+                    <textarea id="content_post" name="content_post" placeholder="I love radish ..." required></textarea>
+                    <input type="file" name="image_post" id="image_post" accept=".jpg, .jpeg, .png">   
+                    <button type="submit">Post</button>
+                </form>
+            </div>
         </div>
     </div>
     <script src="/web/static/css/dashboard.js"></script>

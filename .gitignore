@@ -1,2 +1,6 @@
-.prettierignore
 db/database.db
+
+# Adam
+.prettierignore
+.air.toml
+tmp/
