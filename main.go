@@ -31,7 +31,10 @@ func main() {
 		handlers.SignupPage(db, w, r)
 	})
 
-	http.HandleFunc("/dashboard", handlers.DashboardPage)
+	http.HandleFunc("/dashboard", func(w http.ResponseWriter, r *http.Request) {
+		handlers.DashboardPage(db, w, r)
+	})
+
 	http.HandleFunc("/logout", handlers.LogoutHandler)
 
 	http.HandleFunc("/delete-account", func(w http.ResponseWriter, r *http.Request) {

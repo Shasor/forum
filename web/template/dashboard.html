@@ -25,6 +25,16 @@
             </div>
             <div id="Discover">
                 <h2>Discover :</h2>
+                <ul>
+                    {{ range .Users }}
+                    <li>
+                        <img src="data:image/jpeg;base64,{{ .ProfilePicture }}" alt = "Profile Picture" width="50" height="50"/>
+                        <span>{{ .Pseudo }}</span>
+                    </li>
+                    {{ else }}
+                    <li>No users found</li>
+                    {{ end }}
+                </ul>
             </div>
             
         </div>

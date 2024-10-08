@@ -9,6 +9,7 @@ import (
 	"image"
 	"image/jpeg"
 	"log"
+	"login/src/database"
 	"login/src/models"
 	"math"
 	"mime/multipart"
@@ -17,7 +18,7 @@ import (
 )
 
 // Page du dashboard avec le nom d'utilisateur
-func DashboardPage(w http.ResponseWriter, r *http.Request) {
+func DashboardPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	if !IsCookieExist(r) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -34,9 +35,18 @@ func DashboardPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Fetch users from the database (limit to 5)
+	users, err := FetchUsers(db, 5)
+	if err != nil {
+		log.Println("Error fetching users:", err)
+		http.Error(w, "Error fetching users", http.StatusInternalServerError)
+		return
+	}
+
 	tmpl := template.Must(template.ParseFiles("./web/template/dashboard.html"))
 	tmpl.Execute(w, map[string]interface{}{
 		"Username": username,
+		"Users":    users,
 	})
 }
 
@@ -132,4 +142,25 @@ func resizeImage(img image.Image) image.Image {
 	}
 
 	return dst
+}
+
+// FetchUsers fetches a limited number of users from the database
+func FetchUsers(db *sql.DB, limit int) ([]database.User, error) {
+	rows, err := db.Query("SELECT Pseudo, ProfilePicture FROM Users LIMIT ?", limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []database.User
+	for rows.Next() {
+		var user database.User
+		err := rows.Scan(&user.Pseudo, &user.ProfilePicture)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
 }
