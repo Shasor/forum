@@ -25,10 +25,10 @@
             </div>
             <div id="Discover">
                 <h2>Discover :</h2>
-                <ul>
+                <ul class="no-bullets">
                     {{ range .Users }}
                     <li>
-                        <img src="data:image/jpeg;base64,{{ .ProfilePicture }}" alt = "Profile Picture" width="50" height="50"/>
+                        <img src="data:image/jpeg;base64,{{ .ProfilePicture }}" alt = "Profile Picture" class="profile-pic"/>
                         <span>{{ .Pseudo }}</span>
                     </li>
                     {{ else }}

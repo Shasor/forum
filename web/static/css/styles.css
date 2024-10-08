@@ -504,3 +504,24 @@ body {
     background-color: var(--BUTTON-HOVER-COLOR);
     transform: scale(1.05);
 }
+
+.no-bullets {
+    list-style-type: none; /* Remove bullet points */   
+}
+
+.no-bullets li {
+    list-style-type: none; /* Remove bullet points */   
+    color:rgb(68, 68, 201);
+    margin-top: 25px;
+    display: flex; /* Enable flexbox */
+    align-items: center; /* Center items vertically */
+    margin: 20px 0; /* Space between list items */
+}
+
+/* Styles for the profile image */
+.profile-pic {
+    width: 50px; /* Set width */
+    height: 50px; /* Set height */
+    border-radius: 50%; /* Optional: Make it a circle */
+    margin-right: 10px; /* Space between image and text */
+}

@@ -36,7 +36,7 @@ func DashboardPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch users from the database (limit to 5)
-	users, err := FetchUsers(db, 5)
+	users, err := FetchUsers(db, 5, username)
 	if err != nil {
 		log.Println("Error fetching users:", err)
 		http.Error(w, "Error fetching users", http.StatusInternalServerError)
@@ -144,9 +144,11 @@ func resizeImage(img image.Image) image.Image {
 	return dst
 }
 
-// FetchUsers fetches a limited number of users from the database
-func FetchUsers(db *sql.DB, limit int) ([]database.User, error) {
-	rows, err := db.Query("SELECT Pseudo, ProfilePicture FROM Users LIMIT ?", limit)
+// FetchUsers fetches a limited number of users from the database, excluding the current user's account
+func FetchUsers(db *sql.DB, limit int, username string) ([]database.User, error) {
+	// Use a parameterized query to prevent SQL injection
+	query := "SELECT Pseudo, ProfilePicture FROM Users WHERE Pseudo != ? LIMIT ?"
+	rows, err := db.Query(query, username, limit)
 	if err != nil {
 		return nil, err
 	}
