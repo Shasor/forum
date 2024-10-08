@@ -9,13 +9,23 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func CreatePost(db *sql.DB, Title, Content, Date string, Sender int, Image, Like, Dislike string) error {
+func CreatePost(db *sql.DB, Categorie, Title, Content, Date string, Sender int, Image, Like, Dislike string) error {
 	// Insertion dans la base de données
-	statement, err := db.Prepare("INSERT INTO Post (Title, Content, Date, Sender, Image, Like, Dislike) VALUES (?, ?, ?, ?, ?, ?, ?)")
+
+	if !CategorieExist(db, Categorie) {
+		CreateCategorie(db, Categorie)
+	}
+
+	idCat, err := GetCategorieIDByName(db, Categorie)
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(Title, Content, Date, Sender, Image, Like, Dislike)
+
+	statement, err := db.Prepare("INSERT INTO Post (CategoryID, Title, Content, Date, Sender, Image, Like, Dislike) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+	if err != nil {
+		return err
+	}
+	_, err = statement.Exec(idCat, Title, Content, Date, Sender, Image, Like, Dislike)
 	return err
 }
 

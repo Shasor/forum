@@ -3,13 +3,28 @@ package models
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"login/src/database"
 )
 
+func CategorieExist(db *sql.DB, Name string) bool {
+
+	var exists bool
+
+	err := db.QueryRow("SELECT EXISTS( SELECT 1 FROM Categories WHERE Name = ?)", Name).Scan(&exists)
+	fmt.Println(exists)
+	if err != nil {
+		return false
+	}
+	return exists
+
+}
+
 func CreateCategorie(db *sql.DB, Name string) error {
 	// Insertion dans la base de données
-	statement, err := db.Prepare("INSERT INTO Categorie (Name) VALUES (?)")
+
+	statement, err := db.Prepare("INSERT INTO Categories (Name) VALUES (?)")
 	if err != nil {
 		return err
 	}
@@ -36,7 +51,7 @@ func DeleteCategorie(db *sql.DB, CategorieID int) error {
 // Récupère une catégorie par son id
 func SelectCategorie(db *sql.DB, CateID int) (database.Categorie, error) {
 	var categorie database.Categorie
-	err := db.QueryRow("SELECT id, Name FROM Categorie WHERE id = ?", CateID).Scan(
+	err := db.QueryRow("SELECT id, Name FROM Categories WHERE id = ?", CateID).Scan(
 		&categorie.CategorieID, &categorie.Name)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -45,4 +60,19 @@ func SelectCategorie(db *sql.DB, CateID int) (database.Categorie, error) {
 		return categorie, err
 	}
 	return categorie, nil
+}
+
+// GetCategorieIDByName retourne l'ID d'une catégorie à partir de son nom
+func GetCategorieIDByName(db *sql.DB, name string) (int, error) {
+	var id int
+	// Exécution de la requête pour récupérer l'ID en fonction du nom
+	err := db.QueryRow("SELECT id FROM Categories WHERE Name = ?", name).Scan(&id)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, errors.New("catégorie non trouvée")
+		}
+		return 0, err
+	}
+	return id, nil
 }
