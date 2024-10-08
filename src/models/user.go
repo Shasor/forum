@@ -5,6 +5,8 @@ import (
 	"errors"
 	"log"
 	"login/src/database"
+	"strconv"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -61,4 +63,43 @@ func DeleteUserByUsername(db *sql.DB, Pseudo string) error {
 // Vérifie si le mot de passe fourni correspond au hash enregistré dans la base de données
 func CheckPassword(hashedPassword, plainPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
+}
+
+func UpdateFollowedID(db *sql.DB, UserID, FollowID string) error {
+	statement, err := db.Prepare("UPDATE Users SET FollowID = ? Where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+	_, err = statement.Exec(FollowID, UserID)
+	if err != nil {
+		log.Println("Erreur lors de la mise à jour des abonnements :", err)
+		return err
+	}
+	return nil
+}
+
+func AddFollowID(FollowID string, newFollowID int) string {
+	newString := strconv.Itoa(newFollowID)
+	return FollowID + "-" + newString
+}
+
+func SplitFollowedID(categoriesID string) []string {
+	tab := strings.Split(categoriesID, "-")
+	return tab
+}
+
+func RemoveFollowedID(cateID []string, id int) string {
+	idString := strconv.Itoa(id)
+	categoriesID := ""
+	for indice, value := range cateID {
+		if value == idString {
+			continue
+		}
+		categoriesID += value
+		if indice <= len(cateID)-1 {
+			categoriesID += "-"
+		}
+	}
+	return categoriesID
 }

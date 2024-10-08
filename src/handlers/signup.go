@@ -29,7 +29,7 @@ func SignupPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		Password := r.FormValue("password")
 
 		// Créer un nouvel utilisateur
-		err := models.CreateUser(db, Email, Pseudo, Password, "User", defaultImage, "no-follow")
+		err := models.CreateUser(db, Email, Pseudo, Password, "User", defaultImage, "")
 		if err != nil {
 			// Passer un message d'erreur au template
 			data := map[string]interface{}{
