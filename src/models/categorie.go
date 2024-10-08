@@ -3,7 +3,6 @@ package models
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"login/src/database"
 )
@@ -13,7 +12,6 @@ func CategorieExist(db *sql.DB, Name string) bool {
 	var exists bool
 
 	err := db.QueryRow("SELECT EXISTS( SELECT 1 FROM Categories WHERE Name = ?)", Name).Scan(&exists)
-	fmt.Println(exists)
 	if err != nil {
 		return false
 	}
@@ -75,4 +73,27 @@ func GetCategorieIDByName(db *sql.DB, name string) (int, error) {
 		return 0, err
 	}
 	return id, nil
+}
+
+// FetchCategories fetches a limited number of users from the database, excluding the current user's account
+func FetchCategories(db *sql.DB) ([]database.Categorie, error) {
+	// Use a parameterized query to prevent SQL injection
+	query := "SELECT * FROM Categories"
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []database.Categorie
+	for rows.Next() {
+		var categorie database.Categorie
+		err := rows.Scan(&categorie.CategorieID, &categorie.Name)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, categorie)
+	}
+
+	return categories, nil
 }

@@ -9,7 +9,6 @@ import (
 	"image"
 	"image/jpeg"
 	"log"
-	"login/src/database"
 	"login/src/models"
 	"math"
 	"mime/multipart"
@@ -36,17 +35,16 @@ func DashboardPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Fetch users from the database (limit to 5)
-	users, err := FetchUsers(db, 5, username)
+	categories, err := models.FetchCategories(db)
 	if err != nil {
-		log.Println("Error fetching users:", err)
-		http.Error(w, "Error fetching users", http.StatusInternalServerError)
+		log.Println("Error fetching Categories:", err)
+		http.Error(w, "Error fetching Categories", http.StatusInternalServerError)
 		return
 	}
-
 	tmpl := template.Must(template.ParseFiles("./web/template/dashboard.html"))
 	tmpl.Execute(w, map[string]interface{}{
-		"Username": username,
-		"Users":    users,
+		"Username":   username,
+		"Categories": categories,
 	})
 }
 
@@ -152,27 +150,4 @@ func resizeImage(img image.Image) image.Image {
 	}
 
 	return dst
-}
-
-// FetchUsers fetches a limited number of users from the database, excluding the current user's account
-func FetchUsers(db *sql.DB, limit int, username string) ([]database.User, error) {
-	// Use a parameterized query to prevent SQL injection
-	query := "SELECT Pseudo, ProfilePicture FROM Users WHERE Pseudo != ? LIMIT ?"
-	rows, err := db.Query(query, username, limit)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var users []database.User
-	for rows.Next() {
-		var user database.User
-		err := rows.Scan(&user.Pseudo, &user.ProfilePicture)
-		if err != nil {
-			return nil, err
-		}
-		users = append(users, user)
-	}
-
-	return users, nil
 }
