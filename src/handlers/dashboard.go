@@ -59,6 +59,7 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	layout := "2006-01-02 15:04:05"
 
 	sender := r.FormValue("sender_post")
+	categorie := r.FormValue("categorie_post")
 	title := r.FormValue("title_post")
 	content := r.FormValue("content_post")
 
@@ -87,7 +88,7 @@ func CreatePostHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Call your model function to insert the post
-	err = models.CreatePost(db, title, content, date, senderObject.UserID, base64image, "0", "0")
+	err = models.CreatePost(db, categorie, title, content, date, senderObject.UserID, base64image, "0", "0")
 	if err != nil {
 		// Log the error for debugging
 		log.Println("Error creating post:", err)
