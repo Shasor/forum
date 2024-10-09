@@ -41,6 +41,10 @@ func main() {
 		handlers.DeleteAccountHandler(db, w, r)
 	})
 
+	http.HandleFunc("/profile/", func(w http.ResponseWriter, r *http.Request) {
+		handlers.UserProfilePage(db, w, r) // Ensure the handler gets called for dynamic routes
+	})
+
 	// http.HandleFunc("/account-deleted", func(w http.ResponseWriter, r *http.Request) {
 	// 	if !handlers.IsCookieExist(r) || r.Method != http.MethodPost {
 	// 		handlers.LoginHandler(db, w, r)

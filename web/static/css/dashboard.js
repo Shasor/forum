@@ -47,3 +47,27 @@ document.addEventListener("DOMContentLoaded", function() {
         toggleButton.textContent = settingsPanel.classList.contains("collapsed") ? ">>" : "<<";
     });
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    const postsTab = document.getElementById('posts_tab');
+    const profileTab = document.getElementById('profile_tab');
+    
+    const postsContent = document.getElementById('posts_content');
+    const profileContentSection = document.getElementById('profile_content_section');
+    
+    // Function to switch to "Your Posts"
+    postsTab.onclick = function() {
+        postsTab.classList.add('active');
+        profileTab.classList.remove('active');
+        postsContent.classList.add('active');
+        profileContentSection.classList.remove('active');
+    };
+    
+    // Function to switch to "Your Profile"
+    profileTab.onclick = function() {
+        profileTab.classList.add('active');
+        postsTab.classList.remove('active');
+        profileContentSection.classList.add('active');
+        postsContent.classList.remove('active');
+    };
+});

@@ -44,7 +44,9 @@
             <div class="container" id="popup">
                 <p>Vous êtes connecté !</p>        
                 <nav>
-                    <ul>
+                    <ul class="no-bullets">
+                        <li><a href="/profile/{{ .Username }}">Voir mon profil</a></li>
+
                         <li><a href="/logout">Se déconnecter</a></li>
                         <li>
                             <form action="/delete-account" method="POST">
