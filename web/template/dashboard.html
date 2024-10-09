@@ -52,6 +52,18 @@
                     </ul>
                 </nav>
             </div>
+            <div id="posts">
+                {{ range .Posts }}
+                    <div id="post">
+                        <div id="sender">{{ .Sender }}</div>
+                        <div id="title">{{ .Title }}</div>
+                        <div id="date">{{ .Date }}</div>
+                        <div id="content">{{ .Content }}</div>
+                        <div id="image"><img src="data:image/jpeg;base64,{{ .Image }}"></div>
+                        <div id="reactions"></div>
+                    </div>
+                {{ end }}
+            </div>
             <button id="create_post">+</button>
             <div id="new_post">
                 <form enctype="multipart/form-data" action="/create-post" method="post" autocomplete="off">
