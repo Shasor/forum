@@ -586,3 +586,31 @@ body {
 .tab_content.active {
     display: block;
 }
+
+
+/* CSS for the posts in <profile/User/posts> : */
+
+
+.post {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #fff;
+}
+
+.post h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.post .author {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 15px;
+}
+
+.post .content {
+    font-size: 16px;
+    line-height: 1.6;
+}
+

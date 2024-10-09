@@ -68,3 +68,23 @@ func GetUserIDByUsername(db *sql.DB, username string) (int, error) {
 	}
 	return userID, nil
 }
+
+// FetchPostsBySender retrieves all posts for a specific sender ID.
+func FetchPostsBySender(db *sql.DB, senderID int) ([]database.Post, error) {
+	rows, err := db.Query("SELECT id, Title, Content, Date, Sender, Image, Like, Dislike FROM Post WHERE Sender = ? ORDER BY Date DESC", senderID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []database.Post
+	for rows.Next() {
+		var post database.Post
+		if err := rows.Scan(&post.PostID, &post.Title, &post.Content, &post.Date, &post.Sender, &post.Image, &post.Like, &post.Dislike); err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}

@@ -42,7 +42,11 @@ func main() {
 	})
 
 	http.HandleFunc("/profile/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.UserProfilePage(db, w, r) // Ensure the handler gets called for dynamic routes
+		handlers.UserProfilePage(db, w, r) // Profile page
+	})
+
+	http.HandleFunc("/profile/{username}/posts", func(w http.ResponseWriter, r *http.Request) {
+		handlers.UserPostsPage(db, w, r) // Posts page
 	})
 
 	// http.HandleFunc("/account-deleted", func(w http.ResponseWriter, r *http.Request) {

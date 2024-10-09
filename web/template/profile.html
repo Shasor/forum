@@ -11,12 +11,16 @@
     <header>
         <h1>Profile of {{ .User.Pseudo }}</h1>
     </header>
-    
+
+    <nav>
+        <a href="/profile/{{ .User.Pseudo }}">My Profile</a>
+        <a href="/profile/{{ .User.Pseudo }}/posts">My Posts</a> <!-- Add link to posts -->
+    </nav>
+
     <div>
         <img src="data:image/jpeg;base64,{{ .User.ProfilePicture }}" alt="Profile Picture of {{ .User.Pseudo }}">
         <p>Email: {{ .User.Email }}</p>
         <p>Role: {{ .User.Role }}</p>
-        <!-- Add more fields if needed -->
     </div>
 
     <footer>

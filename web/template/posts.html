@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Posts</title>
+    <link rel="stylesheet" href="web/static/css/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Your Posts</h1>
+    </header>
+
+    <nav>
+        <a href="/profile/{{ $.User.Pseudo }}">My Profile</a> <!-- Link back to profile -->
+        <a href="/profile/{{ $.User.Pseudo }}/posts">My Posts</a>
+    </nav>
+
+    <div>
+        {{ range .Posts }}
+            <div class="post">
+                <h2>{{ .Title }}</h2>
+                <p class="author">Posted by {{ $.User.Pseudo }} on {{ .Date }}</p>
+                <div class="content">
+                    {{ .Content }}
+                </div>
+            </div>
+        {{ else }}
+            <p>No posts found.</p>
+        {{ end }}
+    </div>
+
+    <footer>
+        <a href="/dashboard">Back to Dashboard</a>
+    </footer>
+</body>
+</html>

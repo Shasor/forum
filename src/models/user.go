@@ -25,6 +25,15 @@ func SelectUser(db *sql.DB, Pseudo string) (database.User, error) {
 	return user, nil
 }
 
+func IsUserPresent(db *sql.DB, username string) (bool, error) {
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM Users WHERE Pseudo = ?", username).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 // Ajoute un nouvel utilisateur dans la base de données avec un mot de passe hashé
 func CreateUser(db *sql.DB, Email, Pseudo, Password, Role, ProfilePicture, FollowID string) error {
 	// Hasher le mot de passe avant de l'enregistrer
