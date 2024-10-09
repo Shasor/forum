@@ -10,7 +10,6 @@ import (
 // RenderTemplate renders a template with the given data
 func RenderTemplate(w http.ResponseWriter, tmpl string, data interface{}) {
 	tmplPath := filepath.Join("web", "template", tmpl) // Ensure the path is correct
-	fmt.Println("Loading template:", tmplPath)         // Debugging line
 
 	t, err := template.ParseFiles(tmplPath)
 	if err != nil {
