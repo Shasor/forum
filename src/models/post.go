@@ -59,6 +59,28 @@ func SelectPost(db *sql.DB, PoID int) (database.Post, error) {
 	return post, nil
 }
 
+func FetchPosts(db *sql.DB) ([]database.Post, error) {
+	// Use a parameterized query to prevent SQL injection
+	query := "SELECT * FROM Post"
+	rows, err := db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []database.Post
+	for rows.Next() {
+		var post database.Post
+		err := rows.Scan(&post.PostID, &post.CategorieID, &post.Title, &post.Content, &post.Date, &post.Sender, &post.Image, &post.Like, &post.Dislike)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}
+
 // Function to get UserID based on Username
 func GetUserIDByUsername(db *sql.DB, username string) (int, error) {
 	var userID int

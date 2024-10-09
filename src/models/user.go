@@ -60,6 +60,16 @@ func DeleteUserByUsername(db *sql.DB, Pseudo string) error {
 	return nil
 }
 
+func UserExist(db *sql.DB, pseudo string) bool {
+	var exist bool
+	err := db.QueryRow("SELECT EXISTS( SELECT 1 FROM Users WHERE Pseudo = ?)", pseudo).Scan(&exist)
+	if err != nil {
+		return false
+	}
+	return exist
+
+}
+
 // Vérifie si le mot de passe fourni correspond au hash enregistré dans la base de données
 func CheckPassword(hashedPassword, plainPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
