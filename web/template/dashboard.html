@@ -27,7 +27,7 @@
                         <ul class="no-bullets">
                             {{ range .Categories }}
                             <li>
-                                <span>{{ .Name }}</span>
+                                <span><a href="?cat={{ .Name }}">{{ .Name }}</a></span>
                             </li>
                             {{ else }}
                             <li>No categorie found</li>
@@ -40,7 +40,6 @@
         
         
         <div id="main_content">
-            <h1>Bienvenue sur le Dashboard {{.Username}} </h1>
             <div class="container" id="popup">
                 <p>Vous êtes connecté !</p>        
                 <nav>
