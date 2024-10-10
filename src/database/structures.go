@@ -19,15 +19,16 @@ type Commentaire struct {
 
 // Structure représentant un post
 type Post struct {
-	PostID      int
-	CategorieID int
-	Title       string
-	Content     string
-	Date        string
-	Sender      int
-	Image       string
-	Like        string
-	Dislike     string
+	PostID         int
+	CategorieID    int
+	Title          string
+	Content        string
+	Date           string
+	SenderID       int
+	SenderUsername string
+	Image          string
+	Like           string
+	Dislike        string
 }
 
 // Structure représentant un utilisateur

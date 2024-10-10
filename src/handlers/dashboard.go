@@ -59,6 +59,11 @@ func DashboardPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		if err == nil {
 			for _, post := range posts {
 				if post.CategorieID == catID {
+					senderUsername, _ := models.GetUsernameByID(db, post.SenderID)
+					if senderUsername == "" {
+						senderUsername = "Deleted User"
+					}
+					post.SenderUsername = senderUsername
 					requestedPosts = append(requestedPosts, post)
 				}
 			}

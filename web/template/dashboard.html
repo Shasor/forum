@@ -57,11 +57,13 @@
             <div id="posts">
                 {{ range .Posts }}
                     <div id="post">
-                        <div id="sender">{{ .Sender }}</div>
+                        <div id="sender">{{ .SenderUsername }}</div>
                         <div id="title">{{ .Title }}</div>
                         <div id="date">{{ .Date }}</div>
                         <div id="content">{{ .Content }}</div>
-                        <div id="image"><img src="data:image/jpeg;base64,{{ .Image }}"></div>
+                        {{ if .Image }}
+                            <div id="image"><img src="data:image/jpeg;base64,{{ .Image }}"></div>
+                        {{ end }}
                         <div id="reactions"></div>
                     </div>
                 {{ end }}

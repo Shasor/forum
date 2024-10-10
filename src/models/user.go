@@ -79,6 +79,16 @@ func UserExist(db *sql.DB, pseudo string) bool {
 
 }
 
+// Function to get UserID based on Username
+func GetUsernameByID(db *sql.DB, id int) (string, error) {
+	var username = ""
+	err := db.QueryRow("SELECT pseudo FROM Users WHERE id = ?", id).Scan(&username)
+	if err != nil {
+		return "", err
+	}
+	return username, nil
+}
+
 // Vérifie si le mot de passe fourni correspond au hash enregistré dans la base de données
 func CheckPassword(hashedPassword, plainPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))

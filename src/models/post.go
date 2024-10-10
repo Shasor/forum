@@ -49,7 +49,7 @@ func DeletePost(db *sql.DB, PostID int) error {
 func SelectPost(db *sql.DB, PoID int) (database.Post, error) {
 	var post database.Post
 	err := db.QueryRow("SELECT id, Title, Content, Date, Sender, Image, Like, Dislike FROM Post WHERE id = ?", PoID).Scan(
-		&post.PostID, &post.Title, &post.Content, &post.Date, &post.Sender, &post.Image, &post.Like, &post.Dislike)
+		&post.PostID, &post.Title, &post.Content, &post.Date, &post.SenderID, &post.Image, &post.Like, &post.Dislike)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return post, errors.New("post non trouvé")
@@ -71,7 +71,7 @@ func FetchPosts(db *sql.DB) ([]database.Post, error) {
 	var posts []database.Post
 	for rows.Next() {
 		var post database.Post
-		err := rows.Scan(&post.PostID, &post.CategorieID, &post.Title, &post.Content, &post.Date, &post.Sender, &post.Image, &post.Like, &post.Dislike)
+		err := rows.Scan(&post.PostID, &post.CategorieID, &post.Title, &post.Content, &post.Date, &post.SenderID, &post.Image, &post.Like, &post.Dislike)
 		if err != nil {
 			return nil, err
 		}
