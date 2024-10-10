@@ -74,6 +74,21 @@ func CheckPassword(hashedPassword, plainPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))
 }
 
+func UpdateUser(db *sql.DB, user database.User) error {
+
+	query := `UPDATE users SET Email = ?, ProfilePicture = ? WHERE id = ?`
+	_, err := db.Exec(query, user.Email, user.ProfilePicture, user.UserID) // Ensure user.UserID is correctly passed
+	if err != nil {
+		log.Println("Error executing UPDATE query:", err) // Log any SQL execution error
+	}
+	return err
+}
+
+/* Below are functions for FollowID
+
+
+ */
+
 func UpdateFollowedID(db *sql.DB, UserID, FollowID string) error {
 	statement, err := db.Prepare("UPDATE Users SET FollowID = ? Where id = ?")
 	if err != nil {

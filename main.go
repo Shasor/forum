@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"login/src/database"
@@ -42,11 +43,14 @@ func main() {
 	})
 
 	http.HandleFunc("/profile/", func(w http.ResponseWriter, r *http.Request) {
-		handlers.UserProfilePage(db, w, r) // Profile page
-	})
-
-	http.HandleFunc("/profile/{username}/posts", func(w http.ResponseWriter, r *http.Request) {
-		handlers.UserPostsPage(db, w, r) // Posts page
+		// Depending on the route pattern, call the correct handler
+		if strings.HasSuffix(r.URL.Path, "/edit") {
+			handlers.EditProfilePage(db, w, r)
+		} else if strings.HasSuffix(r.URL.Path, "/posts") {
+			handlers.UserPostsPage(db, w, r)
+		} else {
+			handlers.UserProfilePage(db, w, r)
+		}
 	})
 
 	// http.HandleFunc("/account-deleted", func(w http.ResponseWriter, r *http.Request) {

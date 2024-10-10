@@ -34,17 +34,27 @@ func DashboardPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Fetch users from the database (limit to 5)
+	// Retrieve the user from the database using the username
+	user, err := models.SelectUser(db, username) // Assuming SelectUser fetches user info by username
+	if err != nil {
+		log.Println("Error fetching user:", err)
+		http.Error(w, "Error fetching user", http.StatusInternalServerError)
+		return
+	}
+
+	// Fetch categories from the database (limit to 5)
 	categories, err := models.FetchCategories(db)
 	if err != nil {
 		log.Println("Error fetching Categories:", err)
 		http.Error(w, "Error fetching Categories", http.StatusInternalServerError)
 		return
 	}
+
+	// Pass the user and categories to the template
 	tmpl := template.Must(template.ParseFiles("./web/template/dashboard.html"))
 	tmpl.Execute(w, map[string]interface{}{
-		"Username":   username,
-		"Categories": categories,
+		"User":       user,       // Pass the full user object, including profile picture
+		"Categories": categories, // Categories for the sidebar
 	})
 }
 

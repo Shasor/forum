@@ -13,7 +13,7 @@
          <h1 id="raddit">RADDIT</h1>
          <div id="right_section">
              <input type="text" id="search_input" placeholder="Search...">
-             <img src="/web/img/default_profile_picture.png" alt="home" id="avatar">
+             <img src="{{ if .User.ProfilePicture }}data:image/jpeg;base64,{{ .User.ProfilePicture }}{{ else }}/web/img/default_profile_picture.png{{ end }}" alt="Profile Picture" id="avatar" style="max-width: 150px; max-height: 150px;">
          </div>
     </header>
     <div id="main-container">
@@ -40,7 +40,7 @@
         
         
         <div id="main_content">
-            <h1>Bienvenue sur le Dashboard {{.Username}} </h1>
+            <h1>Bienvenue sur le Dashboard {{.User.Pseudo}} </h1>
             <div class="container" id="popup">
                 <p>Vous êtes connecté !</p>        
                 <nav>

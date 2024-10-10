@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - {{ .User.Pseudo }}</title>
+    <link rel="stylesheet" href="web/static/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Edit Profile of {{ .User.Pseudo }}</h1>
+    </header>
+
+    <nav>
+        <a href="/profile/{{ .User.Pseudo }}">My Profile</a>
+        <a href="/profile/{{ .User.Pseudo }}/posts">My Posts</a> 
+        <a href="/profile/{{ .User.Pseudo }}/edit">Edit Profile</a> <!-- Link to edit profile page -->
+    </nav>
+
+    <form action="/profile/edit" method="POST" enctype="multipart/form-data">
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="{{ .User.Email }}">
+        </div>
+        
+        <div>
+            <label for="profile_picture">Profile Picture:</label>
+            <input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg, image/png">
+            <p>Current profile picture:</p>
+            <img src="data:image/jpeg;base64,{{ .User.ProfilePicture }}" alt="Current Profile Picture" style="max-width: 150px; max-height: 150px;">
+        </div>
+
+        <button type="submit">Update Profile</button>
+    </form>
+
+    <footer>
+        <a href="/dashboard">Back to Dashboard</a>
+    </footer>
+</body>
+</html>
