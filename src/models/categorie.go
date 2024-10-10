@@ -75,7 +75,7 @@ func GetCategorieIDByName(db *sql.DB, name string) (int, error) {
 	return id, nil
 }
 
-// FetchCategories fetches a limited number of users from the database, excluding the current user's account
+// FetchCategories fetches users from the database, excluding the current user's account
 func FetchCategories(db *sql.DB) ([]database.Categorie, error) {
 	// Use a parameterized query to prevent SQL injection
 	query := "SELECT * FROM Categories"

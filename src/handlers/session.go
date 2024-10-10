@@ -3,7 +3,9 @@ package handlers
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"database/sql"
 	"encoding/base64"
+	"login/src/models"
 	"net/http"
 	"strings"
 	"time"
@@ -47,7 +49,7 @@ func IsCookieExist(r *http.Request) bool {
 }
 
 // GetSessionUsername returns the username from the session cookie
-func GetSessionUsername(r *http.Request) (string, error) {
+func GetSessionUsername(db *sql.DB, r *http.Request) (string, error) {
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
 		return "", err
@@ -63,6 +65,9 @@ func GetSessionUsername(r *http.Request) (string, error) {
 	usernameBytes, err := base64.URLEncoding.DecodeString(sessionData)
 	if err != nil {
 		return "", err
+	}
+	if !models.UserExist(db, string(usernameBytes)) {
+		return "", ErrInvalidCookie
 	}
 
 	return string(usernameBytes), nil

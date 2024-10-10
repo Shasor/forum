@@ -21,7 +21,7 @@ func DeleteAccountHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, err := GetSessionUsername(r)
+	username, err := GetSessionUsername(db, r)
 	if err != nil {
 		log.Println("No user logged in.")
 		http.Redirect(w, r, "/", http.StatusSeeOther)

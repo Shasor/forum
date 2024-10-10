@@ -11,6 +11,7 @@ import (
 	"image/jpeg"
 	_ "image/png"
 	"log"
+	"login/src/database"
 	"login/src/models"
 	"math"
 	"mime/multipart"
@@ -25,7 +26,7 @@ func DashboardPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, err := GetSessionUsername(r)
+	username, err := GetSessionUsername(db, r)
 	if err != nil {
 		if err == ErrInvalidCookie {
 			ClearSession(w, r) // If the Cookie hash is incorrect, delete the cookie
@@ -36,15 +37,7 @@ func DashboardPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Retrieve the user from the database using the username
-	user, err := models.SelectUser(db, username) // Assuming SelectUser fetches user info by username
-	if err != nil {
-		log.Println("Error fetching user:", err)
-		http.Error(w, "Error fetching user", http.StatusInternalServerError)
-		return
-	}
-
-	// Fetch categories from the database (limit to 5)
+	// Fetch all categories from the database
 	categories, err := models.FetchCategories(db)
 	if err != nil {
 		log.Println("Error fetching Categories:", err)
@@ -52,11 +45,31 @@ func DashboardPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Pass the user and categories to the template
+	// Fetch all posts from the database
+	posts, err := models.FetchPosts(db)
+	if err != nil {
+		log.Println("Error fetching Categories:", err)
+		http.Error(w, "Error fetching Categories", http.StatusInternalServerError)
+		return
+	}
+	// sends only requested posts
+	var requestedPosts []database.Post
+	if cat := r.URL.Query().Get("cat"); r.Method == http.MethodGet && cat != "" {
+		catID, err := models.GetCategorieIDByName(db, cat)
+		if err == nil {
+			for _, post := range posts {
+				if post.CategorieID == catID {
+					requestedPosts = append(requestedPosts, post)
+				}
+			}
+		}
+	}
+
 	tmpl := template.Must(template.ParseFiles("./web/template/dashboard.html"))
 	tmpl.Execute(w, map[string]interface{}{
-		"User":       user,       // Pass the full user object, including profile picture
-		"Categories": categories, // Categories for the sidebar
+		"Username":   username,
+		"Categories": categories,
+		"Posts":      requestedPosts,
 	})
 }
 
