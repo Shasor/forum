@@ -267,7 +267,6 @@ body {
 
 #main_content {
     flex: 1;
-    padding: 20px;
     transition: margin-left 0.3s ease; /* Pour l'animation du contenu */
     overflow-y: auto;
 }
@@ -278,6 +277,25 @@ body {
 
 .settings-panel:not(.collapsed) + #main_content {
     margin-left: 250px; /* Décalage du contenu quand le panneau est ouvert */
+}
+
+#dashboard-posts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.dashboard-post {
+    margin-top: 50px;
+    height: 20%;
+    width: 50%;
+}
+
+.header-post {
+    display: flex;
+    justify-content: space-between;
 }
 
 #follow{

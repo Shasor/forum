@@ -54,15 +54,19 @@
                     </ul>
                 </nav>
             </div>
-            <div id="posts">
+            <div id="dashboard-posts">
                 {{ range .Posts }}
-                    <div id="post">
-                        <div id="sender">{{ .SenderUsername }}</div>
-                        <div id="title">{{ .Title }}</div>
-                        <div id="date">{{ .Date }}</div>
-                        <div id="content">{{ .Content }}</div>
+                    <div class="dashboard-post">
+                        <div class="header-post">
+                            <div class="sender">{{ .SenderUsername }}</div>
+                            <div class="title">{{ .Title }}</div>
+                            <div class="date">{{ .Date }}</div>
+                        </div>
+                        <div id="content">
+                            {{ .Content }}
+                        </div>
                         {{ if .Image }}
-                            <div id="image"><img src="data:image/jpeg;base64,{{ .Image }}"></div>
+                            <div id="image"><img src="data:image/jpeg;base64,{{ .Image }}" style="height: 20px; width: 20px;"></div>
                         {{ end }}
                         <div id="reactions"></div>
                     </div>
