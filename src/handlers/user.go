@@ -51,7 +51,7 @@ func DeleteAccountHandler(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 // UserProfilePage displays the profile of a specific user by their username
 func UserProfilePage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	username, err := GetSessionUsername(r) // Get the username from the session
+	username, err := GetSessionUsername(db, r) // Get the username from the session
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -75,7 +75,7 @@ func UserProfilePage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 // UserPostsPage displays the posts of a specific user
 func UserPostsPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	username, err := GetSessionUsername(r) // Get the username from the session
+	username, err := GetSessionUsername(db, r) // Get the username from the session
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return

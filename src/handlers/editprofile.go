@@ -13,7 +13,7 @@ import (
 
 // EditProfilePage handler for editing user profile
 func EditProfilePage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
-	username, err := GetSessionUsername(r) // Get the username from the session
+	username, err := GetSessionUsername(db, r) // Get the username from the session
 	if err != nil {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 		return
@@ -97,7 +97,7 @@ func checkFileSize(header *multipart.FileHeader) error {
 	const maxFileSize = 8 * 1024 * 1024 // 8 MB
 
 	if header.Size > maxFileSize {
-		return fmt.Errorf("Uploaded file exceeds the maximum size limit of 8MB.")
+		return fmt.Errorf("uploaded file exceeds the maximum size limit of 8mb")
 	}
 	return nil
 }

@@ -102,7 +102,7 @@ func FetchPostsBySender(db *sql.DB, senderID int) ([]database.Post, error) {
 	var posts []database.Post
 	for rows.Next() {
 		var post database.Post
-		if err := rows.Scan(&post.PostID, &post.Title, &post.Content, &post.Date, &post.Sender, &post.Image, &post.Like, &post.Dislike); err != nil {
+		if err := rows.Scan(&post.PostID, &post.Title, &post.Content, &post.Date, &post.SenderID, &post.Image, &post.Like, &post.Dislike); err != nil {
 			return nil, err
 		}
 		posts = append(posts, post)
