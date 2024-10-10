@@ -25,6 +25,7 @@ func EditProfilePage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 	// Handle form submission
 	if r.Method == http.MethodPost {
+		log.Printf("Attempting to update user: Email=%s, ProfilePictureLength=%d, UserID=%d\n", user.Email, len(user.ProfilePicture), user.UserID)
 		newEmail := r.FormValue("email")
 		var newProfilePicture string
 
@@ -47,8 +48,6 @@ func EditProfilePage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 
 		user.Email = newEmail
 		user.ProfilePicture = newProfilePicture
-
-		log.Printf("Attempting to update user: Email=%s, ProfilePictureLength=%d, UserID=%d\n", user.Email, len(user.ProfilePicture), user.UserID)
 
 		if err := models.UpdateUser(db, user); err != nil {
 			log.Println("Error updating user:", err) // Log the error for debugging
