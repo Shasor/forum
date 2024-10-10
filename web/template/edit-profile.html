@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile - {{ .User.Pseudo }}</title>
     <link rel="stylesheet" href="web/static/css/styles.css">
+    <script src="web/static/css/editprofile.js" defer></script> <!-- Include the new JS file -->
 </head>
 <body>
     <header>
@@ -29,6 +30,12 @@
             <p>Current profile picture:</p>
             <img src="data:image/jpeg;base64,{{ .User.ProfilePicture }}" alt="Current Profile Picture" style="max-width: 150px; max-height: 150px;">
         </div>
+
+        {{ if .ErrorMessage }}
+            <div class="error-message" style="color: red;">
+                {{ .ErrorMessage }}
+            </div>
+        {{ end }}
 
         <button type="submit">Update Profile</button>
     </form>

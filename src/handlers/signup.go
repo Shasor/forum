@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"login/src/models"
@@ -36,6 +37,7 @@ func SignupPage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		err = models.CreateUser(db, Email, Pseudo, Password, "User", defaultImage, "")
 		if err != nil {
 			// Passer un message d'erreur au template
+			log.Println("Error when creating account:, ", err)
 			data := map[string]interface{}{
 				"ErrorMessage": "Erreur lors de la création du compte.",
 			}

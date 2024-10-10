@@ -614,3 +614,11 @@ body {
     line-height: 1.6;
 }
 
+
+/* For Error messages */
+.error-message {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid red;
+    background-color: #ffe6e6; /* Light red background */
+}
