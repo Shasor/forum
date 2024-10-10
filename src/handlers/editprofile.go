@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 	"login/src/database"
 	"login/src/models"
@@ -34,9 +33,11 @@ func EditProfilePage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 		newEmail := r.FormValue("email")
 		var newProfilePicture string
 
-		if file, _, err := r.FormFile("profile_picture"); err == nil {
+		if file, header, err := r.FormFile("profile_picture"); err == nil {
+			defer file.Close()
 			// Check file size
-			if err := checkFileSize(file); err != nil {
+
+			if err := checkFileSize(header); err != nil {
 				errorMessage = err.Error() // Set the error message if the file is too large
 			} else {
 				newProfilePicture, err = base64Image(file) // Convert the uploaded file to base64
@@ -91,16 +92,11 @@ func EditProfilePage(db *sql.DB, w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, data)
 }
 
-// Function to check file size
-func checkFileSize(file multipart.File) error {
+// Function to check file size using FileHeader
+func checkFileSize(header *multipart.FileHeader) error {
 	const maxFileSize = 8 * 1024 * 1024 // 8 MB
-	buf := make([]byte, maxFileSize)
-	n, err := file.Read(buf)
-	if err != nil && err != io.EOF {
-		return err
-	}
 
-	if n == maxFileSize && err == nil {
+	if header.Size > maxFileSize {
 		return fmt.Errorf("Uploaded file exceeds the maximum size limit of 8MB.")
 	}
 	return nil

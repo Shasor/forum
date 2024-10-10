@@ -26,7 +26,7 @@
         
         <div>
             <label for="profile_picture">Profile Picture:</label>
-            <input type="file" id="profile_picture" name="profile_picture" accept="image/jpeg, image/png">
+            <input type="file" id="profile_picture" name="profile_picture" accept=".jpeg, .png">
             <p>Current profile picture:</p>
             <img src="data:image/jpeg;base64,{{ .User.ProfilePicture }}" alt="Current Profile Picture" style="max-width: 150px; max-height: 150px;">
         </div>
