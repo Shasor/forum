@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "forum/internal/server"
 
+func main() {
+	server.InitServer()
 }
