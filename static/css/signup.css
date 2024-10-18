@@ -1,0 +1,73 @@
+@import "index.css";
+
+.signup {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  max-height: 100%;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  align-self: center;
+}
+
+.signup h2 {
+  color: var(--SECOND-COLOR);
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+/* Champs de saisie */
+.signup input[type="email"],
+.signup input[type="text"],
+.signup input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--c);
+  border-radius: 5px;
+  font-size: 1em;
+  color: var(--nc);
+  transition: border-color 0.3s ease;
+}
+
+.signup input[type="email"]:focus,
+.signup input[type="text"]:focus,
+.signup input[type="password"]:focus {
+  border-color: var(--SECOND-COLOR);
+  outline: none;
+}
+
+/* Bouton de soumission */
+.signup button[type="submit"] {
+  background-color: var(--SECOND-COLOR);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.signup button[type="submit"]:hover {
+  background-color: var(--THIRD-COLOR);
+  transform: scale(1.05);
+}
+
+.signup #close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  color: var(--SECOND-COLOR);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}

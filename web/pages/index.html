@@ -5,10 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Raddit</title>
     <link rel="stylesheet" href="static/css/index.css" />
+    <link rel="stylesheet" href="static/css/login.css" />
+    <link rel="stylesheet" href="static/css/signup.css" />
+    <script>
+      function showError(message) {
+        alert(message);
+      }
+    </script>
   </head>
   {{template "header" .}}
   <body>
     <div class="main-container">{{template "left-bar" .}}{{template "posts" .}}{{template "create-post" .}}</div>
+
+    {{ if .ErrorMessage }}
+    <script>
+      showError("{{ .ErrorMessage }}");
+    </script>
+    {{ end }}
   </body>
-  <script src="static/js/index.js"></script>
+  <script type="module" src="static/js/index.js"></script>
 </html>

@@ -3,6 +3,8 @@
   --MAIN-COLOR: rgb(255, 182, 243);
   --SECOND-COLOR: #d97ae6;
   --THIRD-COLOR: #772188;
+  --c: #ccc;
+  --nc: #333;
 }
 
 * {
@@ -10,12 +12,30 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  user-select: none;
 }
 
 * ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
+  width: 100%;
+}
+
+* ul li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+  width: 100%;
+}
+
+* ul li span {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  flex: 1;
+  margin-right: 10px;
   width: 100%;
 }
 
@@ -73,7 +93,7 @@ body {
   position: absolute; /* Positionner le pop-up */
   top: 75px; /* Ajustez la position verticale */
   right: 40px; /* Ajustez la position horizontale */
-  border: 1px solid #ccc; /* Bordure pour le pop-up */
+  border: 1px solid var(--c); /* Bordure pour le pop-up */
   background-color: white; /* Couleur de fond */
   padding: 30px; /* Espacement interne */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombre */
@@ -96,7 +116,7 @@ body {
   height: 100%;
   width: 20vw;
   transition: all 0.3s ease-in-out;
-  border-right: 1px solid #ccc;
+  border-right: 1px solid var(--c);
   padding: 0 20px;
   overflow: hidden;
   z-index: 1;
@@ -141,7 +161,7 @@ body {
 }
 
 .left-bar #item:first-child {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--c);
 }
 
 .left-bar.closed + .posts {

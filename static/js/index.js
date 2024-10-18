@@ -1,3 +1,5 @@
+import { GetLogin, GetSignup } from "./auth.js";
+
 document.addEventListener("DOMContentLoaded", function () {
   // ╔════════════════════ avatar ════════════════════╗
   const avatar = document.getElementById("avatar");
@@ -40,4 +42,10 @@ document.addEventListener("DOMContentLoaded", function () {
     event.stopPropagation();
   };
   // ╚═════════════════════════════════════════════════════╝
+
+  const login_link = document.getElementById("login-link");
+  login_link.addEventListener("click", GetLogin);
+
+  const signup_button = document.getElementById("header-signup-link");
+  signup_button.addEventListener("click", GetSignup);
 });
