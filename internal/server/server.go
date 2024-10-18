@@ -12,6 +12,7 @@ func InitServer() {
 	server := NewServer(port, 10*time.Second, 10*time.Second, 30*time.Second, 2*time.Second, 1<<20)
 
 	http.HandleFunc("/", handlers.IndexHandler)
+	http.HandleFunc("/signup", handlers.SignupHandler)
 
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

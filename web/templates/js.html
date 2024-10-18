@@ -1,0 +1,8 @@
+{{define "js"}}
+<script type="module">
+  import { GetLogin, GetSignup, ShowError } from "../../static/js/auth.js";
+  window.GetLogin = GetLogin; // Rend la fonction accessible globalement
+  window.GetSignup = GetSignup; // Rend la fonction accessible globalement
+  window.ShowError = ShowError; // Rend la fonction accessible globalement
+</script>
+{{end}}

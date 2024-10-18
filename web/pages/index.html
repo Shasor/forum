@@ -7,21 +7,12 @@
     <link rel="stylesheet" href="static/css/index.css" />
     <link rel="stylesheet" href="static/css/login.css" />
     <link rel="stylesheet" href="static/css/signup.css" />
-    <script>
-      function showError(message) {
-        alert(message);
-      }
-    </script>
+    {{template "js"}}
   </head>
   {{template "header" .}}
   <body>
     <div class="main-container">{{template "left-bar" .}}{{template "posts" .}}{{template "create-post" .}}</div>
-
-    {{ if .ErrorMessage }}
-    <script>
-      showError("{{ .ErrorMessage }}");
-    </script>
-    {{ end }}
+    {{template "err"}}
   </body>
   <script type="module" src="static/js/index.js"></script>
 </html>
