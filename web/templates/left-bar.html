@@ -1,0 +1,29 @@
+{{define "left-bar"}}
+<div class="left-bar">
+  <div id="item">
+    <h2>Following :</h2>
+    <ul>
+      <!-- {{ range .CategoriesFollow }} -->
+      <li>
+        <span><a href="?cat={{ .CategorieID }}">{{ .Name }}</a></span>
+      </li>
+      <!-- {{ else }} -->
+      <li><span>No categorie found</span></li>
+      <!-- {{ end }} -->
+    </ul>
+  </div>
+  <div id="item">
+    <h2>Discover :</h2>
+    <ul>
+      <!-- {{ range .Categories }} -->
+      <li>
+        <span><a href="?cat={{ .CategorieID }}">{{ .Name }}</a></span>
+      </li>
+      <!-- {{ else }} -->
+      <li><span>No categorie found</span></li>
+      <!-- {{ end }} -->
+    </ul>
+  </div>
+  <button><<</button>
+</div>
+{{end}}

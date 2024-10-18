@@ -1,0 +1,14 @@
+{{define "create-post"}}
+<button class="create-post-button">+</button>
+<div class="create-post">
+  <form enctype="multipart/form-data" action="/create-post" method="post" autocomplete="off">
+    <input type="hidden" id="sender_post" name="sender_post" value="{{.Username}}" />
+    <input type="hidden" id="post_id" name="post_id" value="0" />
+    <input type="text" id="categorie_post" name="categorie_post" placeholder="Categorie" maxlength="25" required />
+    <input type="text" id="title_post" name="title_post" placeholder="Title" maxlength="75" required />
+    <textarea id="content_post" name="content_post" placeholder="I love radish ..." required></textarea>
+    <input type="file" name="image_post" id="image_post" accept=".jpg, .jpeg, .png" />
+    <button type="submit">Post</button>
+  </form>
+</div>
+{{end}}

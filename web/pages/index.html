@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Raddit</title>
+    <link rel="stylesheet" href="static/css/index.css" />
+  </head>
+  {{template "header" .}}
+  <body>
+    <div class="main-container">{{template "left-bar" .}}{{template "posts" .}}{{template "create-post" .}}</div>
+  </body>
+  <script src="static/js/index.js"></script>
+</html>

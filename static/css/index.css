@@ -1,0 +1,241 @@
+:root {
+  --BODY-COLOR: #898989;
+  --MAIN-COLOR: rgb(255, 182, 243);
+  --SECOND-COLOR: #d97ae6;
+  --THIRD-COLOR: #772188;
+}
+
+* {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+* ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100;
+  height: 10%;
+  padding: 0 1vw;
+  background-color: var(--MAIN-COLOR);
+}
+
+.header #logo {
+  flex: 1;
+  max-height: 60px;
+  max-width: 60px;
+}
+
+.header #title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2rem; /* Taille de police relative */
+}
+
+.header #profile {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.header #logo #avatar {
+  flex: 1;
+  max-height: 60px;
+  max-width: 60px;
+}
+
+.header #avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/*Popup quand on clique sur l'avatar*/
+.header #popup {
+  display: none;
+  position: absolute; /* Positionner le pop-up */
+  top: 75px; /* Ajustez la position verticale */
+  right: 40px; /* Ajustez la position horizontale */
+  border: 1px solid #ccc; /* Bordure pour le pop-up */
+  background-color: white; /* Couleur de fond */
+  padding: 30px; /* Espacement interne */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombre */
+  z-index: 1000; /* S'assurer qu'il est au-dessus des autres éléments */
+}
+
+.main-container {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background-color: var(--BODY-COLOR);
+  transition: all 0.3s ease-in-out;
+}
+
+.left-bar {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  width: 20vw;
+  transition: all 0.3s ease-in-out;
+  border-right: 1px solid #ccc;
+  padding: 0 20px;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.left-bar button {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  background: none;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.left-bar.closed {
+  transform: translateX(-90%);
+}
+
+.left-bar #item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  scrollbar-width: none;
+}
+
+.left-bar h2 {
+  margin: 15px 0 0 0;
+  position: sticky;
+  background-color: var(--BODY-COLOR);
+  top: 0px;
+}
+
+.left-bar li {
+  margin-top: 25px;
+}
+
+.left-bar li:last-child {
+  margin-bottom: 25px;
+}
+
+.left-bar #item:first-child {
+  border-bottom: 1px solid #ccc;
+}
+
+.left-bar.closed + .posts {
+  transform: translateX(-20vw);
+}
+
+.left-bar:not(.closed) + .posts {
+  margin-left: 0;
+}
+
+.posts {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+  transition: all 0.3s ease-in-out;
+}
+
+/* travailler ici */
+
+/* Bouton pour ouvrir le pop-up de création de post */
+.create-post-button {
+  background-color: var(--SECOND-COLOR);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+}
+
+/* Le conteneur du pop-up */
+.create-post {
+  display: none; /* Le pop-up est caché par défaut */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.create-post.active {
+  display: block;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.create-post input,
+.create-post textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.create-post textarea {
+  resize: vertical; /* Autoriser uniquement l'agrandissement en hauteur */
+}
+
+.create-post input:focus,
+.create-post textarea:focus {
+  border-color: var(--SECOND-COLOR);
+  outline: none;
+}
+
+/* Bouton de soumission */
+.create-post button[type="submit"] {
+  background-color: var(--SECOND-COLOR);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.create-post button[type="submit"]:hover {
+  background-color: var(--THIRD-COLOR);
+  transform: scale(1.05);
+}
