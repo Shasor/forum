@@ -1,7 +1,7 @@
 @import "index.css";
 
 /* Conteneur principal de connexion */
-.login {
+.auth {
   display: flex;
   flex-direction: column;
   position: relative;
@@ -16,14 +16,15 @@
   align-self: center;
 }
 
-.login h2 {
+.auth h2 {
   color: var(--SECOND-COLOR);
   font-size: 2em;
   margin-bottom: 20px;
 }
 
-.login input[type="text"],
-.login input[type="password"] {
+.auth input[type="email"],
+.auth input[type="text"],
+.auth input[type="password"] {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
@@ -34,13 +35,13 @@
   transition: border-color 0.3s ease;
 }
 
-.login input[type="text"]:focus,
-.login input[type="password"]:focus {
+.auth input[type="text"]:focus,
+.auth input[type="password"]:focus {
   border-color: var(--MAIN-COLOR);
   outline: none;
 }
 
-.login button[type="submit"] {
+.auth button[type="submit"] {
   background-color: var(--SECOND-COLOR);
   color: white;
   padding: 10px 20px;
@@ -53,21 +54,21 @@
   width: 100%;
 }
 
-.login button[type="submit"]:hover {
+.auth button[type="submit"]:hover {
   background-color: var(--THIRD-COLOR);
   transform: scale(1.05);
 }
 
-.login #redirect {
+.auth #redirect {
   margin-top: 20px;
   font-size: 0.9em;
 }
 
-.login #redirect p {
+.auth #redirect p {
   color: var(--nc);
 }
 
-.login #header-signup-link {
+.auth #signup-link {
   background-color: var(--SECOND-COLOR);
   color: white;
   border: none;
@@ -80,12 +81,12 @@
   margin-top: 10px;
 }
 
-.login #header-signup-link:hover {
+.auth #signup-link:hover {
   background-color: var(--THIRD-COLOR);
   transform: scale(1.05);
 }
 
-.login #close {
+.auth #close {
   position: absolute;
   top: 10px;
   right: 10px;

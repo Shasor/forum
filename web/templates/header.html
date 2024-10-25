@@ -5,16 +5,18 @@
   <div id="profile">
     <img src="static/assets/img/default_profile_picture.png" alt="Profile Picture" id="avatar" style="max-width: 150px; max-height: 150px" />
     <div id="popup">
-      {{if .cookie}}
+      {{if .user}}
       <p>Vous êtes connecté !</p>
       {{end}}
       <nav>
         <ul>
-          {{if .cookie}}
-          <!-- <li><a href="/profile/{{ .Username }}">Voir mon profil</a></li> -->
-          <li><a href="/logout">Se déconnecter</a></li>
+          {{if .user}}
+          <li><a href="#">Voir mon profil</a></li>
+          <form method="post" action="/logout">
+            <li><button type="submit">Se déconnecter</button></li>
+          </form>
           {{else}}
-          <li><a href="#" id="login-link">Se connecter</a></li>
+          <li><a href="#" id="header-login-link">Se connecter</a></li>
           <li><a href="#" id="header-signup-link">Créer un compte</a></li>
           {{end}}
         </ul>

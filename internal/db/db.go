@@ -23,9 +23,6 @@ func GetDB() *sql.DB {
 			password TEXT NOT NULL,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (role) REFERENCES role(string)
-		); CREATE TABLE IF NOT EXISTS roles (
-			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			name TEXT NOT NULL
 		); CREATE TABLE IF NOT EXISTS categories (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL
@@ -34,11 +31,11 @@ func GetDB() *sql.DB {
 			category INTEGER NOT NULL,
 			sender INTEGER NOT NULL,
 			title TEXT NOT NULL,
+			content TEXT NOT NULL,
+			picture LONGTEXT,
 			date TEXT NOT NULL,
-			comments INTEGER NOT NULL,
 			FOREIGN KEY (category) REFERENCES categories(id),
-			FOREIGN KEY (sender) REFERENCES users(id),
-			FOREIGN KEY (comments) REFERENCES posts(id)
+			FOREIGN KEY (sender) REFERENCES users(id)
 		); CREATE TABLE IF NOT EXISTS reactions (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			sender INTEGER NOT NULL,

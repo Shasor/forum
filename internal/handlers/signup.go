@@ -2,43 +2,56 @@ package handlers
 
 import (
 	"forum/internal/db"
-	"html/template"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Redirect(w, r, "/", http.StatusSeeOther) // not sure good code
+	if r.Method != http.MethodPost || IsCookieValid(w, r) {
+		Resp = Response{Msg: []string{
+			map[bool]string{
+				true:  "You are connected",
+				false: "Method not Allowed",
+			}[IsCookieValid(w, r)],
+		}}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
-	var errors []string
+	Resp = Response{}
 	email := r.FormValue("email")
-	username := r.FormValue("pseudo")
-	password, err := bcrypt.GenerateFromPassword([]byte(r.FormValue("password")), bcrypt.DefaultCost)
-	if err != nil {
-		errors = append(errors, err.Error())
+	username := r.FormValue("username")
+	password := r.FormValue("password")
+	if email != "" && username != "" && password != "" {
+		password, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err == nil {
+			file, header, _ := OpenLocalImage("static/assets/img/default_profile_picture.png")
+			picture, _ := ImageToBase64(file, header)
+			_, err := db.CreateUser("user", username, email, picture, string(password))
+			if err == nil {
+				SetSession(w, username)
+			} else {
+				Resp.Msg = append(Resp.Msg, err.Error())
+				Resp.Action = "GetSignup();"
+			}
+		} else if err == bcrypt.ErrPasswordTooLong {
+			Resp.Msg = append(Resp.Msg, "The password is too long!")
+			Resp.Action = "GetSignup();"
+		} else {
+			Resp.Msg = append(Resp.Msg, err.Error())
+			Resp.Action = "GetSignup();"
+		}
+	} else {
+		Resp.Msg = append(Resp.Msg, "All fields are required!")
+		Resp.Action = "GetSignup();"
 	}
-	picture, _ := db.ImageToBase64("static/assets/img/default_profile_picture.png")
 
-	err = db.CreateUser("user", username, email, picture, string(password))
-	if err != nil {
-		errors = append(errors, err.Error())
+	if Resp.Msg == nil {
+		Resp.Msg = append(Resp.Msg, "Account created successfully!")
+	} else {
+		Resp.Form.Username = username
+		Resp.Form.Email = email
 	}
-
-	tmpl, err := template.ParseFiles("web/pages/index.html", "web/templates/header.html", "web/templates/left-bar.html", "web/templates/posts.html", "web/templates/create-post.html", "web/templates/js.html")
-	if err != nil {
-		http.Error(w, "Internal Server Error (Error parsing templates)", http.StatusInternalServerError)
-		return
-	}
-
-	data := map[string]interface{}{
-		"err": errors,
-	}
-	err = tmpl.Execute(w, data)
-	if err != nil {
-		http.Error(w, "Internal Server Error (Error executing template)", http.StatusInternalServerError)
-		return
-	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

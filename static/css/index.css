@@ -100,6 +100,18 @@ body {
   z-index: 1000; /* S'assurer qu'il est au-dessus des autres éléments */
 }
 
+.header #popup button {
+  background-color: var(--SECOND-COLOR);
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  width: 100%;
+}
+
 .main-container {
   display: flex;
   overflow: hidden;
@@ -107,6 +119,7 @@ body {
   height: 100%;
   background-color: var(--BODY-COLOR);
   transition: all 0.3s ease-in-out;
+  position: relative;
 }
 
 .left-bar {
@@ -164,21 +177,31 @@ body {
   border-bottom: 1px solid var(--c);
 }
 
-.left-bar.closed + .posts {
+.left-bar.closed + .posts-container {
   transform: translateX(-20vw);
 }
 
-.left-bar:not(.closed) + .posts {
+.left-bar:not(.closed) + .posts-container {
   margin-left: 0;
 }
 
-.posts {
+.posts-container {
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
+  flex-direction: column;
+  align-items: center;
   flex-grow: 1;
   transition: all 0.3s ease-in-out;
+  overflow-y: scroll;
+  width: 100%;
 }
 
+.auth-container {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
 /* travailler ici */
 
 /* Bouton pour ouvrir le pop-up de création de post */
