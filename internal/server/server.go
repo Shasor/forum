@@ -21,6 +21,7 @@ func InitServer() {
 	http.HandleFunc("/signup", handlers.SignupHandler)
 	http.HandleFunc("/login", handlers.LoginHandler)
 	http.HandleFunc("/create-post", handlers.CreatePostHandler)
+	http.HandleFunc("/react", handlers.ReactToPost)
 	http.HandleFunc("/logout", handlers.LogoutHandler)
 
 	fs := http.FileServer(http.Dir("static"))

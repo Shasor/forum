@@ -11,9 +11,9 @@ export function GetLogin() {
       <h2>Connexion</h2>
       <form action="/login" method="post">
           <label for="username">Nom d'utilisateur</label>
-          <input type="text" id="username" name="username" required>
+          <input type="text" id="username" name="username" required autocomplete="username">
           <label for="password">Mot de passe</label>
-          <input type="password" id="password" name="password" required>
+          <input type="password" id="password" name="password" required autocomplete="password">
           <button type="submit">Se connecter</button>
       </form>
       <div id="redirect">

@@ -59,6 +59,14 @@ func FetchPosts() []Post {
 		if err != nil {
 			return nil
 		}
+
+		likes, dislikes, err := GetPostReactions(post.ID)
+		if err != nil {
+			return nil
+		}
+		post.Likes = likes
+		post.Dislikes = dislikes
+
 		posts = append(posts, post)
 	}
 	return posts

@@ -22,6 +22,8 @@ type Post struct {
 	Content  string
 	Picture  string
 	Date     string
+	Likes    int
+	Dislikes int
 }
 
 type Reaction struct {
