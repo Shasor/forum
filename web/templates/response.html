@@ -1,0 +1,21 @@
+{{define "response"}} {{ range .resp.Msg }}
+<script type="module">
+  ShowError("{{.}}");
+</script>
+{{end}} {{if .resp.Action}}
+<script type="module">
+  (function () {
+    var actionString = "{{.resp.Action}}";
+    var actionName = actionString.replace(/[();]/g, "");
+    var formValue = {
+      username: '{{if .resp.Form.Username}} value="{{.resp.Form.Username}} {{end}}"',
+      email: '{{if .resp.Form.Email}} value="{{.resp.Form.Email}} {{end}}"',
+    };
+    if (typeof window[actionName] === "function") {
+      window[actionName](formValue);
+    } else {
+      console.error("Function " + actionName + " is not defined");
+    }
+  })();
+</script>
+{{end}} {{ end }}
