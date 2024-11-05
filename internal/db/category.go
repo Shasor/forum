@@ -5,11 +5,11 @@ import (
 	"errors"
 )
 
-func CreateCategorie(name string) error {
+func CreateCategory(name string) error {
 	db := GetDB()
 	defer db.Close()
 
-	if CategorieExist(name) {
+	if CategoryExist(name) {
 		return errors.New("the category already exists")
 	}
 
@@ -19,6 +19,9 @@ func CreateCategorie(name string) error {
 		return err
 	}
 	_, err = statement.Exec(name)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -42,7 +45,7 @@ func SelectCategoryByName(name string) (Category, error) {
 	return category, nil
 }
 
-func CategorieExist(name string) bool {
+func CategoryExist(name string) bool {
 	db := GetDB()
 	defer db.Close()
 
@@ -52,4 +55,16 @@ func CategorieExist(name string) bool {
 		return false
 	}
 	return exist
+}
+
+func GetCategoryNameByID(id int) string {
+	db := GetDB()
+	defer db.Close()
+
+	var name string
+	err := db.QueryRow("SELECT name FROM categories WHERE id = ?", id).Scan(&name)
+	if err != nil {
+		return ""
+	}
+	return name
 }

@@ -21,7 +21,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sender, _ := strconv.Atoi(r.FormValue("sender_post"))
-	categorie := r.FormValue("categorie_post")
+	category := r.FormValue("categorie_post")
 	title := r.FormValue("title_post")
 	content := r.FormValue("content_post")
 
@@ -41,7 +41,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	date := fmt.Sprintf("%02d:%02d | %02d/%02d/%d", time.Now().Hour(), time.Now().Minute(), time.Now().Day(), time.Now().Month(), time.Now().Year())
 
-	_ = db.CreatePost(sender, categorie, title, content, base64image, date)
+	_ = db.CreatePost(sender, category, title, content, base64image, date)
 
 	Resp.Msg = append(Resp.Msg, "Your post has been successfully sent!")
 	http.Redirect(w, r, "/", http.StatusSeeOther)

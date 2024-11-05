@@ -11,9 +11,35 @@ import (
 	"io"
 	"math"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 )
+
+func GetFormGet(r *http.Request) (int, int) {
+	var categoryID int
+	if categoryIDStr := r.URL.Query().Get("catID"); categoryIDStr != "" {
+		var err error
+		categoryID, err = strconv.Atoi(categoryIDStr)
+		if err != nil {
+			categoryID = 0
+		}
+	} else {
+		categoryID = 0
+	}
+	var post int
+	if postStr := r.URL.Query().Get("postID"); postStr != "" {
+		var err error
+		post, err = strconv.Atoi(postStr)
+		if err != nil {
+			post = 0
+		}
+	} else {
+		post = 0
+	}
+	return categoryID, post
+}
 
 func OpenLocalImage(filePath string) (multipart.File, *multipart.FileHeader, error) {
 	// Ouvrir le fichier local
@@ -83,9 +109,9 @@ func ImageToBase64(file multipart.File, header *multipart.FileHeader) (string, e
 func resizeImage(img image.Image) image.Image {
 	bounds := img.Bounds()
 	width := bounds.Dx()
-	maxWidth := 400
+	maxWidth := 800
 	height := bounds.Dy()
-	maxHeight := 400
+	maxHeight := 800
 
 	// Calculez le ratio pour redimensionner
 	ratioW := float64(maxWidth) / float64(width)
