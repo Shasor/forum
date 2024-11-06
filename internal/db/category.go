@@ -3,6 +3,8 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
+	"log"
 )
 
 func CreateCategory(name string) error {
@@ -67,4 +69,39 @@ func GetCategoryNameByID(id int) string {
 		return ""
 	}
 	return name
+}
+
+func FetchCategories() []Category {
+	db := GetDB()
+	defer db.Close()
+
+	query := `
+        SELECT c.id, c.name
+        FROM categories c;`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		// Gérer l'erreur, par exemple en la journalisant
+		log.Printf("Erreur lors de l'exécution de la requête : %v", err)
+		return nil
+	}
+	defer rows.Close()
+
+	var categories []Category
+	for rows.Next() {
+		var category Category
+		err := rows.Scan(&category.ID, &category.Name)
+		fmt.Println(category)
+		if err != nil {
+			// Gérer l'erreur, par exemple en la journalisant
+			log.Printf("Erreur lors du scan de la ligne : %v", err)
+			continue
+		}
+		categories = append(categories, category)
+	}
+	if err = rows.Err(); err != nil {
+		// Gérer l'erreur finale, si elle existe
+		log.Printf("Erreur lors de l'itération sur les lignes : %v", err)
+	}
+	return categories
 }

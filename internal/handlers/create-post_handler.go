@@ -5,6 +5,7 @@ import (
 	"forum/internal/db"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -21,9 +22,15 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sender, _ := strconv.Atoi(r.FormValue("sender_post"))
-	category := r.FormValue("categorie_post")
-	title := r.FormValue("title_post")
-	content := r.FormValue("content_post")
+	category := strings.TrimSpace(r.FormValue("categorie_post"))
+	title := strings.TrimSpace(r.FormValue("title_post"))
+	content := strings.TrimSpace(r.FormValue("content_post"))
+
+	if category == "" || title == "" || content == "" {
+		Resp = Response{Msg: []string{"Tous les champs doivent être remplis"}}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 
 	Resp = Response{}
 	// Check if the form has a file for image_post

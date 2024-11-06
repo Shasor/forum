@@ -1,8 +1,46 @@
+@import "index.css";
+
 #posts {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
+/* Pas bien */
+.dashboard-categorie-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px 0;
+  margin-top: 20px;
+  background-color: var(--SECOND-COLOR);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dashboard-categorie-name:hover {
+  background-color: var(--THIRD-COLOR);
+  color: white;
+}
+
+#follow-button {
+  background: transparent;
+  border: 1px solid black;
+}
+#follow-button img {
+  max-width: 50px;
+  max-height: 50px;
+}
+
+#follow-button:hover {
+  background-color: red;
+}
+/* Fin pas bien */
 
 .post {
   display: flex;
@@ -95,11 +133,6 @@
   cursor: pointer;
   padding: 0px;
   font-size: 20px;
-  transition: transform .15s ease-in-out;
-}
-
-.reaction-button:hover {
-  transform: scale(120%);
 }
 
 .like-count,

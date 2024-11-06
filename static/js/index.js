@@ -1,6 +1,6 @@
-import { GetLogin, GetSignup, ShowError, GetProfile, GetEditProfile, GetMyPosts, GetLikedPosts } from "./auth.js";
-console.log("GetProfile loaded:", typeof GetProfile); // Should log "function" if loaded correctly
-
+import { ShowError } from "./other.js";
+import { GetLogin, GetSignup } from "./auth.js";
+import { GetProfile, GetEditProfile, GetMyPosts, GetLikedPosts } from "./profile.js";
 
 // ╔════════════════════ avatar ════════════════════╗
 const avatar = document.getElementById("avatar");
@@ -8,8 +8,8 @@ avatar.addEventListener("click", ToggleAvatar);
 
 function ToggleAvatar(event) {
   const popup = document.getElementById("popup");
-    popup.style.display = popup.style.display === "block" ? "none" : "block";
-    event.stopPropagation();
+  popup.style.display = popup.style.display === "block" ? "none" : "block";
+  event.stopPropagation();
 }
 
 // ╔════════════════════ profile access ════════════════════╗
@@ -38,28 +38,25 @@ liked_posts_link?.addEventListener("click", (event) => {
   GetLikedPosts();
 });
 
-
-
-
 // ╔════════════════════ left bar ════════════════════╗
-  const leftBar = document.querySelector(".left-bar");
-  const toggleButton = leftBar.querySelector("button");
-  const postsDiv = document.querySelector(".posts-container");
-  toggleButton.addEventListener("click",  () =>{
-    leftBar.classList.toggle("closed");
-    if (leftBar.classList.contains("closed")) {
-      toggleButton.textContent = ">>";
-      postsDiv.style.marginRight = "-20vw";
-    } else {
-      toggleButton.textContent = "<<";
-      postsDiv.style.marginRight = "0vw";
-    }
-  });
+const leftBar = document.querySelector(".left-bar");
+const toggleButton = leftBar.querySelector("button");
+const postsDiv = document.querySelector(".posts-container");
+toggleButton.addEventListener("click", () => {
+  leftBar.classList.toggle("closed");
+  if (leftBar.classList.contains("closed")) {
+    toggleButton.textContent = ">>";
+    postsDiv.style.marginRight = "-20vw";
+  } else {
+    toggleButton.textContent = "<<";
+    postsDiv.style.marginRight = "0vw";
+  }
+});
 
 // ╔════════════════════ create-post ════════════════════╗
-  const new_post = document.querySelector(".create-post");
-  const bttn_new_post = document.querySelector(".create-post-button");
-  bttn_new_post?.addEventListener("click", CreatePost(new_post, bttn_new_post));
+const new_post = document.querySelector(".create-post");
+const bttn_new_post = document.querySelector(".create-post-button");
+bttn_new_post?.addEventListener("click", CreatePost(new_post, bttn_new_post));
 
 function CreatePost(new_post, bttn_new_post) {
   // Vérifier si les éléments existent avant d'ajouter des événements
@@ -90,32 +87,30 @@ document.addEventListener("DOMContentLoaded", function () {
   const signup_button = document.getElementById("header-signup-link");
   signup_button?.addEventListener("click", GetSignup);
 });
-  
 
-  const reactionForms = document.querySelectorAll("form.reaction-form");
-  reactionForms.forEach((form) => {
-    form.addEventListener("submit", async function (event) {
-      event.preventDefault();
+const reactionForms = document.querySelectorAll("form.reaction-form");
+reactionForms.forEach((form) => {
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-      const postId = this.querySelector('input[name="postId"]').value;
-      const reaction = this.querySelector('input[name="reaction"]').value;
+    const postId = this.querySelector('input[name="postId"]').value;
+    const reaction = this.querySelector('input[name="reaction"]').value;
 
-      try {
-        const data = await UpdateReaction(postId, reaction);
+    try {
+      const data = await UpdateReaction(postId, reaction);
 
-        // Update the HTML counters with the new data
-        const likeCountSpan = document.querySelector(`.like-count[data-postid="${postId}"]`);
-        const dislikeCountSpan = document.querySelector(`.dislike-count[data-postid="${postId}"]`);
+      // Update the HTML counters with the new data
+      const likeCountSpan = document.querySelector(`.like-count[data-postid="${postId}"]`);
+      const dislikeCountSpan = document.querySelector(`.dislike-count[data-postid="${postId}"]`);
 
-        if (likeCountSpan) likeCountSpan.textContent = data.likes;
-        if (dislikeCountSpan) dislikeCountSpan.textContent = data.dislikes;
-
-      } catch (error) {
-        console.error("Error:", error);
-        ShowError("You are not connected");
-      }
-    });
+      if (likeCountSpan) likeCountSpan.textContent = data.likes;
+      if (dislikeCountSpan) dislikeCountSpan.textContent = data.dislikes;
+    } catch (error) {
+      console.error("Error:", error);
+      ShowError("You are not connected");
+    }
   });
+});
 
 async function UpdateReaction(postId, reaction) {
   const response = await fetch("/react", {

@@ -17,11 +17,13 @@ import (
 	"strconv"
 )
 
-func GetFormGet(r *http.Request) (int, int) {
+func GetFormGET(r *http.Request) (int, int, string) {
+	var get string
 	var categoryID int
 	if categoryIDStr := r.URL.Query().Get("catID"); categoryIDStr != "" {
 		var err error
 		categoryID, err = strconv.Atoi(categoryIDStr)
+		get = "category"
 		if err != nil {
 			categoryID = 0
 		}
@@ -32,37 +34,41 @@ func GetFormGet(r *http.Request) (int, int) {
 	if postStr := r.URL.Query().Get("postID"); postStr != "" {
 		var err error
 		post, err = strconv.Atoi(postStr)
+		get = "post"
 		if err != nil {
 			post = 0
 		}
 	} else {
 		post = 0
 	}
-	return categoryID, post
+	return categoryID, post, get
 }
 
 func OpenLocalImage(filePath string) (multipart.File, *multipart.FileHeader, error) {
-	// Open the local file
+	// Ouvrir le fichier local
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, nil, err
 	}
+	defer file.Close()
 
-	// Obtain the file information
+	// Obtenir les informations du fichier
 	fileInfo, err := file.Stat()
 	if err != nil {
-		file.Close() // Close the file on error
+		file.Close()
 		return nil, nil, err
 	}
 
-	// Create a multipart.FileHeader
+	// Créer un multipart.FileHeader
 	header := &multipart.FileHeader{
 		Filename: filepath.Base(filePath),
 		Size:     fileInfo.Size(),
 	}
 
-	// Return the opened file and header
-	return file, header, nil
+	// Créer un multipart.File à partir du fichier ouvert
+	multipartFile := multipart.File(file)
+
+	return multipartFile, header, nil
 }
 
 func ImageToBase64(file multipart.File, header *multipart.FileHeader) (string, error) {

@@ -1,6 +1,7 @@
 {{define "js"}}
 <script type="module">
-  import { GetLogin, GetSignup, ShowError } from "../../static/js/auth.js";
+  import { GetLogin, GetSignup } from "../../static/js/auth.js";
+  import { ShowError } from "../../static/js/other.js";
   window.GetLogin = GetLogin;
   window.GetSignup = GetSignup;
   window.ShowError = ShowError;
@@ -11,7 +12,7 @@
     email: "{{ if .user }}{{ .user.Email | js }}{{ else }}'Not logged in'{{ end }}",
     role: "{{ if .user }}{{ .user.Role | js }}{{ else }}'visitor'{{ end }}",
     profilePicture: "{{ if .user }}{{ if .user.Picture }}data:image/jpeg;base64,{{ .user.Picture }}{{ else }}'default-profile.png'{{ end }}{{ else }}'default-profile.png'{{ end }}",
-    
+
     myposts: `{{ if.user }} 
     {{ range .posts }}{{ if eq $.user.ID .Sender.ID }} <div class="post">
       <!-- <a class="post-link" href="?cat={{.Category.ID}}" title="Go to Categorie '{{.Category.Name}}'"> -->
@@ -30,31 +31,25 @@
         {{end}}
       </div>
       <div class="reactions">
-        <form class="reaction-form" method="POST">
           <input type="hidden" name="postId" value="{{.ID}}" />
           <input type="hidden" name="reaction" value="LIKE" />
           <div class="reaction">
             <button type="submit" class="reaction-button">❤️</button>
             <span class="like-count" data-postid="{{.ID}}">{{.Likes}}</span>
           </div>
-        </form>
-        <form class="reaction-form" method="POST">
           <input type="hidden" name="postId" value="{{.ID}}" />
           <input type="hidden" name="reaction" value="DISLIKE" />
           <div class="reaction">
             <button type="submit" class="reaction-button">💔</button>
             <span class="dislike-count" data-postid="{{.ID}}">{{.Dislikes}}</span>
           </div>
-        </form>
         <div class="reaction">
-          <form action="" method="get">
             <input type="hidden" name="com" value="{{.ID}}" />
             <button type="submit" class="reaction-button">📝</button>
-          </form>
         </div>
       </div>
       <!-- </a> -->
-    </div> {{ end}} {{ end }} {{ end }}`
+    </div> {{ end}} {{ end }} {{ end }}`,
   };
 </script>
 {{end}}
