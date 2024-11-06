@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -106,6 +107,50 @@ func FetchPosts(categoryID, postID int) []Post {
 		log.Printf("Erreur lors de l'itération sur les lignes : %v", err)
 	}
 	return posts
+}
+
+// FetchPostsLiked retrieves all posts that the user with the specified senderID liked.
+func FetchPostsLiked(senderID int) []Post {
+	db := GetDB()
+	// Query to fetch posts that the user liked, joining Post and PostReaction tables
+	query := `
+		SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name, u.role, u.username, u.email, u.picture, u.password
+		FROM posts p 
+		JOIN categories c ON p.category = c.id
+		JOIN reactions r ON p.id = r.post
+		JOIN users u ON p.sender = u.id
+		WHERE r.sender = ? AND r.value = 'LIKE';
+    `
+
+	// Execute the query
+	rows, err := db.Query(query, senderID)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	defer rows.Close()
+
+	// Slice to hold the posts
+	var likedPosts []Post
+
+	// Loop through the result set and scan each row into a Post struct
+	for rows.Next() {
+		var post Post
+		if err := rows.Scan(&post.ID, &post.Category.ID, &post.Sender.ID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Category.Name, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture, &post.Sender.Password); err != nil {
+			fmt.Println(err)
+			return nil
+		}
+		likedPosts = append(likedPosts, post)
+	}
+
+	// Check for errors encountered during iteration
+	if err := rows.Err(); err != nil {
+		fmt.Println(err)
+		return nil
+	}
+
+	// Return the list of liked posts
+	return likedPosts
 }
 
 func PostExist(id int) bool {

@@ -42,30 +42,27 @@ func GetFormGet(r *http.Request) (int, int) {
 }
 
 func OpenLocalImage(filePath string) (multipart.File, *multipart.FileHeader, error) {
-	// Ouvrir le fichier local
+	// Open the local file
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, nil, err
 	}
-	defer file.Close()
 
-	// Obtenir les informations du fichier
+	// Obtain the file information
 	fileInfo, err := file.Stat()
 	if err != nil {
-		file.Close()
+		file.Close() // Close the file on error
 		return nil, nil, err
 	}
 
-	// Créer un multipart.FileHeader
+	// Create a multipart.FileHeader
 	header := &multipart.FileHeader{
 		Filename: filepath.Base(filePath),
 		Size:     fileInfo.Size(),
 	}
 
-	// Créer un multipart.File à partir du fichier ouvert
-	multipartFile := multipart.File(file)
-
-	return multipartFile, header, nil
+	// Return the opened file and header
+	return file, header, nil
 }
 
 func ImageToBase64(file multipart.File, header *multipart.FileHeader) (string, error) {

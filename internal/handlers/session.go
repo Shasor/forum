@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
+	"fmt"
 	"forum/internal/db"
 	"net/http"
 	"os"
@@ -55,7 +56,14 @@ func GetUserFromCookie(w http.ResponseWriter, r *http.Request) *db.User {
 	if err != nil {
 		return nil
 	}
+
 	parts := strings.Split(cookie.Value, ".")
+	if len(parts) != 2 {
+		fmt.Println("Invalid cookie format.")
+		ClearSession(w)
+		return nil
+	}
+
 	dataPart := parts[0]
 	signaturePart := parts[1]
 
@@ -64,14 +72,30 @@ func GetUserFromCookie(w http.ResponseWriter, r *http.Request) *db.User {
 	h.Write([]byte(dataPart))
 	expectedSignature := base64.URLEncoding.EncodeToString(h.Sum(nil))
 
-	username, _ := base64.URLEncoding.DecodeString(dataPart)
-	user, err := db.SelectUserByUsername(string(username))
-
-	// Compare the expected signature with the actual signature in the cookie
-	if !hmac.Equal([]byte(signaturePart), []byte(expectedSignature)) || len(parts) != 2 || err != nil {
+	// Decode the username from the data part
+	usernameBytes, err := base64.URLEncoding.DecodeString(dataPart)
+	if err != nil {
+		fmt.Println("Error decoding username:", err)
 		ClearSession(w)
 		return nil
 	}
+	username := string(usernameBytes)
+
+	// Fetch the user from the database
+	user, err := db.SelectUserByUsername(username)
+	if err != nil {
+		fmt.Println("Error fetching user from DB:", err)
+		ClearSession(w)
+		return nil
+	}
+
+	// Compare the expected signature with the actual signature in the cookie
+	if !hmac.Equal([]byte(signaturePart), []byte(expectedSignature)) {
+		fmt.Println("Invalid cookie signature.")
+		ClearSession(w)
+		return nil
+	}
+
 	return &user
 }
 

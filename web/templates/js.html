@@ -1,8 +1,58 @@
 {{define "js"}}
 <script type="module">
   import { GetLogin, GetSignup, ShowError } from "../../static/js/auth.js";
-  window.GetLogin = GetLogin; // Rend la fonction accessible globalement
-  window.GetSignup = GetSignup; // Rend la fonction accessible globalement
-  window.ShowError = ShowError; // Rend la fonction accessible globalement
+  window.GetLogin = GetLogin;
+  window.GetSignup = GetSignup;
+  window.ShowError = ShowError;
+
+  // Check if the user is nil before trying to access its properties
+  window.userData = {
+    pseudo: "{{ if .user }}{{ .user.Username | js }}{{ else }}'Guest'{{ end }}",
+    email: "{{ if .user }}{{ .user.Email | js }}{{ else }}'Not logged in'{{ end }}",
+    role: "{{ if .user }}{{ .user.Role | js }}{{ else }}'visitor'{{ end }}",
+    profilePicture: "{{ if .user }}{{ if .user.Picture }}data:image/jpeg;base64,{{ .user.Picture }}{{ else }}'default-profile.png'{{ end }}{{ else }}'default-profile.png'{{ end }}",
+    myposts: `{{ range .posts }}{{ if eq $.user.ID .Sender.ID }} <div class="post">
+      <!-- <a class="post-link" href="?cat={{.Category.ID}}" title="Go to Categorie '{{.Category.Name}}'"> -->
+      <div class="post-header">
+        <div class="sender">{{.Sender.Username}}</div>
+        <!-- Ensure SenderUsername is passed -->
+        {{if .Title}}
+        <div class="title">{{.Title}}</div>
+        {{end}}
+        <div class="date">{{.Date}}</div>
+      </div>
+      <div class="post-content">
+        <div class="content">{{.Content}}</div>
+        {{if .Picture}}
+        <div class="post-image"><img src="data:image/jpeg;base64,{{.Picture}}" /></div>
+        {{end}}
+      </div>
+      <div class="reactions">
+        <form class="reaction-form" method="POST">
+          <input type="hidden" name="postId" value="{{.ID}}" />
+          <input type="hidden" name="reaction" value="LIKE" />
+          <div class="reaction">
+            <button type="submit" class="reaction-button">❤️</button>
+            <span class="like-count" data-postid="{{.ID}}">{{.Likes}}</span>
+          </div>
+        </form>
+        <form class="reaction-form" method="POST">
+          <input type="hidden" name="postId" value="{{.ID}}" />
+          <input type="hidden" name="reaction" value="DISLIKE" />
+          <div class="reaction">
+            <button type="submit" class="reaction-button">💔</button>
+            <span class="dislike-count" data-postid="{{.ID}}">{{.Dislikes}}</span>
+          </div>
+        </form>
+        <div class="reaction">
+          <form action="" method="get">
+            <input type="hidden" name="com" value="{{.ID}}" />
+            <button type="submit" class="reaction-button">📝</button>
+          </form>
+        </div>
+      </div>
+      <!-- </a> -->
+    </div> {{ end}} {{ end }}`
+  };
 </script>
 {{end}}

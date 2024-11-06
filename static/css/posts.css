@@ -95,6 +95,11 @@
   cursor: pointer;
   padding: 0px;
   font-size: 20px;
+  transition: transform .15s ease-in-out;
+}
+
+.reaction-button:hover {
+  transform: scale(120%);
 }
 
 .like-count,

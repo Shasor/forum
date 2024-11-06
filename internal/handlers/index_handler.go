@@ -12,11 +12,16 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		Resp.Broadcasted = true
 	}
 
+	// Get the user from the cookie, which may be nil
+	user := GetUserFromCookie(w, r)
+
 	categoryID, postID := GetFormGet(r)
 	data := map[string]interface{}{
-		"resp":  Resp,
-		"user":  GetUserFromCookie(w, r),
-		"posts": db.FetchPosts(categoryID, postID),
+		"resp":       Resp,
+		"user":       user, // This will be nil if no user is logged in
+		"posts":      db.FetchPosts(categoryID, postID),
+		"likedposts": db.FetchPostsLiked(user.ID),
 	}
+
 	Parse(w, data)
 }

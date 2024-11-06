@@ -19,27 +19,21 @@
         {{end}}
       </div>
       <div class="reactions">
-        <form class="reaction-form" method="POST">
           <input type="hidden" name="postId" value="{{.ID}}" />
           <input type="hidden" name="reaction" value="LIKE" />
           <div class="reaction">
             <button type="submit" class="reaction-button">❤️</button>
             <span class="like-count" data-postid="{{.ID}}">{{.Likes}}</span>
           </div>
-        </form>
-        <form class="reaction-form" method="POST">
           <input type="hidden" name="postId" value="{{.ID}}" />
           <input type="hidden" name="reaction" value="DISLIKE" />
           <div class="reaction">
             <button type="submit" class="reaction-button">💔</button>
             <span class="dislike-count" data-postid="{{.ID}}">{{.Dislikes}}</span>
           </div>
-        </form>
         <div class="reaction">
-          <form action="" method="get">
             <input type="hidden" name="com" value="{{.ID}}" />
             <button type="submit" class="reaction-button">📝</button>
-          </form>
         </div>
       </div>
       <!-- </a> -->
