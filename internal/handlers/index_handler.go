@@ -21,9 +21,9 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		"resp":       Resp,
 		"user":       user, // This will be nil if no user is logged in
 		"posts":      db.FetchPosts(categoryID, postID),
+		"categories": db.FetchCategories(),
 		"likedposts": likedposts,
 		"GET":        get,
 	}
-
 	Parse(w, data)
 }

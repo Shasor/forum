@@ -23,7 +23,6 @@ func Parse(w http.ResponseWriter, data map[string]interface{}) {
 		http.Error(w, "Internal Server Error (Error parsing templates)", http.StatusInternalServerError)
 		return
 	}
-
 	// Execute the template with data, including user and posts
 	err = tmpl.Execute(w, data)
 	if err != nil {
