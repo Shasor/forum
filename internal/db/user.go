@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -60,6 +61,35 @@ func SelectUserByUsername(username string) (User, error) {
 	}
 
 	return user, nil
+}
+
+func DeleteUserByUsername(username string) error {
+	db := GetDB()
+	defer db.Close()
+
+	// Retrieve the user ID to delete
+	var userID int
+	err := db.QueryRow(`SELECT id FROM users WHERE username = ?`, username).Scan(&userID)
+	if err != nil {
+		log.Printf("Error retrieving user ID: %v", err)
+		return err
+	}
+
+	// Update posts by this user to set sender to 0
+	_, err = db.Exec(`UPDATE posts SET sender = 0 WHERE sender = ?`, userID)
+	if err != nil {
+		log.Printf("Error updating posts sender to 0: %v", err)
+		return err
+	}
+
+	// Now delete the user
+	_, err = db.Exec(`DELETE FROM users WHERE id = ?`, userID)
+	if err != nil {
+		log.Printf("Error when deleting user: %v", err)
+		return err
+	}
+
+	return nil
 }
 
 func IsPasswordValid(providedPassword, storedHash string) bool {

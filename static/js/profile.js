@@ -21,7 +21,7 @@ export function GetProfile() {
                 <form method="post" action="/logout">
                   <li><button type="submit">Se déconnecter</button></li>
                 </form>
-              </ul>
+                </ul>
             </nav>
             <div>
                 <img src="${window.userData.profilePicture}" alt="Profile Picture of ${window.userData.pseudo}">
@@ -95,7 +95,7 @@ export function GetEditProfile() {
           <button type="submit">Update Profile</button>
       </form>
   
-      <form action="/delete-account" method="POST">
+      <form action="/delete" method="POST">
           <input type="submit" value="Supprimer mon compte" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cela est irréversible.');">
       </form>
   
@@ -157,19 +157,7 @@ export function GetLikedPosts() {
       </nav>
   
       <div id="liked-posts-content">
-          ${
-            window.userData.likedPosts
-              .map(
-                (post) => `
-            <div class="post">
-                <h2>${post.title}</h2>
-                <p class="author">Posted by ${post.author} on ${post.date}</p>
-                <div class="content">${post.content}</div>
-            </div>
-          `
-              )
-              .join("") || "<p>No liked posts found.</p>"
-          }
+          ${window.userData.likedposts || "<p>No liked posts found.</p>"}
       </div>
   
       <footer>
@@ -182,3 +170,4 @@ export function GetLikedPosts() {
   document.getElementById("my-posts-link").addEventListener("click", GetMyPosts);
   document.getElementById("edit-profile-link").addEventListener("click", GetEditProfile);
 }
+
