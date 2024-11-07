@@ -48,12 +48,12 @@
   justify-content: space-between;
   margin-top: 50px;
   padding-bottom: 10px;
-  width: 1000px;
+  width: 65vw;
   max-width: 1000px;
   border-radius: 10px;
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
-  background-color: #a500b5;
-  /* overflow: hidden; */
+  box-shadow: 0 0px 6px rgba(184, 13, 155, 0.253);
+  background-color: none;
+  overflow: hidden;
 }
 
 .post:last-child {
@@ -62,22 +62,18 @@
 
 .post a {
   text-decoration: none;
-  color: black;
+  color: #f4acb7;
 }
 
 .post-header {
+  padding: 15px 15px 0 15px ;
+  background-color: none;
   display: flex;
   justify-content: space-between;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
-  border-radius: 10px;
+  color: rgb(122, 122, 122);
 }
 
 .post-header > div {
-  border: 1px solid black;
-  border-top-width: 0px;
-  border-bottom-width: 0px;
-  border-radius: 10px;
   padding: 5px;
 }
 
@@ -108,12 +104,34 @@
   max-height: 800px;
 }
 
+.title{
+  margin-top: 12px;
+  margin-left: 20px;
+  font-family: 'Itim';
+  font-weight: 400;
+  font-style: normal;
+  font-size: 20px;  
+}
+
+.category{
+  margin-top: -10px;
+  font-family: 'Itim';
+  font-weight: 400;
+  font-style: normal;
+  font-size: 25px;
+  color: #FFE4F0;
+   -webkit-text-stroke-width: 1.5px;
+   -webkit-text-stroke-color: #f53271;
+  text-shadow: #9b0f40 -1.5px 1.5px, rgb(255, 255, 255) -25px  20px  30px;  
+}
+
 .post-image img {
   max-width: 100%;
   max-height: auto;
 }
 
 .reactions {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -133,6 +151,29 @@
   cursor: pointer;
   padding: 0px;
   font-size: 20px;
+}
+
+#like:hover{
+  >svg{
+    fill: red;
+  }
+}
+
+#dislike:hover{
+  >svg{
+    fill: red;
+  }
+}
+
+#comments:hover{
+  >svg{
+    fill: #f53271;
+  }
+}
+
+#comments{
+  position: absolute;
+  right: 10px;
 }
 
 .like-count,

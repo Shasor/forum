@@ -7,12 +7,17 @@
     <link rel="stylesheet" href="static/css/index.css" />
     <link rel="stylesheet" href="static/css/auth.css" />
     <link rel="stylesheet" href="static/css/posts.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
     {{template "js" .}}
   </head>
-  {{template "header" .}}
   <body>
     {{template "response" .}}
-    <div class="main-container">{{template "left-bar" .}}{{template "posts" .}}{{template "create-post" .}}</div>
+    <div class="main-container">{{template "left-bar" .}}
+      {{template "posts" .}}
+      {{template "header" .}}
+      {{template "create-post" .}}</div>
   </body>
   <script type="module" src="static/js/index.js"></script>
 </html>
