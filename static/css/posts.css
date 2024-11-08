@@ -90,6 +90,7 @@
   max-height: 150px;
   overflow: scroll;
   text-overflow: ellipsis;
+  scrollbar-width: none;
 }
 
 .post-image {
