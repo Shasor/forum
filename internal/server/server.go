@@ -24,6 +24,7 @@ func InitServer() {
 	http.HandleFunc("/react", handlers.ReactToPost)
 	http.HandleFunc("/logout", handlers.LogoutHandler)
 	http.HandleFunc("/delete", handlers.DeleteHandler)
+	http.HandleFunc("/edit", handlers.EditProfileHandler)
 
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))

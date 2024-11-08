@@ -79,7 +79,7 @@ export function GetEditProfile() {
           <a href="#" id="edit-profile-link">Edit Profile</a>
       </nav>
   
-      <form action="/profile/edit" method="POST" enctype="multipart/form-data">
+      <form action="/edit" method="POST" enctype="multipart/form-data">
           <div>
               <label for="email">Email:</label>
               <input type="email" id="email" name="email" placeholder="${window.userData.email}">
@@ -106,8 +106,8 @@ export function GetEditProfile() {
 
   // Attach click events to navigation links
   document.getElementById("my-profile-link").addEventListener("click", GetProfile);
-  document.getElementById("my-posts-link").addEventListener("click", GetMyPosts); // Placeholder function
-  document.getElementById("my-liked-posts-link").addEventListener("click", GetLikedPosts); // Placeholder function
+  document.getElementById("my-posts-link").addEventListener("click", GetMyPosts);
+  document.getElementById("my-liked-posts-link").addEventListener("click", GetLikedPosts);
 }
 
 // Function to display the My Posts section

@@ -92,6 +92,23 @@ func DeleteUserByUsername(username string) error {
 	return nil
 }
 
+// UpdateUserProfile updates the user's email and picture in the database.
+func UpdateUserProfile(userID int, email, picture string) error {
+	db := GetDB()
+	defer db.Close()
+
+	// Prepare the SQL statement
+	stmt, err := db.Prepare("UPDATE users SET email = ?, picture = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Execute the SQL statement with the provided values
+	_, err = stmt.Exec(email, picture, userID)
+	return err
+}
+
 func IsPasswordValid(providedPassword, storedHash string) bool {
 	// Comparer le mot de passe fourni avec le hash stocké
 	err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(providedPassword))
