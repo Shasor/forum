@@ -170,4 +170,3 @@ export function GetLikedPosts() {
   document.getElementById("my-posts-link").addEventListener("click", GetMyPosts);
   document.getElementById("edit-profile-link").addEventListener("click", GetEditProfile);
 }
-

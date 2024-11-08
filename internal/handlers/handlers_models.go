@@ -17,6 +17,13 @@ type ReactionRequest struct {
 	Reaction string `json:"reaction"`
 }
 
+type ErrorPageData struct {
+	StatusCode   int
+	StatusText   string
+	ErrorMessage string
+	ErrorDetails string
+}
+
 var (
 	Resp Response
 )
