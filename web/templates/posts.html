@@ -1,24 +1,10 @@
 {{define "posts"}}
 <div class="posts-container" id="posts-container">
   <div id="posts">
-    {{if eq .GET "category"}}
-    <div class="dashboard-categorie-name">
-      {{range .categories}} {{if eq .ID (index $.posts 0).Category.ID}}
-      <div class="follow-category">
-        <button type="button" id="follow-button" data-categorieid="{{.ID}}">
-          <img src="https://www.svgrepo.com/show/522427/notification-bell-on.svg" alt="Suivre cette catégorie" />
-          <!-- <img src="https://www.svgrepo.com/show/522425/notification-bell-off.svg" alt="Désuivre cette catégorie" /> -->
-        </button>
-      </div>
-      <p>Catégorie actuelle : {{.Name}}</p>
-      {{end}} {{end}}
-    </div>
-    {{end}} {{range .posts}}
+    {{range .posts}}
     <div class="post">
-      <!-- <a class="post-link" href="?cat={{.Category.ID}}" title="Go to Categorie '{{.Category.Name}}'"> -->
       <div class="post-header">
         <div class="sender">{{.Sender.Username}}</div>
-        <!-- Ensure SenderUsername is passed -->
         {{if .Title}}
         <div class="title">{{.Title}}</div>
         {{end}}
@@ -54,7 +40,6 @@
           </form>
         </div>
       </div>
-      <!-- </a> -->
     </div>
     {{end}}
   </div>

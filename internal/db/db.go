@@ -43,7 +43,13 @@ func GetDB() *sql.DB {
 			value TEXT NOT NULL,
 			FOREIGN KEY (sender) REFERENCES users(id),
 			FOREIGN KEY (post) REFERENCES posts(id)
-		);`
+		); CREATE TABLE IF NOT EXISTS follows (
+    		id INTEGER PRIMARY KEY AUTOINCREMENT,
+    		category INTEGER NOT NULL,
+    		user INTEGER NOT NULL,
+    		FOREIGN KEY (category) REFERENCES categories(id),
+    		FOREIGN KEY (user) REFERENCES users(id)
+)`
 
 	// Start a transaction
 	tx, err := db.Begin()

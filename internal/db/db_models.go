@@ -3,6 +3,7 @@ package db
 type User struct {
 	ID       int
 	Role     string
+	Follows  []Category
 	Username string
 	Email    string
 	Picture  string

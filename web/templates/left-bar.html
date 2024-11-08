@@ -2,27 +2,34 @@
 <div class="left-bar">
   <div id="item">
     <h2>Following :</h2>
-    <ul>
-      <!-- {{ range .CategoriesFollow }} -->
+    {{if .user}}
+    <ul class="no-bullets">
+      {{ range .user.Follows }}
       <li>
-        <span><a href="?cat={{ .CategorieID }}">{{ .Name }}</a></span>
+        <span><a href="?catID={{ .ID }}">{{ .Name }}</a></span>
       </li>
-      <!-- {{ else }} -->
-      <li><span>No categorie found</span></li>
-      <!-- {{ end }} -->
+      {{ else }}
+      <li>No categorie found</li>
+      {{ end }}
     </ul>
+    {{end}}
   </div>
   <div id="item">
     <h2>Discover :</h2>
-    <ul>
-      <!-- {{ range .Categories }} -->
+    {{if .user}}
+    <ul class="no-bullets">
+      {{range $index, $category := .categories}} {{$isFollowed := false}} {{range $.user.Follows}} {{if eq .ID $category.ID}} {{$isFollowed = true}} {{end}} {{end}} {{if not $isFollowed}}
       <li>
-        <span><a href="?cat={{ .CategorieID }}">{{ .Name }}</a></span>
+        <span><a href="?catID={{ $category.ID }}">{{ $category.Name }}</a></span>
       </li>
-      <!-- {{ else }} -->
-      <li><span>No categorie found</span></li>
-      <!-- {{ end }} -->
+      {{end}} {{else}}
+      <li>No category found</li>
+      {{end}} {{else}} {{range .categories}}
+      <li>
+        <span><a href="?catID={{ .ID }}">{{ .Name }}</a></span>
+      </li>
     </ul>
+    {{end}} {{end}}
   </div>
   <button><<</button>
 </div>

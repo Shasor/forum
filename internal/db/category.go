@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 )
 
@@ -91,7 +90,6 @@ func FetchCategories() []Category {
 	for rows.Next() {
 		var category Category
 		err := rows.Scan(&category.ID, &category.Name)
-		fmt.Println(category)
 		if err != nil {
 			// Gérer l'erreur, par exemple en la journalisant
 			log.Printf("Erreur lors du scan de la ligne : %v", err)

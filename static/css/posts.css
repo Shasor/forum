@@ -32,10 +32,6 @@
   background: transparent;
   border: 1px solid black;
 }
-#follow-button img {
-  max-width: 50px;
-  max-height: 50px;
-}
 
 #follow-button:hover {
   background-color: red;

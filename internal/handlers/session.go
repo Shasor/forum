@@ -30,7 +30,6 @@ func SetSession(w http.ResponseWriter, username string) {
 		HttpOnly: true, // Cookie is not accessible via JavaScript for security
 		MaxAge:   int(1 * time.Hour),
 	}
-	// fmt.Println(cookie)
 	http.SetCookie(w, &cookie)
 }
 

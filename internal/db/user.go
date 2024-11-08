@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -48,8 +49,8 @@ func SelectUserByUsername(username string) (User, error) {
 
 	var user User
 	err := db.QueryRow(`
-	SELECT id, role, username, email, picture, password
-	FROM users
+	SELECT u.id, u.role, u.username, u.email, u.picture, u.password
+	FROM users u
 	WHERE username = ?`,
 		username).Scan(&user.ID, &user.Role, &user.Username, &user.Email, &user.Picture, &user.Password)
 	if err != nil {
@@ -58,6 +59,8 @@ func SelectUserByUsername(username string) (User, error) {
 		}
 		return User{}, err
 	}
+
+	user.Follows = GetUserFollows(user.ID)
 
 	return user, nil
 }
@@ -68,4 +71,37 @@ func IsPasswordValid(providedPassword, storedHash string) bool {
 
 	// Si err est nil, cela signifie que les mots de passe correspondent
 	return err == nil
+}
+
+func GetUserFollows(id int) []Category {
+	db := GetDB()
+	defer db.Close()
+
+	query := `
+        SELECT c.id, c.name
+        FROM categories c
+		JOIN follows f
+		WHERE c.id = f.category AND f.user = ?;`
+
+	rows, err := db.Query(query, id)
+	if err != nil {
+		// Gérer l'erreur, par exemple en la journalisant
+		log.Printf("Erreur lors de l'exécution de la requête : %v", err)
+		return nil
+	}
+	defer rows.Close()
+
+	var categories []Category
+	for rows.Next() {
+		var category Category
+		err := rows.Scan(&category.ID, &category.Name)
+		if err != nil {
+			// Gérer l'erreur, par exemple en la journalisant
+			log.Printf("Erreur lors du scan de la ligne : %v", err)
+			continue
+		}
+		categories = append(categories, category)
+	}
+
+	return categories
 }

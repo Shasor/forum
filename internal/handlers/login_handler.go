@@ -25,6 +25,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		if err == nil {
 			if db.IsPasswordValid(password, user.Password) {
 				SetSession(w, username)
+			} else {
+				Resp.Msg = append(Resp.Msg, "Wrong password!")
+				Resp.Action = "GetLogin();"
 			}
 		} else {
 			Resp.Msg = append(Resp.Msg, err.Error())
