@@ -65,6 +65,52 @@ func SelectUserByUsername(username string) (User, error) {
 	return user, nil
 }
 
+func DeleteUserByUsername(username string) error {
+	db := GetDB()
+	defer db.Close()
+
+	// Retrieve the user ID to delete
+	var userID int
+	err := db.QueryRow(`SELECT id FROM users WHERE username = ?`, username).Scan(&userID)
+	if err != nil {
+		log.Printf("Error retrieving user ID: %v", err)
+		return err
+	}
+
+	// Update posts by this user to set sender to 0
+	_, err = db.Exec(`UPDATE posts SET sender = 0 WHERE sender = ?`, userID)
+	if err != nil {
+		log.Printf("Error updating posts sender to 0: %v", err)
+		return err
+	}
+
+	// Now delete the user
+	_, err = db.Exec(`DELETE FROM users WHERE id = ?`, userID)
+	if err != nil {
+		log.Printf("Error when deleting user: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+// UpdateUserProfile updates the user's email and picture in the database.
+func UpdateUserProfile(userID int, email, picture string) error {
+	db := GetDB()
+	defer db.Close()
+
+	// Prepare the SQL statement
+	stmt, err := db.Prepare("UPDATE users SET email = ?, picture = ? WHERE id = ?")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	// Execute the SQL statement with the provided values
+	_, err = stmt.Exec(email, picture, userID)
+	return err
+}
+
 func IsPasswordValid(providedPassword, storedHash string) bool {
 	// Comparer le mot de passe fourni avec le hash stocké
 	err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(providedPassword))

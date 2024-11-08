@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -47,37 +46,49 @@ func FetchPosts(categoryID, postID int) []Post {
 
 	var query string
 	var args []interface{}
+
+	// Use LEFT JOIN to allow posts from deleted users
 	if categoryID != 0 && CategoryExist(GetCategoryNameByID(categoryID)) {
 		query = `
-        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name, u.role, u.username, u.email, u.picture, u.password
+        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name,
+               IFNULL(u.role, 'Deleted') AS role,
+               IFNULL(u.username, 'Deleted User') AS username,
+               IFNULL(u.email, '') AS email,
+               IFNULL(u.picture, 'default-profile.png') AS picture
         FROM posts p
         JOIN categories c ON p.category = c.id
-        JOIN users u ON p.sender = u.id
+        LEFT JOIN users u ON p.sender = u.id
         WHERE p.category = ?
         ORDER BY p.id DESC;`
 		args = append(args, categoryID)
 	} else if postID != 0 && PostExist(postID) {
 		query = `
-        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name, u.role, u.username, u.email, u.picture, u.password
+        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name,
+               IFNULL(u.role, 'Deleted') AS role,
+               IFNULL(u.username, 'Deleted User') AS username,
+               IFNULL(u.email, '') AS email,
+               IFNULL(u.picture, 'default-profile.png') AS picture
         FROM posts p
         JOIN categories c ON p.category = c.id
-        JOIN users u ON p.sender = u.id
+        LEFT JOIN users u ON p.sender = u.id
         WHERE p.id = ?;`
 		args = append(args, postID)
-	}
-	if query == "" {
+	} else {
 		query = `
-        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name, u.role, u.username, u.email, u.picture, u.password
+        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name,
+               IFNULL(u.role, 'Deleted') AS role,
+               IFNULL(u.username, 'Deleted User') AS username,
+               IFNULL(u.email, '') AS email,
+               IFNULL(u.picture, 'default-profile.png') AS picture
         FROM posts p
         JOIN categories c ON p.category = c.id
-        JOIN users u ON p.sender = u.id
+        LEFT JOIN users u ON p.sender = u.id
         ORDER BY p.id DESC;`
 	}
 
 	rows, err := db.Query(query, args...)
 	if err != nil {
-		// Gérer l'erreur, par exemple en la journalisant
-		log.Printf("Erreur lors de l'exécution de la requête : %v", err)
+		log.Printf("Error executing query: %v", err)
 		return nil
 	}
 	defer rows.Close()
@@ -85,26 +96,25 @@ func FetchPosts(categoryID, postID int) []Post {
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.Category.ID, &post.Sender.ID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Category.Name, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture, &post.Sender.Password)
+		err := rows.Scan(&post.ID, &post.Category.ID, &post.Sender.ID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Category.Name, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture)
 		if err != nil {
-			// Gérer l'erreur, par exemple en la journalisant
-			log.Printf("Erreur lors du scan de la ligne : %v", err)
+			log.Printf("Error scanning row: %v", err)
 			continue
 		}
 
+		// Get post reactions
 		likes, dislikes, err := GetPostReactions(post.ID)
 		if err != nil {
-			// Gérer l'erreur, par exemple en la journalisant
-			log.Printf("Erreur lors de la récupération des réactions : %v", err)
+			log.Printf("Error fetching reactions: %v", err)
 			continue
 		}
 		post.Likes = likes
 		post.Dislikes = dislikes
+
 		posts = append(posts, post)
 	}
 	if err = rows.Err(); err != nil {
-		// Gérer l'erreur finale, si elle existe
-		log.Printf("Erreur lors de l'itération sur les lignes : %v", err)
+		log.Printf("Error during row iteration: %v", err)
 	}
 	return posts
 }
@@ -112,20 +122,26 @@ func FetchPosts(categoryID, postID int) []Post {
 // FetchPostsLiked retrieves all posts that the user with the specified senderID liked.
 func FetchPostsLiked(senderID int) []Post {
 	db := GetDB()
-	// Query to fetch posts that the user liked, joining Post and PostReaction tables
+	defer db.Close()
+
+	// Query to fetch posts that the user liked, with LEFT JOIN for users and placeholders for deleted users
 	query := `
-		SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name, u.role, u.username, u.email, u.picture, u.password
-		FROM posts p 
-		JOIN categories c ON p.category = c.id
-		JOIN reactions r ON p.id = r.post
-		JOIN users u ON p.sender = u.id
-		WHERE r.sender = ? AND r.value = 'LIKE';
+        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name,
+               IFNULL(u.role, 'Deleted') AS role,
+               IFNULL(u.username, 'Deleted User') AS username,
+               IFNULL(u.email, '') AS email,
+               IFNULL(u.picture, 'default-profile.png') AS picture
+        FROM posts p 
+        JOIN categories c ON p.category = c.id
+        JOIN reactions r ON p.id = r.post
+        LEFT JOIN users u ON p.sender = u.id
+        WHERE r.sender = ? AND r.value = 'LIKE';
     `
 
 	// Execute the query
 	rows, err := db.Query(query, senderID)
 	if err != nil {
-		fmt.Println(err)
+		log.Printf("Error executing query: %v", err)
 		return nil
 	}
 	defer rows.Close()
@@ -136,8 +152,13 @@ func FetchPostsLiked(senderID int) []Post {
 	// Loop through the result set and scan each row into a Post struct
 	for rows.Next() {
 		var post Post
-		if err := rows.Scan(&post.ID, &post.Category.ID, &post.Sender.ID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Category.Name, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture, &post.Sender.Password); err != nil {
-			fmt.Println(err)
+		// Scan each row's values, including placeholders for missing user info
+		if err := rows.Scan(
+			&post.ID, &post.Category.ID, &post.Sender.ID, &post.Title, &post.Content,
+			&post.Picture, &post.Date, &post.Category.Name,
+			&post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture,
+		); err != nil {
+			log.Printf("Error scanning row: %v", err)
 			return nil
 		}
 		likedPosts = append(likedPosts, post)
@@ -145,7 +166,7 @@ func FetchPostsLiked(senderID int) []Post {
 
 	// Check for errors encountered during iteration
 	if err := rows.Err(); err != nil {
-		fmt.Println(err)
+		log.Printf("Error during row iteration: %v", err)
 		return nil
 	}
 
