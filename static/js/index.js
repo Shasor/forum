@@ -10,6 +10,12 @@ function ToggleAvatar(event) {
   const popup = document.getElementById("popup");
   popup.style.display = popup.style.display === "block" ? "none" : "block";
   event.stopPropagation();
+
+  document.addEventListener("click", function (event) {
+    if (!popup.contains(event.target)) {
+      popup.style.display = "none";
+    }
+  });
 }
 
 // ╔════════════════════ profile access ════════════════════╗
@@ -40,15 +46,13 @@ liked_posts_link?.addEventListener("click", (event) => {
 
 // ╔════════════════════ left bar ════════════════════╗
 const leftBar = document.querySelector(".left-bar");
-const toggleButton = leftBar.querySelector("button");
+const toggleButton = leftBar.querySelector("#logo");
 const postsDiv = document.querySelector(".posts-container");
 toggleButton.addEventListener("click", () => {
   leftBar.classList.toggle("closed");
   if (leftBar.classList.contains("closed")) {
-    toggleButton.textContent = ">>";
     postsDiv.style.marginRight = "-20vw";
   } else {
-    toggleButton.textContent = "<<";
     postsDiv.style.marginRight = "0vw";
   }
 });
