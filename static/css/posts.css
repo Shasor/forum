@@ -23,18 +23,14 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.dashboard-categorie-name:hover {
-  background-color: var(--THIRD-COLOR);
-  color: white;
-}
-
 #follow-button {
   background: transparent;
-  border: 1px solid black;
+  border: none;
+  border-radius: 5px;
 }
 
 #follow-button:hover {
-  background-color: red;
+  background-color: var(--THIRD-COLOR);
 }
 /* Fin pas bien */
 
@@ -83,6 +79,10 @@
   white-space: normal;
 }
 
+.post-content img{
+  border-radius: 10px;
+}
+
 .content {
   width: 100%;
   word-wrap: break-word;
@@ -119,7 +119,8 @@
   color: #FFE4F0;
    -webkit-text-stroke-width: 1.5px;
    -webkit-text-stroke-color: #f53271;
-  text-shadow: #9b0f40 -1.5px 1.5px, rgb(255, 255, 255) -25px  20px  30px;  
+  text-shadow: #9b0f40 -1.5px 1.5px, rgb(255, 255, 255) -25px  20px  30px;
+  text-decoration: none;  
 }
 
 .post-image img {
