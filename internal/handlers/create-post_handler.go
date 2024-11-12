@@ -5,7 +5,6 @@ import (
 	"forum/internal/db"
 	"net/http"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -20,23 +19,23 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+	Resp = Response{}
 
 	sender, _ := strconv.Atoi(r.FormValue("sender_post"))
-	category := strings.TrimSpace(r.FormValue("categorie_post"))
-	title := strings.TrimSpace(r.FormValue("title_post"))
-	content := strings.TrimSpace(r.FormValue("content_post"))
+	category := capitalize(r.FormValue("categorie_post"))
+	title := normalizeSpaces(r.FormValue("title_post"))
+	content := normalizeSpaces(r.FormValue("content_post"))
 
 	if category == "" || title == "" || content == "" {
-		Resp = Response{Msg: []string{"Tous les champs doivent être remplis"}}
+		Resp.Msg = append(Resp.Msg, "All fields must be completed!")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	} else if len(category) >= 26 {
-		Resp = Response{Msg: []string{"La catégorie ne doit pas dépasser 25 caractères"}}
+		Resp.Msg = append(Resp.Msg, "The category must not exceed 25 characters!")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
-	Resp = Response{}
 	// Check if the form has a file for image_post
 	var base64image string
 	if file, header, err := r.FormFile("image_post"); err == nil {
