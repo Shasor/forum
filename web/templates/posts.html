@@ -22,7 +22,7 @@
         <div class="sender">{{.Sender.Username}}</div>
         <!-- Ensure Category is passed -->
         {{if .Category}}
-        <div class="category">{{ .Category.Name}}</div>
+        <div class="category"><a href="?catID={{ .Category.ID }}">{{ .Category.Name }}</a></div>
         {{end}}
         <div class="date">{{.Date}}</div>
       </div>
