@@ -29,7 +29,7 @@ func EditProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Retrieve values from the form
 	email := strings.TrimSpace(r.FormValue("email"))
-	pictureFile, header, err := r.FormFile("profile_picture")
+	pictureFile, header, _ := r.FormFile("profile_picture")
 
 	// Check for fields to skip if empty
 	updatedEmail := user.Email     // Default to the current email if empty
@@ -51,7 +51,7 @@ func EditProfileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Execute the database update
-	err = db.UpdateUserProfile(user.ID, updatedEmail, updatedPicture)
+	err := db.UpdateUserProfile(user.ID, updatedEmail, updatedPicture)
 	if err != nil {
 		http.Error(w, "Error updating profile", http.StatusInternalServerError)
 		return

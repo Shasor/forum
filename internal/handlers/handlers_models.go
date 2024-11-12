@@ -24,6 +24,12 @@ type ErrorPageData struct {
 	ErrorDetails string
 }
 
+type Get struct {
+	Type       string
+	CategoryID int
+	PostID     int
+}
+
 var (
 	Resp Response
 )

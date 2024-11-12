@@ -17,31 +17,29 @@ import (
 	"strconv"
 )
 
-func GetFormGET(r *http.Request) (int, int, string) {
-	var get string
-	var categoryID int
+func GetFormGET(r *http.Request) Get {
+	var get Get
 	if categoryIDStr := r.URL.Query().Get("catID"); categoryIDStr != "" {
 		var err error
-		categoryID, err = strconv.Atoi(categoryIDStr)
-		get = "category"
+		get.CategoryID, err = strconv.Atoi(categoryIDStr)
+		get.Type = "category"
 		if err != nil {
-			categoryID = 0
+			get.CategoryID = 0
 		}
 	} else {
-		categoryID = 0
+		get.CategoryID = 0
 	}
-	var post int
 	if postStr := r.URL.Query().Get("postID"); postStr != "" {
 		var err error
-		post, err = strconv.Atoi(postStr)
-		get = "post"
+		get.PostID, err = strconv.Atoi(postStr)
+		get.Type = "post"
 		if err != nil {
-			post = 0
+			get.PostID = 0
 		}
 	} else {
-		post = 0
+		get.PostID = 0
 	}
-	return categoryID, post, get
+	return get
 }
 
 func OpenLocalImage(filePath string) (multipart.File, *multipart.FileHeader, error) {

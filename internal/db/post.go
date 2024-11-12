@@ -40,41 +40,11 @@ func CreatePost(sender int, categoryName, title, content, picture, date string) 
 	return nil
 }
 
-func FetchPosts(categoryID, postID int) []Post {
+func FetchPosts() []Post {
 	db := GetDB()
 	defer db.Close()
 
-	var query string
-	var args []interface{}
-
-	// Use LEFT JOIN to allow posts from deleted users
-	if categoryID != 0 && CategoryExist(GetCategoryNameByID(categoryID)) {
-		query = `
-        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name,
-               IFNULL(u.role, 'Deleted') AS role,
-               IFNULL(u.username, 'Deleted User') AS username,
-               IFNULL(u.email, '') AS email,
-               IFNULL(u.picture, 'default-profile.png') AS picture
-        FROM posts p
-        JOIN categories c ON p.category = c.id
-        LEFT JOIN users u ON p.sender = u.id
-        WHERE p.category = ?
-        ORDER BY p.id DESC;`
-		args = append(args, categoryID)
-	} else if postID != 0 && PostExist(postID) {
-		query = `
-        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name,
-               IFNULL(u.role, 'Deleted') AS role,
-               IFNULL(u.username, 'Deleted User') AS username,
-               IFNULL(u.email, '') AS email,
-               IFNULL(u.picture, 'default-profile.png') AS picture
-        FROM posts p
-        JOIN categories c ON p.category = c.id
-        LEFT JOIN users u ON p.sender = u.id
-        WHERE p.id = ?;`
-		args = append(args, postID)
-	} else {
-		query = `
+	query := `
         SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name,
                IFNULL(u.role, 'Deleted') AS role,
                IFNULL(u.username, 'Deleted User') AS username,
@@ -84,9 +54,8 @@ func FetchPosts(categoryID, postID int) []Post {
         JOIN categories c ON p.category = c.id
         LEFT JOIN users u ON p.sender = u.id
         ORDER BY p.id DESC;`
-	}
 
-	rows, err := db.Query(query, args...)
+	rows, err := db.Query(query)
 	if err != nil {
 		log.Printf("Error executing query: %v", err)
 		return nil
