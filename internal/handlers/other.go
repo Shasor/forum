@@ -71,7 +71,7 @@ func OpenLocalImage(filePath string) (multipart.File, *multipart.FileHeader, err
 	return multipartFile, header, nil
 }
 
-func ImageToBase64(file multipart.File, header *multipart.FileHeader) (string, error) {
+func ImageToBase64(file multipart.File, header *multipart.FileHeader, is_pfp bool) (string, error) {
 	// Reset the file pointer to the beginning of the file
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
 		return "", fmt.Errorf("error resetting file pointer: %v", err)
@@ -93,9 +93,13 @@ func ImageToBase64(file multipart.File, header *multipart.FileHeader) (string, e
 	if err != nil {
 		return "", fmt.Errorf("error decoding image: %v", err)
 	}
-
+	var resizedImg image.Image
 	// Resize the image (optional, depends on your requirements)
-	resizedImg := resizeImage(img)
+	if is_pfp {
+		resizedImg = resizeImage(img, 256, 256)
+	} else {
+		resizedImg = resizeImage(img, 800, 800)
+	}
 
 	// Encode resized image to JPEG format
 	buf := new(bytes.Buffer)
@@ -108,19 +112,18 @@ func ImageToBase64(file multipart.File, header *multipart.FileHeader) (string, e
 	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
 }
 
-// Resize img to 1920x1080
-func resizeImage(img image.Image) image.Image {
+// Resize img to a specified maxWidth and maxHeight
+func resizeImage(img image.Image, maxWidth, maxHeight int) image.Image {
 	bounds := img.Bounds()
 	width := bounds.Dx()
-	maxWidth := 800
 	height := bounds.Dy()
-	maxHeight := 800
 
-	// Calculez le ratio pour redimensionner
+	// Calculate the resize ratio
 	ratioW := float64(maxWidth) / float64(width)
 	ratioH := float64(maxHeight) / float64(height)
 	ratio := math.Min(ratioW, ratioH)
 
+	// If the image is already within bounds, return it unchanged
 	if ratio >= 1 {
 		return img
 	}
@@ -128,10 +131,10 @@ func resizeImage(img image.Image) image.Image {
 	newWidth := int(float64(width) * ratio)
 	newHeight := int(float64(height) * ratio)
 
-	// Créez une nouvelle image redimensionnée
+	// Create a new resized image
 	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 
-	// Redimensionnez l'image manuellement
+	// Resize the image manually
 	for y := 0; y < newHeight; y++ {
 		for x := 0; x < newWidth; x++ {
 			srcX := int(float64(x) / ratio)

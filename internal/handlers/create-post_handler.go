@@ -30,6 +30,10 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		Resp = Response{Msg: []string{"Tous les champs doivent être remplis"}}
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
+	} else if len(category) >= 26 {
+		Resp = Response{Msg: []string{"La catégorie ne doit pas dépasser 25 caractères"}}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	Resp = Response{}
@@ -39,7 +43,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		defer file.Close()
 		// If header is not empty, encode the image
 		if header.Size > 0 {
-			base64image, err = ImageToBase64(file, header)
+			base64image, err = ImageToBase64(file, header, false)
 			if err != nil {
 				Resp.Msg = append(Resp.Msg, err.Error())
 			}
