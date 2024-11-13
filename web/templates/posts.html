@@ -16,7 +16,7 @@
       <p>{{.Name}}</p>
       {{end}} {{end}}
     </div>
-    {{end}} {{end}} {{if eq .GET.CategoryID 0}} {{range .posts}} {{template "post" .}} {{end}} {{else}} {{range .posts}} {{if eq $.GET.CategoryID .Category.ID}} {{template "post" .}} {{end}} {{end}} {{end}}
+      {{end}} {{end}} {{if eq .GET.Type "post"}} {{range .posts}} {{$ID := .ID}} {{if eq $.GET.PostID .ID}} {{template "post" .}} {{end}} {{range $.comments}} {{if and (eq .ParentID $ID) (eq $.GET.PostID $ID)}} {{template "post" .}} {{end}}{{end}} {{end}} {{else if eq .GET.CategoryID 0}} {{range .posts}} {{if eq .ParentID 0}} {{template "post" .}} {{end}} {{end}} {{else}} {{range .posts}} {{if and (eq $.GET.CategoryID .Category.ID) (eq .ParentID 0)}} {{template "post" .}} {{end}} {{end}} {{end}}
   </div>
 </div>
 {{end}}

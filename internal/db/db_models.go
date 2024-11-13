@@ -19,6 +19,7 @@ type Post struct {
 	ID       int
 	Category Category
 	Sender   User
+	ParentID int
 	Title    string
 	Content  string
 	Picture  string

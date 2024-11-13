@@ -4,39 +4,48 @@ import (
 	"log"
 )
 
-func CreatePost(sender int, categoryName, title, content, picture, date string) error {
-	// Ouvrir la connexion à la base de données
+// CreatePost handles both posts and comments, depending on parentID
+func CreatePost(sender int, categoryName, title, content, picture, date string, parentID *int) error {
+	// Open the database connection
 	db := GetDB()
 	defer db.Close()
 
+	// Create the category if it doesn't exist
 	_ = CreateCategory(categoryName)
 	category, _ := SelectCategoryByName(categoryName)
 
-	// Démarrer une transaction
+	// Start a database transaction
 	tx, err := db.Begin()
 	if err != nil {
 		return err
 	}
 
-	// Préparer la requête d'insertion
-	stmt, err := tx.Prepare("INSERT INTO posts (category, sender, title, content, picture, date) VALUES(?, ?, ?, ?, ?, ?)")
+	// Prepare the SQL statement for inserting a post (including parent_id)
+	stmt, err := tx.Prepare("INSERT INTO posts (category, sender, parent_id, title, content, picture, date) VALUES(?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	// Exécuter l'insertion
-	_, err = stmt.Exec(category.ID, sender, title, content, picture, date)
+	// If parentID is nil, it means it's an original post, so we set parent_id to 0
+	if parentID == nil {
+		_, err = stmt.Exec(category.ID, sender, 0, title, content, picture, date)
+	} else {
+		// Otherwise, use the provided parent_id (for comments)
+		_, err = stmt.Exec(category.ID, sender, *parentID, title, content, picture, date)
+	}
+
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
 
-	// Commit de la transaction
+	// Commit the transaction
 	err = tx.Commit()
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -45,7 +54,7 @@ func FetchPosts() []Post {
 	defer db.Close()
 
 	query := `
-        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name,
+        SELECT p.id, p.category, p.sender, p.parent_id, p.title, p.content, p.picture, p.date, c.name,
                IFNULL(u.role, 'Deleted') AS role,
                IFNULL(u.username, 'Deleted User') AS username,
                IFNULL(u.email, '') AS email,
@@ -65,7 +74,7 @@ func FetchPosts() []Post {
 	var posts []Post
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.ID, &post.Category.ID, &post.Sender.ID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Category.Name, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture)
+		err := rows.Scan(&post.ID, &post.Category.ID, &post.Sender.ID, &post.ParentID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Category.Name, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture)
 		if err != nil {
 			log.Printf("Error scanning row: %v", err)
 			continue
@@ -95,7 +104,7 @@ func FetchPostsLiked(senderID int) []Post {
 
 	// Query to fetch posts that the user liked, with LEFT JOIN for users and placeholders for deleted users
 	query := `
-        SELECT p.id, p.category, p.sender, p.title, p.content, p.picture, p.date, c.name,
+        SELECT p.id, p.category, p.sender, p.parent_id, p.title, p.content, p.picture, p.date, c.name,
                IFNULL(u.role, 'Deleted') AS role,
                IFNULL(u.username, 'Deleted User') AS username,
                IFNULL(u.email, '') AS email,
@@ -123,7 +132,7 @@ func FetchPostsLiked(senderID int) []Post {
 		var post Post
 		// Scan each row's values, including placeholders for missing user info
 		if err := rows.Scan(
-			&post.ID, &post.Category.ID, &post.Sender.ID, &post.Title, &post.Content,
+			&post.ID, &post.Category.ID, &post.Sender.ID, &post.ParentID, &post.Title, &post.Content,
 			&post.Picture, &post.Date, &post.Category.Name,
 			&post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture,
 		); err != nil {
@@ -141,6 +150,56 @@ func FetchPostsLiked(senderID int) []Post {
 
 	// Return the list of liked posts
 	return likedPosts
+}
+
+func FetchComments() []Post {
+	db := GetDB()
+	defer db.Close()
+
+	query := `
+        SELECT p.id, p.category, p.sender, p.parent_id, p.title, p.content, p.picture, p.date, c.name,
+               IFNULL(u.role, 'Deleted') AS role,
+               IFNULL(u.username, 'Deleted User') AS username,
+               IFNULL(u.email, '') AS email,
+               IFNULL(u.picture, 'default-profile.png') AS picture
+        FROM posts p
+        JOIN categories c ON p.category = c.id
+        LEFT JOIN users u ON p.sender = u.id
+        ORDER BY p.id DESC;`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		log.Printf("Error executing query: %v", err)
+		return nil
+	}
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.Category.ID, &post.Sender.ID, &post.ParentID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Category.Name, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture)
+		if err != nil {
+			log.Printf("Error scanning row: %v", err)
+			continue
+		}
+
+		// Get post reactions
+		likes, dislikes, err := GetPostReactions(post.ID)
+		if err != nil {
+			log.Printf("Error fetching reactions: %v", err)
+			continue
+		}
+		post.Likes = likes
+		post.Dislikes = dislikes
+
+		if post.ParentID != 0 {
+			posts = append(posts, post)
+		}
+	}
+	if err = rows.Err(); err != nil {
+		log.Printf("Error during row iteration: %v", err)
+	}
+	return posts
 }
 
 func PostExist(id int) bool {

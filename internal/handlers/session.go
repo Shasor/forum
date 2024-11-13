@@ -83,7 +83,6 @@ func GetUserFromCookie(w http.ResponseWriter, r *http.Request) *db.User {
 	// Fetch the user from the database
 	user, err := db.SelectUserByUsername(username)
 	if err != nil {
-		fmt.Println("Error fetching user from DB:", err)
 		ClearSession(w)
 		return nil
 	}

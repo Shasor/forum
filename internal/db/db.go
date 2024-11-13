@@ -30,12 +30,14 @@ func GetDB() *sql.DB {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			category INTEGER NOT NULL,
 			sender INTEGER NOT NULL,
+			parent_id INTEGER DEFAULT NULL,
 			title TEXT NOT NULL,
 			content TEXT NOT NULL,
 			picture LONGTEXT,
 			date TEXT NOT NULL,
 			FOREIGN KEY (category) REFERENCES categories(id),
 			FOREIGN KEY (sender) REFERENCES users(id)
+			FOREIGN KEY (parent_id) REFERENCES posts(id)
 		); CREATE TABLE IF NOT EXISTS reactions (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			sender INTEGER NOT NULL,

@@ -24,6 +24,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		"categories": db.FetchCategories(),
 		"likedposts": likedposts,
 		"GET":        get,
+		"comments":   db.FetchComments(),
 	}
 	Parse(w, data)
 }
