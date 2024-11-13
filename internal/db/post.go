@@ -153,3 +153,28 @@ func PostExist(id int) bool {
 	}
 	return exist
 }
+
+func GetLastPostIDByUserID(id int) (int, error){
+	db := GetDB()
+	defer db.Close()
+
+	query := `
+        SELECT id
+        FROM posts
+		WHERE sender = ?
+		ORDER BY date DESC
+		LIMIT 1;`
+	var postID int
+
+	err := db.QueryRow(query, id).Scan(&postID)
+	
+	
+	if err != nil {
+		// Gérer l'erreur
+		log.Printf("Erreur lors de l'exécution de la requête : %v", err)
+		return 0,err
+	}
+
+
+	return postID,nil
+}

@@ -26,7 +26,7 @@ func GetDB() *sql.DB {
 		); CREATE TABLE IF NOT EXISTS categories (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL
-		); CREATE TABLE IF NOT EXISTS posts (
+		);  CREATE TABLE IF NOT EXISTS posts (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			category INTEGER NOT NULL,
 			sender INTEGER NOT NULL,
@@ -36,6 +36,12 @@ func GetDB() *sql.DB {
 			date TEXT NOT NULL,
 			FOREIGN KEY (category) REFERENCES categories(id),
 			FOREIGN KEY (sender) REFERENCES users(id)
+		); CREATE TABLE IF NOT EXISTS post_category (
+            post_id INTEGER,
+            category_id INTEGER,
+            PRIMARY KEY (post_id, category_id),
+            FOREIGN KEY (post_id) REFERENCES post(id),
+            FOREIGN KEY (category_id) REFERENCES categories(id)
 		); CREATE TABLE IF NOT EXISTS reactions (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			sender INTEGER NOT NULL,
