@@ -32,7 +32,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	content := normalizeSpaces(r.FormValue("content_post"))
 
 	// Validate form data
-	if category == "" || title == "" || content == "" {
+	if category == "" || content == "" {
 		Resp.Msg = append(Resp.Msg, "All fields must be completed!")
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
@@ -87,5 +87,10 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Success message after creating the post
 	Resp.Msg = append(Resp.Msg, "Your post has been successfully sent!")
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	if parentID != nil {
+		id := strconv.Itoa(*parentID)
+		http.Redirect(w, r, "/?postID="+id, http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	}
 }

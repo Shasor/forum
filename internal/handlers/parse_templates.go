@@ -17,6 +17,7 @@ func Parse(w http.ResponseWriter, data map[string]interface{}) {
 		"web/templates/js.html",
 		"web/templates/response.html",
 		"web/templates/post.html",
+		"web/templates/comment.html",
 	)
 	if err != nil {
 		// Log the error for debugging
