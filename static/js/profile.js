@@ -8,10 +8,10 @@ export function GetProfile() {
 
   div.className = "profile-container";
   div.innerHTML = `
+          <header>
+            <h1>Profile of ${window.userData.pseudo}</h1>
+          </header>
         <div class="profile">
-            <header>
-                <h1>Profile of ${window.userData.pseudo}</h1>
-            </header>
             <nav>
               <ul>
                 <li><a href="#" id="header-profile-link">Voir mon profil</a></li>
@@ -28,9 +28,6 @@ export function GetProfile() {
                 <p>Email: ${window.userData.email}</p>
                 <p>Role: ${window.userData.role}</p>
             </div>
-            <footer>
-                <a href="/">Back to Home</a>
-            </footer>
         </div>`;
 
   // Attach event listener for "Edit Profile" after updating inner HTML
@@ -98,10 +95,7 @@ export function GetEditProfile() {
       <form action="/delete" method="POST">
           <input type="submit" value="Supprimer mon compte" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ? Cela est irréversible.');">
       </form>
-  
-      <footer>
-          <a href="/">Back to Home</a>
-      </footer>
+
     `;
 
   // Attach click events to navigation links
@@ -129,10 +123,6 @@ export function GetMyPosts() {
       <div id="posts-content">
         ${window.userData.myposts}
       </div>
-  
-      <footer>
-          <a href="/">Back to Home</a>
-      </footer>
     `;
 
   // Add event listeners for nav links
@@ -159,10 +149,6 @@ export function GetLikedPosts() {
       <div id="liked-posts-content">
           ${window.userData.likedposts || "<p>No liked posts found.</p>"}
       </div>
-  
-      <footer>
-          <a href="/">Back to Home</a>
-      </footer>
     `;
 
   // Add event listeners for nav links
