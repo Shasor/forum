@@ -139,3 +139,11 @@ async function UpdateReaction(postId, reaction) {
     throw new Error("Invalid JSON response");
   }
 }
+
+// ╔════════════════════ search bar ════════════════════╗
+document.getElementById("search_bar").addEventListener("keypress", function(event){
+  if (event.key === "Enter"){
+    event.preventDefault();
+    document.getElementById("SearchForm").submit()
+  }
+});
