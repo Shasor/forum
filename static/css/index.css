@@ -329,3 +329,11 @@ body {
   background-color: var(--THIRD-COLOR);
   transform: scale(1.05);
 }
+
+.profile li{
+  color: inherit;
+  text-decoration: none;
+  background-color: #FFE0FD;
+  border-radius: 7px;
+  padding:5px;
+}

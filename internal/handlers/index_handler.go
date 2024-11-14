@@ -26,4 +26,9 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		"GET":        get,
 	}
 	Parse(w, data)
+
+	if r.Method == "POST" {
+		print(r.FormValue("SearchForm"))
+	}
+
 }
