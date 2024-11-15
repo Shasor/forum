@@ -139,6 +139,16 @@ func FetchPostsLiked(senderID int) []Post {
 			log.Printf("Error scanning row: %v", err)
 			return nil
 		}
+
+		// Get post reactions
+		likes, dislikes, err := GetPostReactions(post.ID)
+		if err != nil {
+			log.Printf("Error fetching reactions: %v", err)
+			continue
+		}
+		post.Likes = likes
+		post.Dislikes = dislikes
+
 		likedPosts = append(likedPosts, post)
 	}
 
