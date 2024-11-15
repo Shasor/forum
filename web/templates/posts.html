@@ -1,10 +1,11 @@
 {{define "posts"}}
 <div class="posts-container" id="posts-container">
   <div id="posts">
-    {{if eq .GET.Type "category"}} {{if $.user}}
+    {{if eq .GET.Type "category"}}
     <div class="dashboard-categorie-name">
-      {{range .categories}} {{if eq .ID (index $.posts 0).Category.ID}}
+      {{range .categories}} {{if eq .ID $.GET.CategoryID}}
       <div class="follow-category">
+        {{if $.user}}
         <button type="button" id="follow-button" data-categorieid="{{.ID}}">
           {{ $ActualCategory := .ID }} {{ $Followed := false }} {{ range $.user.Follows}} {{if eq .ID $ActualCategory}} {{$Followed = true}} {{end}} {{end}} {{if $Followed}}
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M160-200v-80h80v-280q0-33 8.5-65t25.5-61l60 60q-7 16-10.5 32.5T320-560v280h248L56-792l56-56 736 736-56 56-146-144H160Zm560-154-80-80v-126q0-66-47-113t-113-47q-26 0-50 8t-44 24l-58-58q20-16 43-28t49-18v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v206Zm-276-50Zm36 324q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80Zm33-481Z" /></svg>
@@ -12,11 +13,12 @@
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="M80-560q0-100 44.5-183.5T244-882l47 64q-60 44-95.5 111T160-560H80Zm720 0q0-80-35.5-147T669-818l47-64q75 55 119.5 138.5T880-560h-80ZM160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z" /></svg>
           {{end}}
         </button>
+        {{end}}
+        <p>Bienvenue sur la Catégorie : {{.Name}}</p>
       </div>
-      <p>{{.Name}}</p>
       {{end}} {{end}}
     </div>
-      {{end}} {{end}} {{if eq .GET.Type "post"}} {{range .posts}} {{$ID := .ID}} {{if eq $.GET.PostID .ID}}  {{template "post" .}} {{template "comment" .}} {{end}} {{range $.comments}} {{if and (eq .ParentID $ID) (eq $.GET.PostID $ID)}} {{template "post" .}} {{end}}{{end}} {{end}} {{else if eq .GET.CategoryID 0}} {{range .posts}} {{if eq .ParentID 0}} {{template "post" .}} {{end}} {{end}} {{else}} {{range .posts}} {{if and (eq $.GET.CategoryID .Category.ID) (eq .ParentID 0)}} {{template "post" .}} {{end}} {{end}} {{end}}
+    {{end}} {{if eq .GET.Type "post"}} {{range .posts}} {{$ID := .ID}} {{if eq $.GET.PostID .ID}} {{template "post" .}} {{template "comment" .}} {{end}} {{range $.comments}} {{if and (eq .ParentID $ID) (eq $.GET.PostID $ID)}} {{template "post" .}} {{end}} {{end}} {{end}} {{else if eq .GET.CategoryID 0}} {{range .posts}} {{if eq .ParentID 0}} {{template "post" .}} {{end}} {{end}} {{else}} {{range .posts}} {{$ActualPost := .}} {{if eq .ParentID 0}} {{range .Categories}} {{if eq $.GET.CategoryID .ID}} {{template "post" $ActualPost}} {{end}} {{end}} {{end}} {{end}} {{end}}
   </div>
 </div>
 {{end}}

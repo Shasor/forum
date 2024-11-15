@@ -17,7 +17,7 @@ type Category struct {
 
 type Post struct {
 	ID       int
-	Category Category
+	Categories []Category
 	Sender   User
 	ParentID int
 	Title    string

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -81,16 +82,21 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		parentID = nil
 	}
 
-	// Call the CreatePost function, passing parent_id as a parameter
-	err := db.CreatePost(sender, category, title, content, base64image, date, parentID)
-	if err != nil {
-		log.Println("Error creating post:", err)
-		Resp.Msg = append(Resp.Msg, "Error creating post")
-		http.Redirect(w, r, "/", http.StatusInternalServerError)
-		return
+	categories := strings.Split(category, "#")
+	postAlreadyCreated := false
+	for _, cat := range categories {
+		if !db.CategoryExist(capitalize(cat)) {
+			db.CreateCategory(capitalize(cat))
+		}
+		if !postAlreadyCreated {
+			_ = db.CreatePost(sender, cat, title, content, base64image, date, parentID)
+			postAlreadyCreated = true
+		}
+		category_cat, _ := db.SelectCategoryByName(capitalize(cat))
+		postID, _ := db.GetLastPostIDByUserID(sender)
+		db.LinkPostToCategory(postID, category_cat)
 	}
 
-	// Success message after creating the post
 	Resp.Msg = append(Resp.Msg, "Your post has been successfully sent!")
 	if parentID != nil {
 		id := strconv.Itoa(*parentID)

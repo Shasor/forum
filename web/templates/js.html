@@ -17,8 +17,8 @@
     {{ range .posts }}{{ if eq $.user.ID .Sender.ID }} <div class="post">
   <div class="post-header">
     <div class="sender">{{.Sender.Username}}</div>
-    {{if .Category}}
-    <div class="category"><a href="?catID={{ .Category.ID }}">{{ .Category.Name }}</a></div>
+    {{if (index .Categories 0).ID}}
+    <div class="category"><a href="?catID={{(index .Categories 0).ID }}">{{ (index .Categories 0).Name }}</a></div>
     {{end}}
     <div class="date">{{.Date}}</div>
   </div>
@@ -32,6 +32,11 @@
     {{end}}
   </div>
   <div class="reactions">
+    <div class="post-categories">
+      {{range .Categories}}
+      <a href="/?catID={{.ID}}">#{{.Name}}</a>
+      {{end}}
+    </div>
       <input type="hidden" name="postId" value="{{.ID}}" />
       <input type="hidden" name="reaction" value="LIKE" />
       <div class="reaction">
@@ -40,7 +45,6 @@
         </button>
         <span class="like-count" data-postid="{{.ID}}">{{.Likes}}</span>
       </div>
-    
       <input type="hidden" name="postId" value="{{.ID}}" />
       <input type="hidden" name="reaction" value="DISLIKE" />
       <div class="reaction">
@@ -49,7 +53,6 @@
         </button>
         <span class="dislike-count" data-postid="{{.ID}}">{{.Dislikes}}</span>
       </div>
-    
     <div class="reaction">
       <form action="" method="get">
         <input type="hidden" name="postID" value="{{.ID}}" />
@@ -58,15 +61,15 @@
         </button>
       </form>
     </div>
-  </div>  
+  </div>
 </div> {{ end}} {{ end }} {{ end }}`,
 
     likedposts: `{{ if.user }} 
     {{ range .likedposts }} <div class="post">
   <div class="post-header">
     <div class="sender">{{.Sender.Username}}</div>
-    {{if .Category}}
-    <div class="category"><a href="?catID={{ .Category.ID }}">{{ .Category.Name }}</a></div>
+    {{if (index .Categories 0).ID}}
+    <div class="category"><a href="?catID={{(index .Categories 0).ID }}">{{ (index .Categories 0).Name }}</a></div>
     {{end}}
     <div class="date">{{.Date}}</div>
   </div>
@@ -80,7 +83,11 @@
     {{end}}
   </div>
   <div class="reactions">
-    
+    <div class="post-categories">
+      {{range .Categories}}
+      <a href="/?catID={{.ID}}">#{{.Name}}</a>
+      {{end}}
+    </div>
       <input type="hidden" name="postId" value="{{.ID}}" />
       <input type="hidden" name="reaction" value="LIKE" />
       <div class="reaction">
@@ -89,7 +96,6 @@
         </button>
         <span class="like-count" data-postid="{{.ID}}">{{.Likes}}</span>
       </div>
-    
       <input type="hidden" name="postId" value="{{.ID}}" />
       <input type="hidden" name="reaction" value="DISLIKE" />
       <div class="reaction">
@@ -98,7 +104,6 @@
         </button>
         <span class="dislike-count" data-postid="{{.ID}}">{{.Dislikes}}</span>
       </div>
-    
     <div class="reaction">
       <form action="" method="get">
         <input type="hidden" name="postID" value="{{.ID}}" />
@@ -107,7 +112,7 @@
         </button>
       </form>
     </div>
-  </div>  
+  </div>
 </div> {{ end}} {{ end }}`,
   };
 </script>
