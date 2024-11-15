@@ -31,17 +31,6 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	title := normalizeSpaces(r.FormValue("title_post"))
 	content := normalizeSpaces(r.FormValue("content_post"))
 
-	// Validate form data
-	if category == "" || content == "" {
-		Resp.Msg = append(Resp.Msg, "All fields must be completed!")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	} else if len(category) >= 26 {
-		Resp.Msg = append(Resp.Msg, "The category must not exceed 25 characters!")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
-
 	// Check if the form has an image (if it does, convert it to base64)
 	var base64image string
 	if file, header, err := r.FormFile("image_post"); err == nil {
@@ -53,6 +42,22 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 				Resp.Msg = append(Resp.Msg, err.Error())
 			}
 		}
+	}
+
+	// Validate form data
+	if category == "" {
+		Resp.Msg = append(Resp.Msg, "All fields must be completed!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	} else if content == "" && base64image == "" {
+		// Both content and image are missing
+		Resp.Msg = append(Resp.Msg, "Must fill every box")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	} else if len(category) >= 26 {
+		Resp.Msg = append(Resp.Msg, "The category must not exceed 25 characters!")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	}
 
 	// Format the date in the desired format

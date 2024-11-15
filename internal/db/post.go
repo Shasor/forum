@@ -212,3 +212,14 @@ func PostExist(id int) bool {
 	}
 	return exist
 }
+
+func NbCommentsFromPost(id int) (int, error) {
+	db := GetDB()
+	defer db.Close()
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM posts WHERE parent_id =?", id).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
