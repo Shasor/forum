@@ -17,27 +17,32 @@
       <p>Bienvenue sur : {{.Name}}</p>
     </div>
     {{end}} 
-    {{end}} {{end}}   {{if eq .GET.Type "post"}} 
+    {{end}} {{end}} 
 
-      {{range .posts}}
-       {{$ID := .ID}} 
-        {{if eq $.GET.PostID .ID}} 
-         {{template "post" .}} 
-         {{end}} 
-      {{end}} 
+    {{if eq .GET.Type "post"}}
+     {{range .posts}} 
+      {{if eq $.GET.PostID .ID}} 
+       {{template "post" .}} 
+       {{end}}
+        {{end}} 
 
-      {{else }} 
-         
-        {{range .posts}}
-        {{$ActualPost := . }}
-        {{range .Categories }}
-        {{if  (eq $.GET.CategoryID .ID) }}
-            {{.}}
-           {{template "post" $ActualPost}}
-           {{end}}
-          {{end}}
-        {{end}}
+
+      {{else if eq .GET.CategoryID 0}} 
+      {{range .posts}} 
+      {{template "post" .}} 
       {{end}}
+
+       {{else}}
+       {{range .posts}} 
+       {{$ActualPost := .}}
+       {{range .Categories}}
+       {{if eq $.GET.CategoryID .ID}} 
+       {{template "post" $ActualPost}} 
+
+       {{end}}
+
+       {{end}} {{end}} {{end}}
+
   </div>
 </div>
 {{end}}

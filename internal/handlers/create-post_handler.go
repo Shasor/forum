@@ -53,12 +53,9 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	date := fmt.Sprintf("%02d:%02d | %02d/%02d/%d", time.Now().Hour(), time.Now().Minute(), time.Now().Day(), time.Now().Month(), time.Now().Year())
 
 	categories := strings.Split(category, "#")
-
-	fmt.Println(categories)
 	
 	postAlreadyCreated := false
 	for _, cat := range categories{
-		fmt.Println("======", capitalize(cat), "========")
 		if !postAlreadyCreated{
 			_ = db.CreatePost(sender, cat, title, content, base64image, date)
 			postAlreadyCreated = true
@@ -70,7 +67,6 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 
 		category_cat, _ := db.SelectCategoryByName(capitalize(cat))
 		postID,_ := db.GetLastPostIDByUserID(sender)
-		fmt.Println(postID, category_cat)
 		db.LinkPostToCategory(postID,category_cat )
 	}
 	

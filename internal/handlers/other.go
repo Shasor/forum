@@ -19,7 +19,7 @@ import (
 	"unicode"
 )
 
-func GetFormGET(r *http.Request) Get {
+func GetFormGET(w http.ResponseWriter, r *http.Request) Get {
 	var get Get
 	if categoryIDStr := r.URL.Query().Get("catID"); categoryIDStr != "" {
 		var err error
@@ -31,14 +31,18 @@ func GetFormGET(r *http.Request) Get {
 	} else {
 		get.CategoryID = 0
 	}
-	if postStr := r.URL.Query().Get("postID"); postStr != "" {
+	if postStr := r.URL.Query().Get("postID"); postStr != "" && IsCookieValid(w, r) {
 		var err error
 		get.PostID, err = strconv.Atoi(postStr)
 		get.Type = "post"
 		if err != nil {
 			get.PostID = 0
 		}
+	} else if !IsCookieValid(w,r) && postStr != "" {
+		get.PostID = 0
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	} else {
+		// fmt.Println("Redirect test", postStr)
 		get.PostID = 0
 	}
 	return get

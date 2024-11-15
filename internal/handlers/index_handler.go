@@ -16,7 +16,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if user != nil {
 		likedposts = db.FetchPostsLiked(user.ID)
 	}
-	get := GetFormGET(r)
+	get := GetFormGET(w, r)
 	data := map[string]interface{}{
 		"resp":       Resp,
 		"user":       user, // This will be nil if no user is logged in
