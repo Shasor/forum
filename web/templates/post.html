@@ -1,6 +1,7 @@
 {{define "post"}}
 <div class="post">
   <div class="post-header">
+    {{.}}
     <div class="sender">{{.Sender.Username}}</div>
     {{if (index .Categories 0).ID}}
     <div class="category"><a href="?catID={{(index .Categories 0).ID }}">{{ (index .Categories 0).Name }}</a></div>
