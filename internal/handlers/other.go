@@ -219,6 +219,10 @@ func PurgeHashAndSpace(s string) string{
 		}
 	}
 
+	if s[len(s)-1] != '#' || s[len(s)-1] != ' '{
+		newString = newString + string(rune(s[len(s)-1]))
+	}
+
 	return newString
 
 }
