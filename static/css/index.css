@@ -86,6 +86,7 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombre */
   z-index: 1000; /* S'assurer qu'il est au-dessus des autres éléments */
   scrollbar-width: none;
+  border-radius: 8px;
 }
 .header #popup button {
   background-color: var(--SECOND-COLOR);
@@ -478,4 +479,16 @@ body {
 
 .posts-container header{
   margin: 20px;
+}
+
+#header-profile-link{
+  background-color: var(--LIGHT-MAIN-COLOR);
+  padding: 5px 15px 5px 15px ;
+  border-radius: 5px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+
+#header-profile-link:hover{
+  background-color: var(--SECOND-COLOR);
 }
