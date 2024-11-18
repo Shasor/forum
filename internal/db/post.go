@@ -218,6 +218,57 @@ func FetchComments() []Post {
 	return posts
 }
 
+func FetchFollowPosts(senderID int) []Post {
+	db := GetDB()
+	defer db.Close()
+
+	query := `
+        SELECT p.id, p.sender, p.parent_id, p.title, p.content, p.picture, p.date,
+               IFNULL(u.role, 'Deleted') AS role,
+               IFNULL(u.username, 'Deleted User') AS username,
+               IFNULL(u.email, '') AS email,
+               IFNULL(u.picture, 'default-profile.png') AS picture
+        FROM posts p
+        JOIN categories c ON p.category = c.id
+        JOIN follows f ON c.id = f.category
+        LEFT JOIN users u ON p.sender = u.id
+        WHERE f.user = ?
+        ORDER BY p.id DESC;`
+
+	rows, err := db.Query(query, senderID)
+	if err != nil {
+		log.Printf("Error executing query: %v", err)
+		return nil
+	}
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(&post.ID, &post.Sender.ID, &post.ParentID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture)
+		if err != nil {
+			log.Printf("Error scanning row: %v", err)
+			continue
+		}
+
+		// Get post reactions
+		likes, dislikes, err := GetPostReactions(post.ID)
+		if err != nil {
+			log.Printf("Error fetching reactions: %v", err)
+			continue
+		}
+		post.Categories, _ = GetPostCategories(post.ID)
+		post.Likes = likes
+		post.Dislikes = dislikes
+
+		posts = append(posts, post)
+	}
+	if err = rows.Err(); err != nil {
+		log.Printf("Error during row iteration: %v", err)
+	}
+	return posts
+}
+
 func PostExist(id int) bool {
 	db := GetDB()
 	defer db.Close()

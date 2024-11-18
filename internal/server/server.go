@@ -16,7 +16,6 @@ func InitServer() {
 	}
 	var port = ":8080"
 	server := NewServer(port, 10*time.Second, 10*time.Second, 30*time.Second, 2*time.Second, 1<<20)
-
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			handlers.ErrorsHandler(w, r, http.StatusNotFound)
