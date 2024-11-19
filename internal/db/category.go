@@ -38,7 +38,7 @@ func SelectCategoryByName(name string) (Category, error) {
 		name).Scan(&category.ID, &category.Name)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return Category{}, errors.New("user not found")
+			return Category{}, errors.New("category not found")
 		}
 		return Category{}, err
 	}
