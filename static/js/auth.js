@@ -21,10 +21,10 @@ export function GetLogin() {
             <button type="button" id="signup-link">Créer un compte</button>
       </div>
   </div>`;
-  const signup_bttn = document.getElementById('signup-link');
-  signup_bttn.addEventListener('click',GetSignup);
-  
-  const close = document.getElementById('close')
+  const signup_bttn = document.getElementById("signup-link");
+  signup_bttn.addEventListener("click", GetSignup);
+
+  const close = document.getElementById("close");
   close.addEventListener("click", CloseLogin);
 }
 
@@ -50,8 +50,8 @@ export function GetSignup(formValue) {
             <button type="submit">S'inscrire</button>
         </form>
     </div>`;
-    const close = document.getElementById('close');  
-    close.addEventListener("click", CloseLogin);
+  const close = document.getElementById("close");
+  close.addEventListener("click", CloseLogin);
 }
 
 function CloseSignup(e) {

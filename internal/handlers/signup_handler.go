@@ -26,9 +26,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	if email != "" && username != "" && password != "" {
 		password, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err == nil {
-			file, header, _ := OpenLocalImage("static/assets/img/default_profile_picture.png")
-			picture, _ := ImageToBase64(file, header, true)
-			_, err := db.CreateUser("user", username, email, picture, string(password))
+			_, err := db.CreateUser("user", username, email, "", string(password))
 			if err == nil {
 				SetSession(w, username)
 			} else {
