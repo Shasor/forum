@@ -4,14 +4,16 @@ Ce projet est une application web de gestion de connexion et d'inscription, cons
 
 ## Setting up and Run
 
-### Create an .env file and define these environmental variables:
+### Create an .env file in the root directory and define the following environmental variables:
 
 - "signingKeyForum": a sentence to encrypt cookies
 
 ### Run
 
 ```bash
-$ go run cmd/forum/main.go
+$ docker build -t forum .
+...
+$ docker run -p 8080:8080 forum:latest
 Starting server on http://localhost:8080
 ```
 
