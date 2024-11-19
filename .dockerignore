@@ -1,0 +1,4 @@
+internal/db/database.db
+
+tmp/
+.air.toml
