@@ -57,6 +57,24 @@
   color: #f4acb7;
 }
 
+.sender{
+  display: flex;
+  flex-direction: row;
+}
+
+#user_name{
+  margin-left: 10px;
+  margin-top: 12px;
+}
+
+#post_category{
+  margin-top: 2px;
+}
+
+#post_date{
+  margin-top: 14px;
+}
+
 .post-header {
   padding: 15px 15px 0 15px ;
   background-color: none;
@@ -65,7 +83,7 @@
   color: rgb(122, 122, 122);
 }
 
-.avatar-post{
+#avatar-post{
   width: 40px;
   height: 40px;
   border-radius: 50%;
