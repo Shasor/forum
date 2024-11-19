@@ -11,7 +11,7 @@
     pseudo: "{{ if .user }}{{ .user.Username | js }}{{ else }}'Guest'{{ end }}",
     email: "{{ if .user }}{{ .user.Email | js }}{{ else }}'Not logged in'{{ end }}",
     role: "{{ if .user }}{{ .user.Role | js }}{{ else }}'visitor'{{ end }}",
-    profilePicture: "{{ if .user }}{{ if .user.Picture }}data:image/jpeg;base64,{{ .user.Picture }}{{ else }}'default-profile.png'{{ end }}{{ else }}'default-profile.png'{{ end }}",
+    profilePicture: "{{ if .user }}{{ if .user.Picture }}data:image/jpeg;base64,{{ .user.Picture }}{{ else }}static/assets/img/default_profile_picture.png{{ end }}{{ else }}static/assets/img/default_profile_picture.png{{ end }}",
 
     myposts: `{{ if.user }} 
     {{ range .posts }}{{ if eq $.user.ID .Sender.ID }} <div class="post">

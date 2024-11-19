@@ -65,6 +65,12 @@
   color: rgb(122, 122, 122);
 }
 
+.avatar-post{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
 .post-header > div {
   padding: 5px;
 }
@@ -177,4 +183,40 @@
 .like-count,
 .dislike-count {
   margin-left: 5px;
+}
+
+.post-categories{
+  position: absolute;
+  left: 20px;
+}
+
+.comments #content_post{
+  border: none;
+  margin: 20px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+  font-size: 14px;
+  width: 50vw;
+  height: 10vh;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.comments button{
+  position: relative;
+  transform: translateY(-7vh);
+  border: none;
+  padding: 10px;
+  background-color: var(--SECOND-COLOR);
+  border-radius: 10px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+.comments button:hover{
+  background-color: var(--THIRD-COLOR);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+}
+
+#nb_comments{
+  position: absolute;
+  right: 40px;
 }

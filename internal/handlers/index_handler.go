@@ -34,20 +34,22 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		Resp.Broadcasted = true
 	}
-	var likedposts []db.Post
+	var likedposts, followedposts []db.Post
 	user := GetUserFromCookie(w, r)
 	if user != nil {
 		likedposts = db.FetchPostsLiked(user.ID)
+		followedposts = db.FetchFollowPosts(user.ID)
 	}
 	get := GetFormGET(w, r)
 	data := map[string]interface{}{
-		"resp":       Resp,
-		"user":       user, // This will be nil if no user is logged in
-		"posts":      db.FetchPosts(),
-		"categories": db.FetchCategories(),
-		"likedposts": likedposts,
-		"GET":        get,
-		"comments":   db.FetchComments(),
+		"resp":          Resp,
+		"user":          user, // This will be nil if no user is logged in
+		"posts":         db.FetchPosts(),
+		"followedposts": followedposts,
+		"categories":    db.FetchCategories(),
+		"likedposts":    likedposts,
+		"GET":           get,
+		"comments":      db.FetchComments(),
 	}
 	Parse(w, data)
 

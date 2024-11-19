@@ -14,9 +14,9 @@
 
   <img src="static/assets/img/home_logo.png" alt="home" id="logo" />
   <a href="/" id="home_bttn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M240-200h120v-240h240v240h120v-360L480-740 240-560v360Zm-80 80v-480l320-240 320 240v480H520v-240h-80v240H160Zm320-350Z"/></svg></a>
+  {{if .user}}
   <div id="item">
     <h2>Following :</h2>
-    {{if .user}}
     <ul class="no-bullets">
       {{ range .user.Follows }}
       <li>
@@ -26,8 +26,8 @@
       <li>No categorie found</li>
       {{ end }}
     </ul>
-    {{end}}
   </div>
+  {{end}}
   <div id="item">
     <h2>Discover :</h2>
     {{if .user}}

@@ -1,7 +1,15 @@
 {{define "post"}}
 <div class="post">
   <div class="post-header">
-    <div class="sender">{{.Sender.Username}}</div>
+    <div class="sender">
+    {{if .Sender.Picture }}
+    <img src="data:image/jpeg;base64,{{ .Sender.Picture }}" alt="Profile Picture" class="avatar-post" style="max-width: 150px; max-height: 150px" />
+    {{else}}
+    <!-- If .user is not set, also show the default profile picture -->
+    <img src="static/assets/img/default_profile_picture.png" alt="Default Profile Picture" class="avatar-post" style="max-width: 150px; max-height: 150px" />
+    {{end}}
+    {{.Sender.Username}}
+    </div>
     {{if (index .Categories 0).ID}}
     <div class="category"><a href="?catID={{(index .Categories 0).ID }}">{{ (index .Categories 0).Name }}</a></div>
     {{end}}
@@ -43,6 +51,7 @@
       </div>
     </form>
     <div class="reaction">
+      <span id="nb_comments">{{.NbComments}}</span>
       <form action="" method="get">
         <input type="hidden" name="postID" value="{{.ID}}" />
         <button type="submit" class="reaction-button" id="comments">

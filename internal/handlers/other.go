@@ -13,7 +13,6 @@ import (
 	"math"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -59,39 +58,11 @@ func GetFormGET(w http.ResponseWriter, r *http.Request) Get {
 	return get
 }
 
-func OpenLocalImage(filePath string) (multipart.File, *multipart.FileHeader, error) {
-	// Ouvrir le fichier local
-	file, err := os.Open(filePath)
-	if err != nil {
-		return nil, nil, err
-	}
-	defer file.Close()
-
-	// Obtenir les informations du fichier
-	fileInfo, err := file.Stat()
-	if err != nil {
-		file.Close()
-		return nil, nil, err
-	}
-
-	// Créer un multipart.FileHeader
-	header := &multipart.FileHeader{
-		Filename: filepath.Base(filePath),
-		Size:     fileInfo.Size(),
-	}
-
-	// Créer un multipart.File à partir du fichier ouvert
-	multipartFile := multipart.File(file)
-
-	return multipartFile, header, nil
-}
-
 func ImageToBase64(file multipart.File, header *multipart.FileHeader, is_pfp bool) (string, error) {
 	// Reset the file pointer to the beginning of the file
 	if _, err := file.Seek(0, io.SeekStart); err != nil {
 		return "", fmt.Errorf("error resetting file pointer: %v", err)
 	}
-
 	// Check the file extension to see if it's a GIF
 	ext := filepath.Ext(header.Filename)
 	if ext == ".gif" {
@@ -188,41 +159,35 @@ func capitalize(s string) string {
 	return strings.Join(words, " ")
 }
 
-//Purge All prefix of a char
-func PurgePrefixChar(s string, charToRemove string) string{
-		// Convertir le rune en string pour pouvoir le comparer
-		charToRemoveStr := string(charToRemove)
-	
-		// Utiliser une boucle pour supprimer les caractères au début
-		for strings.HasPrefix(s, charToRemoveStr) {
-			s = s[1:]
-		}
-
-		return s
+// Purge All prefix of a char
+func PurgePrefixChar(s string, charToRemove string) string {
+	// Convertir le rune en string pour pouvoir le comparer
+	charToRemoveStr := string(charToRemove)
+	// Utiliser une boucle pour supprimer les caractères au début
+	for strings.HasPrefix(s, charToRemoveStr) {
+		s = s[1:]
+	}
+	return s
 }
 
-//Purge Hash and Space that shouldnt be there
-func PurgeHashAndSpace(s string) string{
-
-	for s[0] == '#' || s[0] ==' '{
+// Purge Hash and Space that shouldnt be there
+func PurgeHashAndSpace(s string) string {
+	for s[0] == '#' || s[0] == ' ' {
 		s = PurgePrefixChar(s, "#")
 		s = PurgePrefixChar(s, " ")
 	}
 
-	newString := ""
-
-	for i:=0; i<len(s)-1;i++{
-		if (s[i] == '#' && s[i+1] == '#') || (s[i] == ' ' && s[i+1] == ' ') || (s[i] == ' ' && s[i+1] == '#') || (s[i] == '#' && s[i+1] == ' ')  {
+	var newString string
+	for i := 0; i < len(s)-1; i++ {
+		if (s[i] == '#' && s[i+1] == '#') || (s[i] == ' ' && s[i+1] == ' ') || (s[i] == ' ' && s[i+1] == '#') || (s[i] == '#' && s[i+1] == ' ') {
 			continue
-		}else {
+		} else {
 			newString = newString + string(rune(s[i]))
 		}
 	}
 
-	if s[len(s)-1] != '#' || s[len(s)-1] != ' '{
+	if s[len(s)-1] != '#' || s[len(s)-1] != ' ' {
 		newString = newString + string(rune(s[len(s)-1]))
 	}
-
 	return newString
-
 }
