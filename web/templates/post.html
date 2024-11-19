@@ -6,7 +6,7 @@
     <img src="data:image/jpeg;base64,{{ .Sender.Picture }}" alt="Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px" />
     {{else}}
     <!-- If .user is not set, also show the default profile picture -->
-    <img src="static/assets/img/default_profile_picture.png" alt="Default Profile Picture" class="avatar-post" style="max-width: 150px; max-height: 150px" />
+    <img src="static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px" />
     {{end}}
     <p id="user_name">{{.Sender.Username}}</p>
     </div>
