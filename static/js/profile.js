@@ -11,13 +11,13 @@ export function GetProfile() {
           <header>
             <h1>Profile of ${window.userData.pseudo}</h1>
           </header>
-        <div class="profile">
+        <div class="profile-menu">
             <nav>
               <ul>
-                <li><a href="#" id="header-profile-link">Voir mon profil</a></li>
-                <li><a href="#" id="header-profile-posts">My Posts</a></li>
-                <li><a href="#" id="header-profile-liked">My Liked Posts</a></li>
-                <li><a href="#" id="header-profile-edit">Edit Profile</a></li>
+                <li><a href="#profil" id="header-profile-link">Voir mon profil</a></li>
+                <li><a href="#myposts" id="header-profile-posts">My Posts</a></li>
+                <li><a href="#likedposts" id="header-profile-liked">My Liked Posts</a></li>
+                <li><a href="#edit" id="header-profile-edit">Edit Profile</a></li>
                 <form method="post" action="/logout">
                   <li><button type="submit">Se déconnecter</button></li>
                 </form>

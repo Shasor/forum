@@ -57,37 +57,37 @@
   color: #f4acb7;
 }
 
-.sender{
+.sender {
   position: relative;
   display: flex;
   flex-direction: row;
 }
 
-#user_name{
+#user_name {
   position: absolute;
   left: 40px;
   margin-left: 10px;
   margin-top: 12px;
 }
 
-#post_category{
+#post_category {
   margin-top: 2px;
   position: relative;
 }
 
-#post_date{
+#post_date {
   margin-top: 14px;
 }
 
 .post-header {
-  padding: 15px 15px 0 15px ;
+  padding: 15px 15px 0 15px;
   background-color: none;
   display: flex;
   justify-content: space-between;
   color: rgb(122, 122, 122);
 }
 
-#avatar-post{
+#avatar-post {
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -107,7 +107,7 @@
   white-space: normal;
 }
 
-.post-content img{
+.post-content img {
   border-radius: 10px;
 }
 
@@ -129,26 +129,26 @@
   max-height: 800px;
 }
 
-.title{
+.title {
   margin-top: 12px;
   margin-left: 20px;
-  font-family: 'Itim';
+  font-family: "Itim";
   font-weight: 400;
   font-style: normal;
-  font-size: 20px;  
+  font-size: 20px;
 }
 
-.category{
+.category {
   margin-top: -10px;
-  font-family: 'Itim';
+  font-family: "Itim";
   font-weight: 400;
   font-style: normal;
   font-size: 25px;
-  color: #FFE4F0;
-   -webkit-text-stroke-width: 1.5px;
-   -webkit-text-stroke-color: #f53271;
-  text-shadow: #9b0f40 -1.5px 1.5px, rgb(255, 255, 255) -25px  20px  30px;
-  text-decoration: none;  
+  color: #ffe4f0;
+  -webkit-text-stroke-width: 1.5px;
+  -webkit-text-stroke-color: #f53271;
+  text-shadow: #9b0f40 -1.5px 1.5px, rgb(255, 255, 255) -25px 20px 30px;
+  text-decoration: none;
 }
 
 .post-image img {
@@ -162,6 +162,7 @@
   justify-content: center;
   align-items: center;
   margin-top: auto;
+  margin-right: 10px;
 }
 
 .reaction {
@@ -169,6 +170,10 @@
   flex-direction: column;
   align-items: center;
   margin: 0 10px;
+}
+
+.reaction span {
+  margin-right: 5px;
 }
 
 .reaction-button {
@@ -179,25 +184,25 @@
   font-size: 20px;
 }
 
-#like:hover{
-  >svg{
+#like:hover {
+  > svg {
     fill: red;
   }
 }
 
-#dislike:hover{
-  >svg{
+#dislike:hover {
+  > svg {
     fill: red;
   }
 }
 
-#comments:hover{
-  >svg{
+#comments:hover {
+  > svg {
     fill: #f53271;
   }
 }
 
-#comments{
+#comments {
   position: absolute;
   right: 10px;
 }
@@ -207,12 +212,12 @@
   margin-left: 5px;
 }
 
-.post-categories{
+.post-categories {
   position: absolute;
   left: 20px;
 }
 
-.comments #content_post{
+.comments #content_post {
   border: none;
   margin: 20px;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
@@ -223,7 +228,7 @@
   border-radius: 5px;
 }
 
-.comments button{
+.comments button {
   position: relative;
   transform: translateY(-7vh);
   border: none;
@@ -233,12 +238,12 @@
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
-.comments button:hover{
+.comments button:hover {
   background-color: var(--THIRD-COLOR);
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
 }
 
-#nb_comments{
+#nb_comments {
   position: absolute;
   right: 40px;
 }

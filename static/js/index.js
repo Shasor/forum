@@ -141,9 +141,9 @@ async function UpdateReaction(postId, reaction) {
 }
 
 // ╔════════════════════ search bar ════════════════════╗
-document.getElementById("search_bar").addEventListener("keypress", function(event){
-  if (event.key === "Enter"){
+document.getElementById("search_bar").addEventListener("keypress", function (event) {
+  if (event.key === "Enter") {
     event.preventDefault();
-    document.getElementById("SearchForm").submit()
+    document.getElementById("SearchForm").submit();
   }
 });
