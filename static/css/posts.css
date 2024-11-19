@@ -58,17 +58,21 @@
 }
 
 .sender{
+  position: relative;
   display: flex;
   flex-direction: row;
 }
 
 #user_name{
+  position: absolute;
+  left: 40px;
   margin-left: 10px;
   margin-top: 12px;
 }
 
 #post_category{
   margin-top: 2px;
+  position: relative;
 }
 
 #post_date{
