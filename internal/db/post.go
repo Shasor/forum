@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -87,6 +88,12 @@ func FetchPosts() []Post {
 		post.Dislikes = dislikes
 
 		post.Categories, _ = GetPostCategories(post.ID)
+
+		post.NbComments, err = NbCommentsFromPost(post.ID)
+		if err != nil {
+			post.NbComments = 0
+			fmt.Println("Error at fetching nb comments: ", err)
+		}
 
 		posts = append(posts, post)
 	}

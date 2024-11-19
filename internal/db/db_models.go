@@ -16,16 +16,17 @@ type Category struct {
 }
 
 type Post struct {
-	ID       int
+	ID         int
 	Categories []Category
-	Sender   User
-	ParentID int
-	Title    string
-	Content  string
-	Picture  string
-	Date     string
-	Likes    int
-	Dislikes int
+	Sender     User
+	ParentID   int
+	Title      string
+	Content    string
+	Picture    string
+	Date       string
+	Likes      int
+	Dislikes   int
+	NbComments int
 }
 
 type Reaction struct {
