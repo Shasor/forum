@@ -234,11 +234,12 @@ func FetchFollowPosts(senderID int) []Post {
                IFNULL(u.email, '') AS email,
                IFNULL(u.picture, 'default-profile.png') AS picture
         FROM posts p
-        JOIN categories c ON p.category = c.id
-        JOIN follows f ON c.id = f.category
+        JOIN post_category pc ON p.id = pc.post_id
+		JOIN follows f ON pc.category_id = f.category
         LEFT JOIN users u ON p.sender = u.id
         WHERE f.user = ?
-        ORDER BY p.id DESC;`
+		GROUP BY p.id
+        ORDER BY p.date DESC;`
 
 	rows, err := db.Query(query, senderID)
 	if err != nil {
