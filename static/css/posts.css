@@ -65,6 +65,12 @@
   color: rgb(122, 122, 122);
 }
 
+.avatar-post{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
 .post-header > div {
   padding: 5px;
 }
