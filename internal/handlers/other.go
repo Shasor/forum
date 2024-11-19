@@ -187,3 +187,42 @@ func capitalize(s string) string {
 	// Rejoindre les mots en une seule chaîne
 	return strings.Join(words, " ")
 }
+
+//Purge All prefix of a char
+func PurgePrefixChar(s string, charToRemove string) string{
+		// Convertir le rune en string pour pouvoir le comparer
+		charToRemoveStr := string(charToRemove)
+	
+		// Utiliser une boucle pour supprimer les caractères au début
+		for strings.HasPrefix(s, charToRemoveStr) {
+			s = s[1:]
+		}
+
+		return s
+}
+
+//Purge Hash and Space that shouldnt be there
+func PurgeHashAndSpace(s string) string{
+
+	for s[0] == '#' || s[0] ==' '{
+		s = PurgePrefixChar(s, "#")
+		s = PurgePrefixChar(s, " ")
+	}
+
+	newString := ""
+
+	for i:=0; i<len(s)-1;i++{
+		if (s[i] == '#' && s[i+1] == '#') || (s[i] == ' ' && s[i+1] == ' ') || (s[i] == ' ' && s[i+1] == '#') || (s[i] == '#' && s[i+1] == ' ')  {
+			continue
+		}else {
+			newString = newString + string(rune(s[i]))
+		}
+	}
+
+	if s[len(s)-1] != '#' || s[len(s)-1] != ' '{
+		newString = newString + string(rune(s[len(s)-1]))
+	}
+
+	return newString
+
+}

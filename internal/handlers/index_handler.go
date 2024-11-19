@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"forum/internal/db"
 	"net/http"
+	"strconv"
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -20,6 +21,12 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 
 		//--TO DO-- : Recharger la page avec la catégorie si cela correspond, ou par l'ensemble des catégories contenant la recherche "ima" affiche les catégories "image", "Fatima", ...
 		fmt.Println("Vous avez recherché : ", searchValue)
+		categorySearched, err := db.SelectCategoryByName(searchValue)
+		categoryID := strconv.Itoa(categorySearched.ID)
+		if err != nil{
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+		}
+		http.Redirect(w, r, "/?catID="+categoryID, http.StatusSeeOther)
 	}
 
 	if Resp.Broadcasted {

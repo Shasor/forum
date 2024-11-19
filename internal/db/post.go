@@ -10,8 +10,6 @@ func CreatePost(sender int, categoryName, title, content, picture, date string, 
 	db := GetDB()
 	defer db.Close()
 
-	// Create the category if it doesn't exist
-	_ = CreateCategory(categoryName)
 	category, _ := SelectCategoryByName(categoryName)
 
 	// Start a database transaction

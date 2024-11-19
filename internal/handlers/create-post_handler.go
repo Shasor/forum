@@ -82,6 +82,8 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		parentID = nil
 	}
 
+	category = PurgeHashAndSpace(category)
+
 	categories := strings.Split(category, "#")
 	postAlreadyCreated := false
 	for _, cat := range categories {
