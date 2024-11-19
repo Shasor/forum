@@ -5,13 +5,13 @@ import (
 	"net/http"
 )
 
-func ErrorsHandler(w http.ResponseWriter, r *http.Request, status int) {
+func ErrorsHandler(w http.ResponseWriter, r *http.Request, status int, msg string) {
 	w.WriteHeader(status)
 
 	data := ErrorPageData{
 		StatusCode:   status,
 		StatusText:   http.StatusText(status),
-		ErrorMessage: "An unexpected error has occurred",
+		ErrorMessage: msg,
 		ErrorDetails: "", // Vous pouvez ajouter des détails spécifiques ici si nécessaire
 	}
 

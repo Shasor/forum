@@ -65,6 +65,9 @@ func ImageToBase64(file multipart.File, header *multipart.FileHeader, is_pfp boo
 	}
 	// Check the file extension to see if it's a GIF
 	ext := filepath.Ext(header.Filename)
+	if ext != ".gif" && ext != ".jpg" && ext != ".png" && ext != ".jpeg" {
+		panic("Invalid file extension")
+	}
 	if ext == ".gif" {
 		// For GIFs, just read the entire file and base64 encode it
 		data, err := io.ReadAll(file)

@@ -16,24 +16,24 @@ func InitServer() {
 	}
 	var port = ":8080"
 	server := NewServer(port, 10*time.Second, 10*time.Second, 30*time.Second, 2*time.Second, 1<<20)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", recoverMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
-			handlers.ErrorsHandler(w, r, http.StatusNotFound)
+			handlers.ErrorsHandler(w, r, http.StatusNotFound, "The page you're looking for doesn't exist")
 		} else {
 			handlers.IndexHandler(w, r)
 		}
-	})
-	http.HandleFunc("/signup", handlers.SignupHandler)
-	http.HandleFunc("/login", handlers.LoginHandler)
-	http.HandleFunc("/create-post", handlers.CreatePostHandler)
-	http.HandleFunc("/react", handlers.ReactToPost)
-	http.HandleFunc("/follow", handlers.FollowHandler)
-	http.HandleFunc("/logout", handlers.LogoutHandler)
-	http.HandleFunc("/delete", handlers.DeleteHandler)
-	http.HandleFunc("/edit", handlers.EditProfileHandler)
+	}))
+	http.HandleFunc("/signup", recoverMiddleware(handlers.SignupHandler))
+	http.HandleFunc("/login", recoverMiddleware(handlers.LoginHandler))
+	http.HandleFunc("/create-post", recoverMiddleware(handlers.CreatePostHandler))
+	http.HandleFunc("/react", recoverMiddleware(handlers.ReactToPost))
+	http.HandleFunc("/follow", recoverMiddleware(handlers.FollowHandler))
+	http.HandleFunc("/logout", recoverMiddleware(handlers.LogoutHandler))
+	http.HandleFunc("/delete", recoverMiddleware(handlers.DeleteHandler))
+	http.HandleFunc("/edit", recoverMiddleware(handlers.EditProfileHandler))
 
 	fs := http.FileServer(http.Dir("static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	http.Handle("/static/", staticMiddleware(http.StripPrefix("/static/", fs)))
 	fmt.Printf("Starting server on http://localhost%s\n", port)
 	if err := server.ListenAndServe(); err != nil {
 		fmt.Printf("Error starting server: %v\n", err)
