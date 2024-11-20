@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"forum/internal/db"
-	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -40,7 +39,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		if header.Size > 0 {
 			base64image, err = ImageToBase64(file, header, false)
 			if err != nil {
-				Resp.Msg = append(Resp.Msg, err.Error())
+				panic(err)
 			}
 		}
 	}
@@ -71,10 +70,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		// If parent_id is provided, convert it to an integer
 		parentIDValue, err := strconv.Atoi(parentIDParam)
 		if err != nil {
-			log.Println("Invalid parent_id:", err)
-			Resp.Msg = append(Resp.Msg, "Invalid parent_id")
-			http.Redirect(w, r, "/", http.StatusSeeOther)
-			return
+			panic(err)
 		}
 		parentID = &parentIDValue // Set parent_id for a comment
 	} else {
@@ -86,15 +82,28 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	postAlreadyCreated := false
 	for _, cat := range categories {
 		if !db.CategoryExist(capitalize(cat)) {
-			db.CreateCategory(capitalize(cat))
+			err := db.CreateCategory(capitalize(cat))
+			if err != nil {
+				panic(err)
+			}
 		}
 		if !postAlreadyCreated {
 			_ = db.CreatePost(sender, cat, title, content, base64image, date, parentID)
 			postAlreadyCreated = true
 		}
-		category_cat, _ := db.SelectCategoryByName(capitalize(cat))
-		postID, _ := db.GetLastPostIDByUserID(sender)
-		db.LinkPostToCategory(postID, category_cat)
+		category_cat, err := db.SelectCategoryByName(capitalize(cat))
+		if err != nil {
+			panic(err)
+		}
+		var postID int
+		postID, err = db.GetLastPostIDByUserID(sender)
+		if err != nil {
+			panic(err)
+		}
+		err = db.LinkPostToCategory(postID, category_cat)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	Resp.Msg = append(Resp.Msg, "Your post has been successfully sent!")

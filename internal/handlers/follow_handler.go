@@ -26,8 +26,7 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 	// Vérifie si l'utilisateur suit déjà la catégorie
 	alreadyFollowing, err := db.AlreadyFollowingCategory(req.CategorieID, user.ID)
 	if err != nil {
-		http.Error(w, "Database error", http.StatusInternalServerError)
-		return
+		panic(err)
 	}
 
 	if alreadyFollowing {
@@ -39,8 +38,7 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err != nil {
-		http.Error(w, "Error updating follow status", http.StatusInternalServerError)
-		return
+		panic(err)
 	}
 	// Répond avec le nouvel état de suivi
 	json.NewEncoder(w).Encode(map[string]bool{
