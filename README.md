@@ -1,34 +1,43 @@
-# Projet Go : Système de Connexion et d'Inscription
+# Forum
 
-Ce projet est une application web de gestion de connexion et d'inscription, construite avec **Go**, **SQLite** pour la base de données, et utilisant **HTML/CSS** pour l'interface utilisateur. L'application permet aux utilisateurs de créer un compte, de se connecter et d'accéder à des pages protégées via la gestion des sessions.
+This project is a web-based login and registration application, built with **Go**, **SQLite** for the database, and using **HTML/CSS** for the user interface. The application allows users to create an account, log in and access protected pages via session management.
 
 ## Setting up and Run
 
-### Create an .env file in the root directory and define the following environmental variables:
+### Create an .env file <ins>in the root directory</ins> and define the following environmental variables:
 
-- "signingKeyForum": a sentence to encrypt cookies
+```bash
+$ echo signingKeyForum=a very strong key > .env
+```
 
 ### Run
 
 ```bash
-$ docker build -t forum .
-...
-$ docker run -p 8080:8080 forum:latest
-Starting server on http://localhost:8080
+$ make          # to build docker image and run* container
+$ make start    # to just start the docker container
+$ make delete   # to delete docker container and image
 ```
 
-## Fonctionnalités
+###### \*run = create and start a docker container
 
-- Création de compte avec hashage sécurisé des mots de passe.
-- Connexion avec vérification du mot de passe.
-- Gestion des sessions pour maintenir l'état de connexion des utilisateurs.
-- Déconnexion des utilisateurs.
-- Redirection des utilisateurs non connectés vers la page de connexion.
+## Features
 
-## Technologies Utilisées
+- Account creation with secure password hashing
+- Login with password verification
+- Session management to maintain user login status
+- User logout
+- Redirects users not logged in to the login page
+
+## Technologies used
 
 - **Go** (Golang)
-- **SQLite** pour la base de données
-- **HTML/CSS** pour l'interface utilisateur
-- **bcrypt** pour le hashage des mots de passe
-- **gorilla/sessions** pour la gestion des sessions
+- **SQLite** for the database
+- **HTML/CSS** for user interface
+- **bcrypt** for password hashing
+
+## Author(s)
+
+- [Clement NUTTENS](https://github.com/ClemNTTS)
+- [Antoine MORLAY](https://github.com/Yssnogood)
+- [Nathan SANNIER](https://github.com/Naofumi76)
+- [Adam GONÇALVES](https://github.com/Shasor) (aka [Shasor#3755](https://discordapp.com/users/282816260075683841))
