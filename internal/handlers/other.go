@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"forum/internal/db"
 	"image"
@@ -66,7 +67,11 @@ func ImageToBase64(file multipart.File, header *multipart.FileHeader, is_pfp boo
 	// Check the file extension to see if it's a GIF
 	ext := filepath.Ext(header.Filename)
 	if ext != ".gif" && ext != ".jpg" && ext != ".png" && ext != ".jpeg" {
-		panic("Invalid file extension")
+		return "", fmt.Errorf("invalid file extension: %s", ext)
+	}
+	// Check that the image does not exceed 20mb
+	if header.Size > 20000000 {
+		return "", errors.New("the image is over 20mb")
 	}
 	if ext == ".gif" {
 		// For GIFs, just read the entire file and base64 encode it
