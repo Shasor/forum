@@ -16,6 +16,17 @@ var signingKey = os.Getenv("signingKeyForum")
 
 // SetSession creates a session and stores it in a signed cookie
 func SetSession(w http.ResponseWriter, username string) {
+
+	usr, _ := db.SelectUserByUsername(username)
+
+	if connected, _ := db.IsUserConnected(usr.ID); connected {
+		Resp = Response{}
+		Resp.Msg = append(Resp.Msg, "You're already login in an other browser")
+		return
+	} else {
+		db.AddConnectedUser(usr.ID)
+	}
+
 	// Base64 encode the session data (in this case, just the username)
 	sessionData := base64.URLEncoding.EncodeToString([]byte(username))
 
@@ -40,6 +51,9 @@ func ClearSession(w http.ResponseWriter) {
 		MaxAge: -1,
 	}
 	http.SetCookie(w, &cookie)
+
+	usr, _ := db.SelectUserByUsername(cookie.Name)
+	db.DeleteConnectedUser(usr.ID)
 }
 
 // sign signs the session data using HMAC-SHA256

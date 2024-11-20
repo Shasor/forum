@@ -57,6 +57,10 @@ func GetDB() *sql.DB {
     		user INTEGER NOT NULL,
     		FOREIGN KEY (category) REFERENCES categories(id),
     		FOREIGN KEY (user) REFERENCES users(id)
+		); CREATE TABLE IF NOT EXISTS sessions(
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			connected_user INTEGER NOT NULL,
+			FOREIGN KEY (connected_user) REFERENCES users(id)
 )`
 
 	// Start a transaction
