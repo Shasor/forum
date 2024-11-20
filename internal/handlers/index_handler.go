@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"forum/internal/db"
 	"net/http"
 	"strconv"
@@ -19,8 +18,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		// Récupère la valeur de l'input `search_bar`
 		searchValue := r.FormValue("search_bar")
 
-		//--TO DO-- : Recharger la page avec la catégorie si cela correspond, ou par l'ensemble des catégories contenant la recherche "ima" affiche les catégories "image", "Fatima", ...
-		fmt.Println("Vous avez recherché : ", searchValue)
 		categorySearched, err := db.SelectCategoryByName(capitalize(searchValue))
 		categoryID := strconv.Itoa(categorySearched.ID)
 		if err != nil {
