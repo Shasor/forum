@@ -56,6 +56,23 @@ func GetFormGET(w http.ResponseWriter, r *http.Request) Get {
 		// fmt.Println("Redirect test", postStr)
 		get.PostID = 0
 	}
+	if postStr := r.URL.Query().Get("userID"); postStr != ""{
+		var err error
+		get.UserID, err = strconv.Atoi(postStr)
+		userExist := db.UserExist(get.UserID)
+		if !userExist{
+			Resp.Msg = append(Resp.Msg, "The user you are looking for doesn't exist !")
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+		}
+		get.Type = "user"
+		if err != nil{
+			get.UserID = 0
+		}
+	}else {
+		get.UserID = 0
+	}
+
+	fmt.Println("UserId selectionné : ", get.UserID)
 	return get
 }
 

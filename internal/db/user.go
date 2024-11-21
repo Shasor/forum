@@ -151,3 +151,16 @@ func GetUserFollows(id int) []Category {
 
 	return categories
 }
+
+func UserExist( id int) bool{
+
+	db := GetDB()
+	defer db.Close()
+
+	var exist bool
+	err := db.QueryRow("SELECT EXISTS( SELECT 1 FROM users WHERE id = ?)", id).Scan(&exist)
+	if err != nil {
+		return false
+	}
+	return true
+}

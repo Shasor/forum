@@ -28,6 +28,7 @@ type Get struct {
 	Type       string
 	CategoryID int
 	PostID     int
+	UserID     int
 }
 
 var (

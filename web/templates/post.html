@@ -1,12 +1,13 @@
 {{define "post"}}
 <div class="post">
   <div class="post-header">
+    
     <div class="sender">
     {{if .Sender.Picture }}
-    <img src="data:image/jpeg;base64,{{ .Sender.Picture }}" alt="Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px" />
+    <a href="?userID={{.Sender.ID}}"> <img src="data:image/jpeg;base64,{{ .Sender.Picture }}" alt="Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px"> </a>
     {{else}}
     <!-- If .user is not set, also show the default profile picture -->
-    <img src="static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px" />
+    <a href="?userID={{.Sender.ID}}"> <img src="static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px" /> </a>
     {{end}}
     <p id="user_name">{{.Sender.Username}}</p>
     </div>
@@ -15,6 +16,7 @@
     {{end}}
     <div class="date" id="post_date">{{.Date}}</div>
   </div>
+
   {{if .Title}}
   <div class="title">{{.Title}}</div>
   {{end}}
