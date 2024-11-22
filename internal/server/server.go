@@ -14,6 +14,9 @@ import (
 )
 
 func InitServer() {
+	if err := loadEnv(".env"); err != nil {
+		fmt.Printf("Error load .env: %v\n", err)
+	}
 	// Initialize the database
 	DB := db.GetDB()
 	defer DB.Close()
@@ -25,16 +28,16 @@ func InitServer() {
 	tlsConfig := security.LoadTLSConfig()
 
 	// Create the HTTP server
-	server := &http.Server{
-		Addr:              ":8080",
-		Handler:           mux,
-		MaxHeaderBytes:    1 << 20,
-		ReadTimeout:       10 * time.Second,
-		ReadHeaderTimeout: 10 * time.Second,
-		IdleTimeout:       30 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		TLSConfig:         tlsConfig,
-	}
+	server := NewServer(
+		":8080",
+		10*time.Second, //Read timeout
+		10*time.Second, //Write timeout
+		30*time.Second, //Idle timeout
+		10*time.Second, //Read header timeout
+		1<<20,          //Max header bytes
+	)
+	server.Handler = mux
+	server.TLSConfig = tlsConfig
 
 	// Start the server with HTTPS
 	fmt.Println("Server started at: https://localhost:8080")
