@@ -3,7 +3,10 @@ package server
 import (
 	"bufio"
 	"fmt"
-	"forum/internal/handlers"
+	"forum/internal/db"
+	"forum/internal/router"
+	"forum/internal/security"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -11,33 +14,31 @@ import (
 )
 
 func InitServer() {
-	if err := loadEnv(".env"); err != nil {
-		fmt.Printf("Error load .env: %v\n", err)
-	}
-	var port = ":8080"
-	server := NewServer(port, 10*time.Second, 10*time.Second, 30*time.Second, 2*time.Second, 1<<20)
-	http.HandleFunc("/", recoverMiddleware(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/" {
-			handlers.ErrorsHandler(w, r, http.StatusNotFound, "The page you're looking for doesn't exist")
-		} else {
-			handlers.IndexHandler(w, r)
-		}
-	}))
-	http.HandleFunc("/signup", recoverMiddleware(handlers.SignupHandler))
-	http.HandleFunc("/login", recoverMiddleware(handlers.LoginHandler))
-	http.HandleFunc("/create-post", recoverMiddleware(handlers.CreatePostHandler))
-	http.HandleFunc("/react", recoverMiddleware(handlers.ReactToPost))
-	http.HandleFunc("/follow", recoverMiddleware(handlers.FollowHandler))
-	http.HandleFunc("/logout", recoverMiddleware(handlers.LogoutHandler))
-	http.HandleFunc("/delete", recoverMiddleware(handlers.DeleteHandler))
-	http.HandleFunc("/edit", recoverMiddleware(handlers.EditProfileHandler))
+	// Initialize the database
+	DB := db.GetDB()
+	defer DB.Close()
 
-	fs := http.FileServer(http.Dir("static"))
-	http.Handle("/static/", staticMiddleware(http.StripPrefix("/static/", fs)))
-	fmt.Printf("Starting server on http://localhost%s\n", port)
-	if err := server.ListenAndServe(); err != nil {
-		fmt.Printf("Error starting server: %v\n", err)
+	// Set up routes
+	mux := router.SetupRoutes(DB)
+
+	// Load custom TLS configuration
+	tlsConfig := security.LoadTLSConfig()
+
+	// Create the HTTP server
+	server := &http.Server{
+		Addr:              ":8080",
+		Handler:           mux,
+		MaxHeaderBytes:    1 << 20,
+		ReadTimeout:       10 * time.Second,
+		ReadHeaderTimeout: 10 * time.Second,
+		IdleTimeout:       30 * time.Second,
+		WriteTimeout:      10 * time.Second,
+		TLSConfig:         tlsConfig,
 	}
+
+	// Start the server with HTTPS
+	fmt.Println("Server started at: https://localhost:8080")
+	log.Fatal(server.ListenAndServeTLS("certs/server.crt", "certs/server.key"))
 }
 
 func NewServer(port string, readTimeout, writeTimeout, idleTimeout, readHeaderTimeout time.Duration, maxHeaderBytes int) *http.Server {

@@ -1,5 +1,9 @@
 package handlers
 
+var (
+	Resp Response
+)
+
 type Response struct {
 	Msg         []string
 	Action      string
@@ -29,7 +33,3 @@ type Get struct {
 	CategoryID int
 	PostID     int
 }
-
-var (
-	Resp Response
-)
