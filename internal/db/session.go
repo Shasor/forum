@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func AddConnectedUser(userID int) error {
+func AddConnectedUser(userID int, sessionID string) error {
 	// Ouvrir la connexion à la base de données
 	db := GetDB()
 	defer db.Close()
@@ -17,14 +17,14 @@ func AddConnectedUser(userID int) error {
 	}
 
 	// Préparer la requête d'insertion
-	stmt, err := tx.Prepare("INSERT INTO sessions(connected_user) VALUES(?)")
+	stmt, err := tx.Prepare("INSERT INTO sessions(connected_user, uuid) VALUES(?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
 	// Exécuter l'insertion
-	_, err = stmt.Exec(userID)
+	_, err = stmt.Exec(userID, sessionID)
 	if err != nil {
 		tx.Rollback()
 		return errors.New("la session existe déjà")

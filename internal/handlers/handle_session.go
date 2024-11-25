@@ -4,19 +4,23 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
-	"fmt"
 	"forum/internal/db"
 	"net/http"
 	"os"
-	"strings"
 	"time"
+
+	"github.com/gofrs/uuid"
 )
 
 var signingKey = os.Getenv("signingKeyForum")
 
 // SetSession creates a session and stores it in a signed cookie
 func SetSession(w http.ResponseWriter, username string) {
-
+	sessionID, err := uuid.NewV4()
+	if err != nil {
+		http.Error(w, "Could not create session", http.StatusInternalServerError)
+		return
+	}
 	usr, _ := db.SelectUserByUsername(username)
 
 	if connected, _ := db.IsUserConnected(usr.ID); connected {
@@ -24,23 +28,18 @@ func SetSession(w http.ResponseWriter, username string) {
 		Resp.Msg = append(Resp.Msg, "You're already login in an other browser")
 		return
 	} else {
-		db.AddConnectedUser(usr.ID)
+		db.AddConnectedUser(usr.ID, sessionID.String())
 	}
-
-	// Base64 encode the session data (in this case, just the username)
-	sessionData := base64.URLEncoding.EncodeToString([]byte(username))
-
-	// Sign the session data
-	signedData := sign(sessionData)
 
 	// Create the cookie with the signed session data
 	cookie := http.Cookie{
 		Name:     "session_token",
-		Value:    signedData,
+		Value:    sessionID.String(),
 		Expires:  time.Now().Add(1 * time.Hour),
 		HttpOnly: true, // Cookie is not accessible via JavaScript for security
 		MaxAge:   int(1 * time.Hour),
 	}
+
 	http.SetCookie(w, &cookie)
 }
 
@@ -64,50 +63,42 @@ func sign(data string) string {
 	return data + "." + signature
 }
 
+// GetUserFromCookie retrieves a user object based on the session token in the cookie.
 func GetUserFromCookie(w http.ResponseWriter, r *http.Request) *db.User {
+	// Retrieve the session token from the cookie
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
+		// Cookie not found or invalid
 		return nil
 	}
 
-	parts := strings.Split(cookie.Value, ".")
-	if len(parts) != 2 {
-		fmt.Println("Invalid cookie format.")
-		ClearSession(w)
-		return nil
-	}
+	sessionUUID := cookie.Value
+	DB := db.GetDB()
+	defer DB.Close()
 
-	dataPart := parts[0]
-	signaturePart := parts[1]
-
-	// Recreate the HMAC signature for the data part
-	h := hmac.New(sha256.New, []byte(signingKey))
-	h.Write([]byte(dataPart))
-	expectedSignature := base64.URLEncoding.EncodeToString(h.Sum(nil))
-
-	// Decode the username from the data part
-	usernameBytes, err := base64.URLEncoding.DecodeString(dataPart)
+	// Query to find the user ID from the sessions table using the UUID
+	var userID int
+	err = DB.QueryRow(`SELECT connected_user FROM sessions WHERE uuid = ?`, sessionUUID).Scan(&userID)
 	if err != nil {
-		fmt.Println("Error decoding username:", err)
-		ClearSession(w)
+		// Session not found or other query error
 		return nil
 	}
-	username := string(usernameBytes)
 
-	// Fetch the user from the database
-	user, err := db.SelectUserByUsername(username)
+	// Query to fetch user details from the users table
+	var user db.User
+	err = DB.QueryRow(
+		`SELECT id, role, username, email, picture, password, created_at 
+		 FROM users 
+		 WHERE id = ?`, userID,
+	).Scan(
+		&user.ID, &user.Role, &user.Username, &user.Email, &user.Picture, &user.Password,
+	)
 	if err != nil {
-		ClearSession(w)
+		// User not found or query error
 		return nil
 	}
 
-	// Compare the expected signature with the actual signature in the cookie
-	if !hmac.Equal([]byte(signaturePart), []byte(expectedSignature)) {
-		fmt.Println("Invalid cookie signature.")
-		ClearSession(w)
-		return nil
-	}
-
+	// Return the populated user object
 	return &user
 }
 

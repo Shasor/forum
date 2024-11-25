@@ -60,6 +60,7 @@ func GetDB() *sql.DB {
 		); CREATE TABLE IF NOT EXISTS sessions(
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			connected_user INTEGER NOT NULL,
+			uuid STRING NOT NULL,
 			FOREIGN KEY (connected_user) REFERENCES users(id)
 )`
 
