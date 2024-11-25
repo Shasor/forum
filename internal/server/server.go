@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"forum/internal/api"
 )
 
 func InitServer() {
@@ -31,6 +32,7 @@ func InitServer() {
 	http.HandleFunc("/logout", recoverMiddleware(handlers.LogoutHandler))
 	http.HandleFunc("/delete", recoverMiddleware(handlers.DeleteHandler))
 	http.HandleFunc("/edit", recoverMiddleware(handlers.EditProfileHandler))
+	http.HandleFunc("/users/", recoverMiddleware(api.GetUserInfo))
 
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/static/", staticMiddleware(http.StripPrefix("/static/", fs)))
