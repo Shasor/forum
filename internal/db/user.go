@@ -43,6 +43,28 @@ func CreateUser(role, username, email, picture, password string) (*User, error) 
 	return &user, nil
 }
 
+func SelectUserByID(userID int) (User, error) {
+	db := GetDB()
+	defer db.Close()
+
+	var user User
+	err := db.QueryRow(`
+	SELECT u.id, u.role, u.username, u.email, u.picture, u.password
+	FROM users u
+	WHERE id = ?`,
+		userID).Scan(&user.ID, &user.Role, &user.Username, &user.Email, &user.Picture, &user.Password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return User{}, errors.New("user not found")
+		}
+		return User{}, err
+	}
+
+	user.Follows = GetUserFollows(user.ID)
+
+	return user, nil
+}
+
 func SelectUserByUsername(username string) (User, error) {
 	db := GetDB()
 	defer db.Close()
