@@ -22,17 +22,16 @@ func Parse(w http.ResponseWriter, data map[string]interface{}) {
 	if err != nil {
 		// Log the error for debugging
 		fmt.Println("Error parsing templates:", err)
-		http.Error(w, "Internal Server Error (Error parsing templates)", http.StatusInternalServerError)
-		return
+		panic(err)
 	}
 	// Execute the template with data, including user and posts
 	err = tmpl.Execute(w, data)
 	if err != nil {
 		// Log the error for debugging
 		fmt.Println("Error executing template:", err)
-		// Only call http.Error if nothing has been written to the response yet
+		// Only call panic() if nothing has been written to the response yet
 		if w.Header().Get("Content-Type") == "" {
-			http.Error(w, "Internal Server Error (Error executing template)", http.StatusInternalServerError)
+			panic(err)
 		}
 		return
 	}

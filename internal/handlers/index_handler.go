@@ -7,12 +7,10 @@ import (
 )
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
-
 	if r.Method == http.MethodPost {
 		err := r.ParseForm()
 		if err != nil {
-			http.Error(w, "Erreur dans la requête", http.StatusBadRequest)
-			return
+			panic(err)
 		}
 
 		// Récupère la valeur de l'input `search_bar`

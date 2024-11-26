@@ -9,14 +9,20 @@ import (
 
 func ReactToPost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost || !IsCookieValid(w, r) {
+		Resp = Response{Msg: []string{
+			map[bool]string{
+				true:  "Method not Allowed",
+				false: "You are not connected",
+			}[r.Method != http.MethodPost],
+		}}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	var reqBody ReactionRequest
 	err := json.NewDecoder(r.Body).Decode(&reqBody)
 	if err != nil {
-		http.Error(w, "Error decoding JSON", http.StatusBadRequest)
-		return
+		panic(err)
 	}
 
 	postID := reqBody.PostID
@@ -30,16 +36,14 @@ func ReactToPost(w http.ResponseWriter, r *http.Request) {
 	err = db.UpdatePostReaction(user.ID, postID, reaction)
 	if err != nil {
 		log.Println("Error saving reaction:", err)
-		http.Error(w, "Error saving reaction", http.StatusInternalServerError)
-		return
+		panic(err)
 	}
 
 	// Fetch updated counts
 	likes, dislikes, err := db.GetPostReactions(postID)
 	if err != nil {
-		http.Error(w, "Error fetching updated reactions", http.StatusInternalServerError)
 		log.Println("Error fetching updated reactions:", err)
-		return
+		panic(err)
 	}
 
 	// Send updated counts back as JSON response

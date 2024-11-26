@@ -72,3 +72,16 @@ func GetUserIDBySessionUUID(sessionUUID string) (int, error) {
 
 	return userID, nil
 }
+
+func GetUUIDByUserID(id int) (string, error) {
+	db := GetDB()
+	defer db.Close()
+
+	var uuid string
+	err := db.QueryRow(`SELECT uuid FROM sessions WHERE connected_user = ?`, id).Scan(&uuid)
+	if err != nil {
+		return "", err
+	}
+
+	return uuid, nil
+}

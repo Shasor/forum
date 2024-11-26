@@ -11,26 +11,26 @@ import (
 func SetSession(w http.ResponseWriter, username string) {
 	sessionUUID, err := uuid.NewV4()
 	if err != nil {
-		http.Error(w, "Could not create session", http.StatusInternalServerError)
-		return
+		panic(err)
 	}
 
 	// Fetch the user by username
 	user, err := db.SelectUserByUsername(username)
 	if err != nil {
-		http.Error(w, "User not found", http.StatusNotFound)
-		return
+		panic(err)
 	}
 
 	if connected, _ := db.IsUserConnected(user.ID); connected {
-		http.Error(w, "You're already logged in on another device", http.StatusBadRequest)
+		Resp.Msg = append(Resp.Msg, "You were already connected elsewhere")
+		id, _ := db.GetUUIDByUserID(user.ID)
+		db.DeleteConnectedUser(id)
+		SetSession(w, username)
 		return
 	}
 
 	err = db.AddConnectedUser(user.ID, sessionUUID.String())
 	if err != nil {
-		http.Error(w, "Error creating session", http.StatusInternalServerError)
-		return
+		panic(err)
 	}
 
 	cookie := http.Cookie{
@@ -46,14 +46,12 @@ func SetSession(w http.ResponseWriter, username string) {
 func ClearSession(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("session_token")
 	if err != nil {
-		http.Error(w, "No session found", http.StatusBadRequest)
-		return
+		panic(err)
 	}
 
 	err = db.DeleteConnectedUser(cookie.Value)
 	if err != nil {
-		http.Error(w, "Error clearing session", http.StatusInternalServerError)
-		return
+		panic(err)
 	}
 
 	cookie = &http.Cookie{
@@ -71,7 +69,6 @@ func GetUserFromCookie(w http.ResponseWriter, r *http.Request) *db.User {
 
 	userID, err := db.GetUserIDBySessionUUID(cookie.Value)
 	if err != nil {
-		http.Error(w, "Invalid session", http.StatusUnauthorized)
 		ClearSession(w, r)
 		return nil
 	}

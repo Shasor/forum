@@ -1,11 +1,11 @@
-package security
+package server
 
 import (
 	"crypto/tls"
 )
 
 // LoadTLSConfig sets up secure cipher suites and forces TLS 1.2 or higher.
-func LoadTLSConfig() *tls.Config {
+func loadTLSConfig() *tls.Config {
 	return &tls.Config{
 		MinVersion:               tls.VersionTLS12,
 		PreferServerCipherSuites: true,

@@ -1,6 +1,7 @@
-package security
+package middlewares
 
 import (
+	"forum/internal/handlers"
 	"net"
 	"net/http"
 	"sync"
@@ -17,7 +18,7 @@ type RateLimiter struct {
 }
 
 // NewRateLimiter creates a new RateLimiter
-func NewRateLimiter(limit int, refillRate time.Duration) *RateLimiter {
+func newRateLimiter(limit int, refillRate time.Duration) *RateLimiter {
 	return &RateLimiter{
 		limit:      limit,
 		refillRate: refillRate,
@@ -27,7 +28,7 @@ func NewRateLimiter(limit int, refillRate time.Duration) *RateLimiter {
 }
 
 // Allow checks if a request is allowed or rate-limited
-func (rl *RateLimiter) Allow() bool {
+func (rl *RateLimiter) allow() bool {
 	rl.mu.Lock()
 	defer rl.mu.Unlock()
 
@@ -74,7 +75,7 @@ func NewRateLimiterMap() *RateLimiterMap {
 }
 
 // GetRateLimiter retrieves or creates a rate limiter for the given IP address
-func (rlm *RateLimiterMap) GetRateLimiter(ip string) *RateLimiter {
+func (rlm *RateLimiterMap) getRateLimiter(ip string) *RateLimiter {
 	rlm.mu.Lock()
 	defer rlm.mu.Unlock()
 
@@ -82,7 +83,7 @@ func (rlm *RateLimiterMap) GetRateLimiter(ip string) *RateLimiter {
 	limiter, exists := rlm.clients[ip]
 	if !exists {
 		// Create a new rate limiter (e.g., 5 requests per second)
-		limiter = NewRateLimiter(5, time.Second)
+		limiter = newRateLimiter(5, time.Second)
 		rlm.clients[ip] = limiter
 	}
 
@@ -90,21 +91,20 @@ func (rlm *RateLimiterMap) GetRateLimiter(ip string) *RateLimiter {
 }
 
 // RateLimitMiddleware applies rate limiting based on the client's IP address
-func (rlm *RateLimiterMap) RateLimitMiddleware(next http.Handler) http.Handler {
+func (rlm *RateLimiterMap) RateLimitMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Get the client's IP address
 		ip, _, err := net.SplitHostPort(r.RemoteAddr)
 		if err != nil {
-			http.Error(w, "Invalid client IP", http.StatusInternalServerError)
-			return
+			panic(err)
 		}
 
 		// Get or create a rate limiter for this IP address
-		limiter := rlm.GetRateLimiter(ip)
+		limiter := rlm.getRateLimiter(ip)
 
 		// Check if the request is allowed
-		if !limiter.Allow() {
-			http.Error(w, "Too Many Requests", http.StatusTooManyRequests)
+		if !limiter.allow() {
+			handlers.ErrorsHandler(w, r, http.StatusTooManyRequests, "Too Many Requests")
 			return
 		}
 

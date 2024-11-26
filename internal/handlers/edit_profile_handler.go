@@ -10,7 +10,8 @@ import (
 func EditProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// Ensure the request is a POST request
 	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method.", http.StatusMethodNotAllowed)
+		Resp.Msg = append(Resp.Msg, "Method not Allowed")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -23,8 +24,7 @@ func EditProfileHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Parse the form to retrieve new data
 	if err := r.ParseMultipartForm(10 << 20); err != nil {
-		http.Error(w, "Error parsing form", http.StatusBadRequest)
-		return
+		panic(err)
 	}
 
 	// Retrieve values from the form
@@ -44,8 +44,7 @@ func EditProfileHandler(w http.ResponseWriter, r *http.Request) {
 		defer pictureFile.Close()
 		encodedPicture, err := ImageToBase64(pictureFile, header, true)
 		if err != nil {
-			http.Error(w, "Error encoding image", http.StatusInternalServerError)
-			return
+			panic(err)
 		}
 		updatedPicture = encodedPicture
 	}
@@ -53,8 +52,7 @@ func EditProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// Execute the database update
 	err := db.UpdateUserProfile(user.ID, updatedEmail, updatedPicture)
 	if err != nil {
-		http.Error(w, "Error updating profile", http.StatusInternalServerError)
-		return
+		panic(err)
 	}
 
 	// Redirect to the profile page or another appropriate page

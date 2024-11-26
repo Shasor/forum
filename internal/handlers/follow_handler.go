@@ -8,7 +8,8 @@ import (
 
 func FollowHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		Resp.Msg = append(Resp.Msg, "Method not Allowed")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -17,8 +18,7 @@ func FollowHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		http.Error(w, "Error decoding JSON", http.StatusBadRequest)
-		return
+		panic(err)
 	}
 
 	user := GetUserFromCookie(w, r)

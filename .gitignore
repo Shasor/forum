@@ -1,7 +1,5 @@
 internal/db/database.db
-.env
 
 tmp/
 certs/
 .air.toml
-guideline.md

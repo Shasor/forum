@@ -2,15 +2,7 @@
 
 This project is a web-based login and registration application, built with **Go**, **SQLite** for the database, and using **HTML/CSS** for the user interface. The application allows users to create an account, log in and access protected pages via session management.
 
-## Setting up and Run
-
-### Create an .env file <ins>in the root directory</ins> and define the following environmental variables:
-
-```bash
-$ echo signingKeyForum=a very strong key > .env
-```
-
-### Run
+## Run
 
 ```bash
 $ make          # to build docker image and run* container
