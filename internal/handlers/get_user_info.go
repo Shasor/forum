@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"forum/internal/db"
-	"strconv"
-	"net/http"
 	"encoding/json"
+	"forum/internal/db"
+	"net/http"
+	"strconv"
 )
 
 func GetUserInfo(w http.ResponseWriter, r *http.Request) {
@@ -18,17 +18,17 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, _ := db.SelectUserById(id)
-	userPosts := db.GetPostFromUserById(id)
 
-	userPostsReactions := db.FetchPostsReactions(id)
-	userPosts = postsUnion(userPosts, userPostsReactions)
+	// userPosts := db.GetPostFromUserById(id)
+	// userPostsReactions := db.FetchPostsReactions(id)
+	// userPosts = postsUnion(userPosts, userPostsReactions)
+	// db.SortPostsByDateDesc(userPosts)
 
-	db.SortPostsByDateDesc(userPosts)
-
+	userActivities := db.GetUserActivitiesByID(user.ID)
 
 	dataUser := map[string]interface{}{
-		"userData": user,
-		"userPosts": userPosts,
+		"userData":     user,
+		"userActivity": userActivities,
 		//"userLikedPosts": userLikedPosts,
 	}
 
@@ -38,12 +38,10 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(dataUser)
 }
 
-func postsUnion(posts1, posts2 []db.Post) []db.Post{
+func postsUnion(posts1, posts2 []db.Post) []db.Post {
 
-	for _, post := range posts2{
+	for _, post := range posts2 {
 		posts1 = append(posts1, post)
 	}
-
 	return posts1
-
 }

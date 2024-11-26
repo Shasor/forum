@@ -3,8 +3,8 @@ package db
 import (
 	"fmt"
 	"log"
-	"time"
 	"sort"
+	"time"
 )
 
 // CreatePost handles both posts and comments, depending on parentID
@@ -46,7 +46,12 @@ func CreatePost(sender int, categoryName, title, content, picture, date string, 
 	if err != nil {
 		return err
 	}
-
+	postID, _ := GetLastPostIDByUserID(sender)
+	if parentID == nil {
+		addActivity(sender, postID, "post")
+	} else {
+		addActivity(sender, postID, "comment")
+	}
 	return nil
 }
 
@@ -122,7 +127,7 @@ func FetchPostsLiked(senderID int) []Post {
         JOIN categories c ON p.category = c.id
         JOIN reactions r ON p.id = r.post
         LEFT JOIN users u ON p.sender = u.id
-        WHERE r.sender = ? AND r.value = 'LIKE';
+        WHERE r.user = ? AND r.value = 'LIKE';
     `
 
 	// Execute the query
@@ -214,6 +219,12 @@ func FetchComments() []Post {
 		post.Dislikes = dislikes
 
 		post.Categories, _ = GetPostCategories(post.ID)
+
+		post.NbComments, err = NbCommentsFromPost(post.ID)
+		if err != nil {
+			post.NbComments = 0
+			fmt.Println("Error at fetching nb comments: ", err)
+		}
 
 		if post.ParentID != 0 {
 			posts = append(posts, post)
@@ -322,7 +333,7 @@ func GetLastPostIDByUserID(id int) (int, error) {
 	return postID, nil
 }
 
-func GetPostFromUserById(id int) []Post{
+func GetPostFromUserById(id int) []Post {
 	db := GetDB()
 	defer db.Close()
 
@@ -399,7 +410,7 @@ func SortPostsByDateDesc(posts []Post) {
 	})
 }
 
-func FetchPostsReactions(senderID int) []Post {
+func FetchPostsReactions(userID int) []Post {
 	db := GetDB()
 	defer db.Close()
 
@@ -414,11 +425,11 @@ func FetchPostsReactions(senderID int) []Post {
         JOIN categories c ON p.category = c.id
         JOIN reactions r ON p.id = r.post
         LEFT JOIN users u ON p.sender = u.id
-        WHERE r.sender = ?;
+        WHERE r.user = ?;
     `
 
 	// Execute the query
-	rows, err := db.Query(query, senderID)
+	rows, err := db.Query(query, userID)
 	if err != nil {
 		log.Printf("Error executing query: %v", err)
 		return nil
@@ -452,7 +463,7 @@ func FetchPostsReactions(senderID int) []Post {
 
 		post.Categories, _ = GetPostCategories(post.ID)
 
-		post.Reactions = GetReactionsByPostID(post.ID)
+		// post.Reactions = GetReactionsByPostID(post.ID)
 
 		likedPosts = append(likedPosts, post)
 	}
@@ -465,4 +476,58 @@ func FetchPostsReactions(senderID int) []Post {
 
 	// Return the list of liked posts
 	return likedPosts
+}
+
+func SelectPostByID(postID int) (Post, error) {
+	db := GetDB()
+	defer db.Close()
+
+	query := `
+			SELECT p.id, p.sender, p.parent_id, p.title, p.content, p.picture, p.date,
+				   IFNULL(u.role, 'Deleted') AS role,
+				   IFNULL(u.username, 'Deleted User') AS username,
+				   IFNULL(u.email, '') AS email,
+				   IFNULL(u.picture, 'default-profile.png') AS picture
+			FROM posts p
+			LEFT JOIN users u ON p.sender = u.id
+			WHERE p.id = ?;`
+
+	rows, err := db.Query(query, postID)
+	if err != nil {
+		log.Printf("Error executing query: %v", err)
+		return Post{}, err
+	}
+	defer rows.Close()
+
+	var post Post
+	for rows.Next() {
+		err := rows.Scan(&post.ID, &post.Sender.ID, &post.ParentID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture)
+		if err != nil {
+			log.Printf("Error scanning row: %v", err)
+			continue
+		}
+
+		// Get post reactions
+		likes, dislikes, err := GetPostReactions(post.ID)
+		if err != nil {
+			log.Printf("Error fetching reactions: %v", err)
+			continue
+		}
+		post.Likes = likes
+		post.Dislikes = dislikes
+
+		post.Categories, _ = GetPostCategories(post.ID)
+
+		post.NbComments, err = NbCommentsFromPost(post.ID)
+		if err != nil {
+			post.NbComments = 0
+			fmt.Println("Error at fetching nb comments: ", err)
+		}
+
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Printf("Error during row iteration: %v", err)
+	}
+	return post, nil
 }

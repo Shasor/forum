@@ -49,7 +49,7 @@
         {{end}} 
         {{range $.comments}} 
           {{if and (eq .ParentID $ID) (eq $.GET.PostID $ID)}} 
-            {{template "post" .}} 
+            {{template "post" .}}
           {{end}} 
         {{end}} 
       {{end}} 

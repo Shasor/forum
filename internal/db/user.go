@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -64,12 +65,12 @@ func SelectUserByUsername(username string) (User, error) {
 	return user, nil
 }
 
-func SelectUserById(id int ) (User, error){
+func SelectUserById(id int) (User, error) {
 	db := GetDB()
 	defer db.Close()
 
 	var user User
-	err := db.QueryRow(`SELECT u.id, u.role, u.username,   u.email, u.picture
+	err := db.QueryRow(`SELECT u.id, u.role, u.username, u.email, u.picture
 	FROM users u
 	WHERE id = ?`,
 		id).Scan(&user.ID, &user.Role, &user.Username, &user.Email, &user.Picture)
@@ -172,7 +173,7 @@ func GetUserFollows(id int) []Category {
 	return categories
 }
 
-func UserExist( id int) bool{
+func UserExist(id int) bool {
 
 	db := GetDB()
 	defer db.Close()

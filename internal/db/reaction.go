@@ -10,11 +10,12 @@ func UpdatePostReaction(userID int, postID int, reaction string) error {
 	defer db.Close()
 
 	var existingReaction string
-	err := db.QueryRow(`SELECT value FROM reactions WHERE sender = ? AND post = ?`, userID, postID).Scan(&existingReaction)
+	err := db.QueryRow(`SELECT value FROM reactions WHERE user = ? AND post = ?`, userID, postID).Scan(&existingReaction)
 
 	if err == sql.ErrNoRows {
 		// No previous reaction: Insert new
-		_, err = db.Exec(`INSERT INTO reactions (sender, post, value) VALUES (?, ?, ?)`, userID, postID, reaction)
+		_, err = db.Exec(`INSERT INTO reactions (user, post, value) VALUES (?, ?, ?)`, userID, postID, reaction)
+		addActivity(userID, postID, reaction)
 		if err != nil {
 			log.Println("Error inserting new reaction:", err)
 			return err
@@ -25,14 +26,21 @@ func UpdatePostReaction(userID int, postID int, reaction string) error {
 	} else {
 		// If user reacted the same way before, delete it (toggle reaction off)
 		if existingReaction == reaction {
-			_, err = db.Exec(`DELETE FROM reactions WHERE sender = ? AND post = ?`, userID, postID)
+			_, err = db.Exec(`DELETE FROM reactions WHERE user = ? AND post = ?`, userID, postID)
+			delActivity(userID, postID, reaction)
 			if err != nil {
 				log.Println("Error removing existing reaction:", err)
 				return err
 			}
 		} else {
 			// Otherwise, update the reaction
-			_, err = db.Exec(`UPDATE reactions SET value = ? WHERE sender = ? AND post = ?`, reaction, userID, postID)
+			_, err = db.Exec(`UPDATE reactions SET value = ? WHERE user = ? AND post = ?`, reaction, userID, postID)
+			if reaction == "LIKE" {
+				delActivity(userID, postID, "DISLIKE")
+			} else {
+				delActivity(userID, postID, "LIKE")
+			}
+			addActivity(userID, postID, reaction)
 			if err != nil {
 				log.Println("Error updating existing reaction:", err)
 				return err
@@ -65,7 +73,7 @@ func GetReactionsByPostID(id int) []Reaction {
 	defer db.Close()
 
 	query := `
-        SELECT r.id, r.sender,  r.value
+        SELECT r.id, r.user,  r.value
         FROM reactions r 
         WHERE r.post = ?;`
 

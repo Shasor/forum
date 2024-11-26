@@ -1,7 +1,7 @@
 import { ShowError } from "./other.js";
 import { GetLogin, GetSignup } from "./auth.js";
 import { GetProfile, GetEditProfile, GetMyPosts, GetLikedPosts } from "./profile.js";
-import {GetOtherProfile} from "./otherProfile.js";
+import { GetOtherProfile } from "./otherProfile.js";
 
 // ╔════════════════════ avatar ════════════════════╗
 const avatar = document.getElementById("avatar");
@@ -45,14 +45,13 @@ liked_posts_link?.addEventListener("click", (event) => {
 });
 
 // ╔════════════════════ other profile access ════════════════════╗
-
 const other_profile_links = document.getElementsByClassName("sender");
 Array.from(other_profile_links).forEach((link) => {
+  console.log("test123");
   link.addEventListener("click", (event) => {
     GetOtherProfile();
   });
 });
-
 
 // ╔════════════════════ left bar ════════════════════╗
 const leftBar = document.querySelector(".left-bar");

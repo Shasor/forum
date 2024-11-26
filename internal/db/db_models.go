@@ -27,7 +27,6 @@ type Post struct {
 	Likes      int
 	Dislikes   int
 	NbComments int
-	Reactions []Reaction
 }
 
 type Reaction struct {
@@ -35,4 +34,11 @@ type Reaction struct {
 	Sender User
 	Post   Post
 	Value  string
+}
+
+type Activity struct {
+	ID     int
+	User   User
+	Post   Post
+	Action string
 }

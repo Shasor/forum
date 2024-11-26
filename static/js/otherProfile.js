@@ -1,22 +1,20 @@
 const div = document.querySelector(".posts-container");
 
-export function GetOtherProfile(){
-
-  
-  const username = event.target.getAttribute('user');
-  const usernameID = event.target.getAttribute('userID')
-  const userPicture = event.target.getAttribute('src')
-  const userRole = event.target.getAttribute('userRole')
+export function GetOtherProfile() {
+  const username = event.target.getAttribute("user");
+  const usernameID = event.target.getAttribute("userID");
+  const userPicture = event.target.getAttribute("src");
+  const userRole = event.target.getAttribute("userRole");
   //console.log('Nom d\'utilisateur récupéré :', username);
   //console.log('ID utilisateur : ', usernameID );
   //console.log(getUserInfo(usernameID));
 
-    if (!div){
-        console.error("Error: .posts-container");
-        return;
-    }
+  if (!div) {
+    console.error("Error: .posts-container");
+    return;
+  }
 
-    div.innerHTML = `
+  div.innerHTML = `
     <header>
       <h1>Profile of ${username}</h1>
     </header>
@@ -35,120 +33,96 @@ export function GetOtherProfile(){
   getUserInfo(usernameID);
 }
 
-
 // Fonction pour récupérer les informations d'un utilisateur
 async function getUserInfo(userId) {
   try {
     // Envoi de la requête GET avec l'ID de l'utilisateur
     const response = await fetch(`http://localhost:8080/users/${userId}`, {
-      method: 'GET', // Méthode GET pour récupérer les données
+      method: "GET", // Méthode GET pour récupérer les données
       headers: {
-        'Content-Type': 'application/json', // Type de contenu JSON
+        "Content-Type": "application/json", // Type de contenu JSON
       },
     });
 
     // Si la réponse est ok, on la transforme en JSON
     if (response.ok) {
       const data = await response.json();
-      console.log('Informations utilisateur :', data);
-      console.log('Informations utilisateur Posts :', data.userPosts);
+      console.log("Informations utilisateur :", data);
+      console.log("Informations utilisateur Posts :", data.userActivity);
       //console.log('Informations utilisateur Liked Posts :', data.userLikedPosts);
-      displayPosts(data.userData, data.userPosts)
+      displayPosts(data.userData, data.userActivity);
     } else {
-      console.error('Erreur de récupération des données:', response.status);
+      console.error("Erreur de récupération des données:", response.status);
     }
   } catch (error) {
-    console.error('Erreur lors de la requête :', error);
+    console.error("Erreur lors de la requête :", error);
   }
 }
 
-async function displayPosts(userdata, posts) {
+async function displayPosts(userdata, userActivity) {
+  console.log(userActivity.length);
+  console.log("Info user data : ", userdata);
 
-  console.log(posts.length);
-  console.log('Info user data : ', userdata);
-  
-  console.log('Info user data username : ', userdata.Username);
-  const container = document.getElementById('posts-content');
+  console.log("Info user data username : ", userdata.Username);
+  const container = document.getElementById("posts-content");
 
   console.log(container);
 
-  for (let i = 0; i < posts.length; i++) {
-
-    
+  for (let i = 0; i < userActivity.length; i++) {
     //Check if the post has multiples categories or not
-    let categoriesHTML = '';
-    if(posts[i].Categories){
-      for (let k = 0; k < posts[i].Categories.length; k++) {
-        categoriesHTML += `<a href="/?catID=${posts[i].Categories[k].ID}">#${posts[i].Categories[k].Name}</a>`;
+    let categoriesHTML = "";
+    if (userActivity[i].Categories) {
+      for (let k = 0; k < userActivity[i].Categories.length; k++) {
+        categoriesHTML += `<a href="/?catID=${userActivity[i].Post.Categories[k].ID}">#${userActivity[i].Post.Categories[k].Name}</a>`;
       }
     }
 
     let typeHTML;
-    if (posts[i].ParentID === 0) {
-
-      if (posts[i].Sender.Username === userdata.Username) {
-        // L'utilisateur a posté
-        typeHTML = `<p>${posts[i].Sender.Username} posted on ${categoriesHTML}:</p>`;
-      } else {
-        // L'utilisateur a liké
-
-        for (let l = 0; l < posts[i].Reactions.length; l++){
-          if(posts[i].Reactions[l].Value === "LIKE"){
-            typeHTML = `<p>${userdata.Username} liked:</p>`;
-          }else {
-            typeHTML = `<p>${userdata.Username} disliked:</p>`;
-          }
-        }
-      }
-    } else {
-      // L'utilisateur a commenté
-      if (posts[i].Sender.Username === userdata.Username) {
-        // L'utilisateur a posté
-        typeHTML = `<p>${userdata.Username} commented to someone post here : <a href="/?postID=${posts[i].ParentID}"> ${posts[i].Title} #${posts[i].Categories[0].Name} </a>  :</p>`;
-      } else {
-        
-        for (let l = 0; l < posts[i].Reactions.length; l++){
-          if(posts[i].Reactions[l].Value === "LIKE"){
-            typeHTML = `<p>${userdata.Username} liked:</p>`;
-          }else {
-            typeHTML = `<p>${userdata.Username} disliked:</p>`;
-          }
-        }
-      }
+    if (userActivity[i].Action === "post") {
+      typeHTML = `<p>${userActivity[i].Post.Sender.Username} posted on ${categoriesHTML}:</p>`;
     }
-    
-  // Set the correct Avatar on the post
-  let avatarHTML;
-  if (posts[i].Sender.Picture) {
-    avatarHTML = `<img src="data:image/jpeg;base64,${posts[i].Sender.Picture}" alt="Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px" />`;
-  } else {
-    avatarHTML = `<img src="static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px" />`;
-  }
+    if (userActivity[i].Action === "comment") {
+      typeHTML = `<p>${userdata.Username} commented to someone post <a href="/?postID=${userActivity[i].Post.ParentID}">here</a>:</p>`;
+    }
+    if (userActivity[i].Action === "LIKE") {
+      typeHTML = `<p>${userdata.Username} liked:</p>`;
+    }
+    if (userActivity[i].Action === "DISLIKE") {
+      typeHTML = `<p>${userdata.Username} disliked:</p>`;
+    }
 
-  // Check if a picture is present inside the post
-  let pictureHTML;
-  if (posts[i].Picture){
-    pictureHTML = `<div class="post-image"><img src="data:image/jpeg;base64,${posts[i].Picture}" /></div>`;
-  } else {
-    pictureHTML =``;
-  }
+    // Set the correct Avatar on the post
+    let avatarHTML;
+    if (userActivity[i].Post.Sender.Picture) {
+      avatarHTML = `<img src="data:image/jpeg;base64,${userActivity[i].Post.Sender.Picture}" alt="Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px" />`;
+    } else {
+      avatarHTML = `<img src="static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar-post" style="max-width: 150px; max-height: 150px" />`;
+    }
 
-    const postDiv = document.createElement('div');
-    postDiv.className = 'post';
+    // Check if a picture is present inside the post
+    let pictureHTML;
+    if (userActivity[i].Post.Picture) {
+      pictureHTML = `<div class="post-image"><img src="data:image/jpeg;base64,${userActivity[i].Post.Picture}" /></div>`;
+    } else {
+      pictureHTML = ``;
+    }
 
-    postDiv.innerHTML= `
+    const postDiv = document.createElement("div");
+    postDiv.className = "post";
+
+    postDiv.innerHTML = `
     ${typeHTML}
       <div class="post-header"> 
         <div class="sender"> 
           ${avatarHTML}
-          <p id = "user_name"   > ${posts[i].Sender.Username} </p>
+          <p id = "user_name"   > ${userActivity[i].Post.Sender.Username} </p>
         </div>
-        <div class="category"><a href="?catID=${posts[i].Categories[0].ID}"> ${posts[i].Categories[0].Name} </a></div>
-        <div class="date">${posts[i].Date}</div>
+        <div class="category"><a href="?catID=${userActivity[i].Post.Categories[0].ID}"> ${userActivity[i].Post.Categories[0].Name} </a></div>
+        <div class="date">${userActivity[i].Post.Date}</div>
       </div>
-      <div class="title">${posts[i].Title}</div>
+      <div class="title">${userActivity[i].Post.Title}</div>
       <div class="post-content">
-        <div class="content">${posts[i].Content}</div>
+        <div class="content">${userActivity[i].Post.Content}</div>
         ${pictureHTML}
         </div>
       <div class="reactions">
@@ -157,11 +131,11 @@ async function displayPosts(userdata, posts) {
         </div>
         <div class="reaction">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" /></svg>
-          <span class="like-count" >${posts[i].Likes}</span>
+          <span class="like-count" >${userActivity[i].Post.Likes}</span>
         </div>
         <div class="reaction">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M240-840h440v520L400-40l-50-50q-7-7-11.5-19t-4.5-23v-14l44-174H120q-32 0-56-24t-24-56v-80q0-7 2-15t4-15l120-282q9-20 30-34t44-14Zm360 80H240L120-480v80h360l-54 220 174-174v-406Zm0 406v-406 406Zm80 34v-80h120v-360H680v-80h200v520H680Z" /></svg>
-          <span class="dislike-count" >${posts[i].Dislikes}</span>
+          <span class="dislike-count" >${userActivity[i].Post.Dislikes}</span>
         </div>
         <div class="reaction">
           <button class="reaction-button" id="comments">
