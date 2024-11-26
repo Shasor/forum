@@ -1,4 +1,4 @@
-package api
+package handlers
 
 import (
 	"forum/internal/db"
@@ -12,14 +12,18 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 	idStr := r.URL.Path[len("/users/"):]
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		http.Error(w, "ID utilisateur invalide", http.StatusBadRequest)
+		Resp.Msg = append(Resp.Msg, "ID utilisateur invalide")
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
 	user, _ := db.SelectUserById(id)
 	userPosts := db.GetPostFromUserById(id)
-	userLikedPosts := db.FetchPostsLiked(id)
-	userPosts = postsUnion(userPosts, userLikedPosts)
+
+	userPostsReactions := db.FetchPostsReactions(id)
+	userPosts = postsUnion(userPosts, userPostsReactions)
+
+	db.SortPostsByDateDesc(userPosts)
 
 
 	dataUser := map[string]interface{}{

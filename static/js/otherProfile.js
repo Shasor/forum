@@ -82,23 +82,38 @@ async function displayPosts(userdata, posts) {
         categoriesHTML += `<a href="/?catID=${posts[i].Categories[k].ID}">#${posts[i].Categories[k].Name}</a>`;
       }
     }
+
     let typeHTML;
     if (posts[i].ParentID === 0) {
+
       if (posts[i].Sender.Username === userdata.Username) {
         // L'utilisateur a posté
         typeHTML = `<p>${posts[i].Sender.Username} posted on ${categoriesHTML}:</p>`;
       } else {
         // L'utilisateur a liké
-        typeHTML = `<p>${userdata.Username} liked:</p>`;
+
+        for (let l = 0; l < posts[i].Reactions.length; l++){
+          if(posts[i].Reactions[l].Value === "LIKE"){
+            typeHTML = `<p>${userdata.Username} liked:</p>`;
+          }else {
+            typeHTML = `<p>${userdata.Username} disliked:</p>`;
+          }
+        }
       }
     } else {
       // L'utilisateur a commenté
       if (posts[i].Sender.Username === userdata.Username) {
         // L'utilisateur a posté
-        typeHTML = `<p>${userdata.Username} commented on <a href="/?postID=${posts[i].ParentID}"> ${posts[i].Title} #${posts[i].Categories[0].Name} </a>  :</p>`;
+        typeHTML = `<p>${userdata.Username} commented to someone post here : <a href="/?postID=${posts[i].ParentID}"> ${posts[i].Title} #${posts[i].Categories[0].Name} </a>  :</p>`;
       } else {
-        // L'utilisateur a liké
-        typeHTML = `<p>${userdata.Username} liked: </p>`;
+        
+        for (let l = 0; l < posts[i].Reactions.length; l++){
+          if(posts[i].Reactions[l].Value === "LIKE"){
+            typeHTML = `<p>${userdata.Username} liked:</p>`;
+          }else {
+            typeHTML = `<p>${userdata.Username} disliked:</p>`;
+          }
+        }
       }
     }
     

@@ -27,6 +27,7 @@ type Post struct {
 	Likes      int
 	Dislikes   int
 	NbComments int
+	Reactions []Reaction
 }
 
 type Reaction struct {

@@ -59,3 +59,47 @@ func GetPostReactions(postID int) (int, int, error) {
 
 	return likes, dislikes, nil
 }
+
+func GetReactionsByPostID(id int) []Reaction {
+	db := GetDB()
+	defer db.Close()
+
+	query := `
+        SELECT r.id, r.sender,  r.value
+        FROM reactions r 
+        WHERE r.post = ?;`
+
+	// Execute the query
+	rows, err := db.Query(query, id)
+	if err != nil {
+		log.Printf("Error executing query: %v", err)
+		return nil
+	}
+	defer rows.Close()
+
+	// Slice to hold the posts
+	var reactions []Reaction
+
+	for rows.Next() {
+		var reaction Reaction
+		var senderID int
+		// Scan each row's values, including placeholders for missing user info
+		if err := rows.Scan(&reaction.ID, &senderID, &reaction.Value); err != nil {
+			log.Printf("Error scanning row: %v", err)
+			return nil
+		}
+
+		reaction.Sender, _ = SelectUserById(senderID)
+
+		reactions = append(reactions, reaction)
+	}
+
+	// Check for errors encountered during iteration
+	if err := rows.Err(); err != nil {
+		log.Printf("Error during row iteration: %v", err)
+		return nil
+	}
+
+	// Return the list of liked posts
+	return reactions
+}
