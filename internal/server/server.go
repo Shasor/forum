@@ -25,6 +25,7 @@ func InitServer() {
 	server.Handle("/logout", handlers.LogoutHandler)
 	server.Handle("/delete", handlers.DeleteHandler)
 	server.Handle("/edit", handlers.EditProfileHandler)
+	server.Handle("/users", handlers.GetUserInfo)
 
 	server.Use(middlewares.NotFoundMiddleware)
 	server.Use(middlewares.RecoverMiddleware)

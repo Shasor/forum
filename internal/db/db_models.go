@@ -35,3 +35,10 @@ type Reaction struct {
 	Post   Post
 	Value  string
 }
+
+type Activity struct {
+	ID     int
+	User   User
+	Post   Post
+	Action string
+}

@@ -12,7 +12,6 @@ FROM alpine:latest
 RUN apk update && apk add --no-cache sqlite
 WORKDIR /root/
 COPY --from=builder /app/main .
-COPY --from=builder /app/.env .
 COPY --from=builder /app/internal/db internal/db
 COPY --from=builder /app/static static/
 COPY --from=builder /app/web web/

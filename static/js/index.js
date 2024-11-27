@@ -1,6 +1,7 @@
 import { ShowError } from "./other.js";
 import { GetLogin, GetSignup } from "./auth.js";
 import { GetProfile, GetEditProfile, GetMyPosts, GetLikedPosts } from "./profile.js";
+import { GetOtherProfile } from "./otherProfile.js";
 
 // ╔════════════════════ avatar ════════════════════╗
 const avatar = document.getElementById("avatar");
@@ -40,8 +41,15 @@ posts_link?.addEventListener("click", (event) => {
 
 const liked_posts_link = document.getElementById("header-profile-liked");
 liked_posts_link?.addEventListener("click", (event) => {
-  event.preventDefault();
   GetLikedPosts();
+});
+
+// ╔════════════════════ other profile access ════════════════════╗
+const other_profile_links = document.getElementsByClassName("sender");
+Array.from(other_profile_links).forEach((link) => {
+  link.addEventListener("click", (event) => {
+    GetOtherProfile();
+  });
 });
 
 // ╔════════════════════ left bar ════════════════════╗

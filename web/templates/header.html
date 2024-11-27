@@ -1,33 +1,31 @@
 {{define "header"}}
 <header class="header">
   <div id="profile">
-    {{if .user}}
-      {{if .user.Picture}}
-        <!-- Use the base64-encoded user picture -->
-        <img src="data:image/jpeg;base64,{{ .user.Picture }}" alt="Profile Picture" id="avatar" style="max-width: 150px; max-height: 150px" />
-      {{else}}
-        <!-- If .user exists but .user.Picture is missing, use the default profile picture -->
-        <img src="static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar" style="max-width: 150px; max-height: 150px" />
-      {{end}}
+    {{if .user}} {{if .user.Picture}}
+    <!-- Use the base64-encoded user picture -->
+    <img src="data:image/jpeg;base64,{{ .user.Picture }}" alt="Profile Picture" id="avatar" style="max-width: 150px; max-height: 150px" />
     {{else}}
-      <!-- If .user is not set, also show the default profile picture -->
-      <img src="static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar" style="max-width: 150px; max-height: 150px" />
+    <!-- If .user exists but .user.Picture is missing, use the default profile picture -->
+    <img src="/static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar" style="max-width: 150px; max-height: 150px" />
+    {{end}} {{else}}
+    <!-- If .user is not set, also show the default profile picture -->
+    <img src="/static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar" style="max-width: 150px; max-height: 150px" />
     {{end}}
-    
+
     <div id="popup">
       {{if .user}}
-        <p>Vous êtes connecté !</p>
+      <p>Vous êtes connecté !</p>
       {{end}}
       <nav>
         <ul>
           {{if .user}}
-            <li><a href="#profile" id="header-profile-link">Voir mon profil</a></li>
-            <form method="post" action="/logout">
-              <li><button type="submit">Se déconnecter</button></li>
-            </form>
+          <li><a href="#profile" id="header-profile-link">Voir mon profil</a></li>
+          <form method="post" action="/logout">
+            <li><button type="submit">Se déconnecter</button></li>
+          </form>
           {{else}}
-            <li><a href="#" id="header-login-link">Se connecter</a></li>
-            <li><a href="#" id="header-signup-link">Créer un compte</a></li>
+          <li><a href="#" id="header-login-link">Se connecter</a></li>
+          <li><a href="#" id="header-signup-link">Créer un compte</a></li>
           {{end}}
         </ul>
       </nav>

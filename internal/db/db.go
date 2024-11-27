@@ -46,10 +46,10 @@ func GetDB() *sql.DB {
             FOREIGN KEY (category_id) REFERENCES categories(id)
 		); CREATE TABLE IF NOT EXISTS reactions (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
-			sender INTEGER NOT NULL,
+			user INTEGER NOT NULL,
 			post INTEGER NOT NULL,
 			value TEXT NOT NULL,
-			FOREIGN KEY (sender) REFERENCES users(id),
+			FOREIGN KEY (user) REFERENCES users(id),
 			FOREIGN KEY (post) REFERENCES posts(id)
 		); CREATE TABLE IF NOT EXISTS follows (
     		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,12 +57,19 @@ func GetDB() *sql.DB {
     		user INTEGER NOT NULL,
     		FOREIGN KEY (category) REFERENCES categories(id),
     		FOREIGN KEY (user) REFERENCES users(id)
-		); CREATE TABLE IF NOT EXISTS sessions(
+		); CREATE TABLE IF NOT EXISTS sessions (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			connected_user INTEGER NOT NULL,
 			uuid STRING NOT NULL,
 			FOREIGN KEY (connected_user) REFERENCES users(id)
-)`
+		); CREATE TABLE IF NOT EXISTS activity (
+    		id INTEGER PRIMARY KEY AUTOINCREMENT,
+    		user INTEGER NOT NULL,
+    		post INTEGER NOT NULL,
+    		action TEXT NOT NULL,
+    		FOREIGN KEY (user) REFERENCES users(id),
+    		FOREIGN KEY (post) REFERENCES posts(id)
+		)`
 
 	// Start a transaction
 	tx, err := db.Begin()

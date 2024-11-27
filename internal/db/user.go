@@ -87,6 +87,27 @@ func SelectUserByUsername(username string) (User, error) {
 	return user, nil
 }
 
+func SelectUserById(id int) (User, error) {
+	db := GetDB()
+	defer db.Close()
+
+	var user User
+	err := db.QueryRow(`SELECT u.id, u.role, u.username, u.email, u.picture
+	FROM users u
+	WHERE id = ?`,
+		id).Scan(&user.ID, &user.Role, &user.Username, &user.Email, &user.Picture)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return User{}, errors.New("user not found")
+		}
+		return User{}, err
+	}
+
+	user.Follows = GetUserFollows(user.ID)
+
+	return user, nil
+}
+
 func DeleteUserByUsername(username string) error {
 	db := GetDB()
 	defer db.Close()
@@ -172,4 +193,17 @@ func GetUserFollows(id int) []Category {
 	}
 
 	return categories
+}
+
+func UserExist(id int) bool {
+
+	db := GetDB()
+	defer db.Close()
+
+	var exist bool
+	err := db.QueryRow("SELECT EXISTS( SELECT 1 FROM users WHERE id = ?)", id).Scan(&exist)
+	if err != nil {
+		return false
+	}
+	return true
 }
