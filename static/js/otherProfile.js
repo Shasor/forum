@@ -71,15 +71,15 @@ async function displayPosts(userdata, userActivity) {
   for (let i = 0; i < userActivity.length; i++) {
     //Check if the post has multiples categories or not
     let categoriesHTML = "";
-    if (userActivity[i].Categories) {
-      for (let k = 0; k < userActivity[i].Categories.length; k++) {
+    if (userActivity[i].Post.Categories) {
+      for (let k = 0; k < userActivity[i].Post.Categories.length; k++) {
         categoriesHTML += `<a href="/?catID=${userActivity[i].Post.Categories[k].ID}">#${userActivity[i].Post.Categories[k].Name}</a>`;
       }
     }
 
     let typeHTML;
     if (userActivity[i].Action === "post") {
-      typeHTML = `<p>${userActivity[i].Post.Sender.Username} posted on ${categoriesHTML}:</p>`;
+      typeHTML = `<p>${userActivity[i].Post.Sender.Username} posted on ${categoriesHTML} :</p>`;
     }
     if (userActivity[i].Action === "comment") {
       typeHTML = `<p>${userdata.Username} commented to someone post <a href="/?postID=${userActivity[i].Post.ParentID}">here</a>:</p>`;
