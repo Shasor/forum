@@ -3,6 +3,7 @@ package handlers
 import (
 	"forum/internal/db"
 	"net/http"
+	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -21,7 +22,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 
 	Resp = Response{}
 	email := r.FormValue("email")
-	username := r.FormValue("username")
+	username := strings.TrimSpace(r.FormValue("username"))
 	password := r.FormValue("password")
 	if email != "" && username != "" && password != "" {
 		password, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

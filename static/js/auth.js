@@ -42,9 +42,9 @@ export function GetSignup(formValue) {
         <buttons id="close">x</buttons>
         <form action="/signup" method="post">
             <label for="email">Email</label>
-            <input type="email" id="email" name="email" required autocomplete="email" ${formValue.email}">
+            <input type="email" id="email" name="email" required autocomplete="email" ${formValue.email}>
             <label for="username">Nom d'utilisateur</label>
-            <input type="text" id="username" maxlength="15" name="username" required autocomplete="username" ${formValue.username}">
+            <input type="text" id="username" maxlength="15" name="username" required autocomplete="username" ${formValue.username}>
             <label for="password">Mot de passe</label>
             <input type="password" id="password" name="password" required autocomplete="new-password">
             <button type="submit">S'inscrire</button>

@@ -8,8 +8,8 @@
     var actionString = "{{.resp.Action}}";
     var actionName = actionString.replace(/[();]/g, "");
     var formValue = {
-      username: '{{if .resp.Form.Username}} value="{{.resp.Form.Username}} {{end}}"',
-      email: '{{if .resp.Form.Email}} value="{{.resp.Form.Email}} {{end}}"',
+      username: '{{if .resp.Form.Username}}value="{{.resp.Form.Username}}"{{end}}',
+      email: '{{if .resp.Form.Email}}value="{{.resp.Form.Email}}"{{end}}',
     };
     if (typeof window[actionName] === "function") {
       window[actionName](formValue);

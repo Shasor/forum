@@ -21,14 +21,14 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userId, _ := strconv.Atoi(data["userId"]) // to do: error handle
-	user, _ := db.SelectUserById(userId)
+	otherID, _ := strconv.Atoi(data["otherID"]) // to do: error handle
+	other, _ := db.SelectUserById(otherID)
 
-	userActivities := db.GetUserActivitiesByID(user.ID)
+	otherActivities := db.GetUserActivitiesByID(other.ID)
 
 	dataUser := map[string]interface{}{
-		"userData":     user,
-		"userActivity": userActivities,
+		"otherData":     other,
+		"otherActivity": otherActivities,
 	}
 
 	jsonData, err := json.Marshal(dataUser)

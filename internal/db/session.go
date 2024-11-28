@@ -56,7 +56,6 @@ func DeleteConnectedUser(sessionUUID string) error {
 		log.Printf("Error when deleting session: %v", err)
 		return err
 	}
-
 	return nil
 }
 

@@ -8,7 +8,7 @@
       <!-- If .user is not set, also show the default profile picture -->
       <img src="/static/assets/img/default_profile_picture.png" alt="Default Profile Picture" id="avatar-post" user="{{.post.Sender.Username}}" userID="{{.post.Sender.ID}}" style="max-width: 150px; max-height: 150px" />
       {{end}}
-      <p id="user_name" user="{{.post.Sender.Username}}" userID="{{.post.Sender.ID}}" userRole="{{.post.Sender.Role}}" src="data:image/jpeg;base64,{{ .post.Sender.Picture }}">{{.post.Sender.Username}}</p>
+      <p id="user_name" user="{{.post.Sender.Username}}" other_id="{{.post.Sender.ID}}" user_role="{{if .user}}{{.user.Role}}{{end}}" src="data:image/jpeg;base64,{{ .post.Sender.Picture }}">{{.post.Sender.Username}}</p>
     </div>
     {{if (index .post.Categories 0).ID}}
     <div class="category" id="post_category"><a href="?catID={{(index .post.Categories 0).ID }}">{{ (index .post.Categories 0).Name }}</a></div>

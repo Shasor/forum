@@ -207,3 +207,17 @@ func UserExist(id int) bool {
 	}
 	return true
 }
+
+func UpdateUserRole(id int, role string) error {
+	db := GetDB()
+	defer db.Close()
+
+	query := `
+		UPDATE users SET role = ? WHERE id = ?;
+	`
+	_, err := db.Exec(query, role, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

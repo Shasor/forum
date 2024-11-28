@@ -90,7 +90,7 @@ func ImageToBase64(file multipart.File, header *multipart.FileHeader, is_pfp boo
 	var resizedImg image.Image
 	// Resize the image (optional, depends on your requirements)
 	if is_pfp {
-		resizedImg = resizeImage(img, 256, 256)
+		resizedImg = resizeImage(img, 500, 500)
 	} else {
 		resizedImg = resizeImage(img, 800, 800)
 	}

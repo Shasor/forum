@@ -27,6 +27,7 @@ func InitServer() {
 	server.Handle("/edit", handlers.EditProfileHandler)
 	server.Handle("/users", handlers.GetUserInfo)
 	server.Handle("/delete-post", handlers.DeletePostHandler)
+	server.Handle("/role", handlers.RoleHandler)
 
 	server.Use(middlewares.NotFoundMiddleware)
 	server.Use(middlewares.RecoverMiddleware)
