@@ -531,3 +531,34 @@ func SelectPostByID(postID int) (Post, error) {
 	}
 	return post, nil
 }
+
+func DeletePostByID(postID int) error {
+    db := GetDB()
+    defer db.Close()
+
+    tx, err := db.Begin()
+    if err != nil {
+        return err
+    }
+
+    queries := []string{
+        "DELETE FROM post_category WHERE post_id = ?;",
+        "DELETE FROM reactions WHERE post = ?;",
+		"DELETE FROM posts WHERE parent_id = ?",
+        "DELETE FROM activity WHERE post = ?;", // Supprime les sous-posts
+        "DELETE FROM posts WHERE id = ?;",        // Supprime le post lui-même
+    }
+
+    for _, query := range queries {
+        if _, err := tx.Exec(query, postID); err != nil {
+            tx.Rollback()
+            return err
+        }
+    }
+
+    err = tx.Commit()
+    if err != nil {
+        return err
+    }
+    return nil
+}

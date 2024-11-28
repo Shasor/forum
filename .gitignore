@@ -3,3 +3,4 @@ internal/db/database.db
 tmp/
 certs/
 .air.toml
+.env

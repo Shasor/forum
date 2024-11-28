@@ -32,6 +32,10 @@
     {{end}}
   </div>
   <div class="reactions">
+      <form class="delete-post-form" method="POST" action="/delete-post">
+      <input type="hidden" name="id-post-to-delete" value="{{.ID}}"/>
+      <button type="submit" id="post-to-delete-button "> Delete time</button>
+    </form>
     <div class="post-categories">
       {{range .Categories}}
       <a href="/?catID={{.ID}}">#{{.Name}}</a>
