@@ -184,6 +184,12 @@
   font-size: 20px;
 }
 
+#post-to-delete-button:hover { 
+  > svg {
+    fill: red;
+  }
+}
+
 #like:hover {
   > svg {
     fill: red;

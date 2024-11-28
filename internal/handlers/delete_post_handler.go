@@ -26,7 +26,7 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     // Debug : Affiche toutes les données du formulaire
-    fmt.Println("Form data:", r.Form)
+    //fmt.Println("Form data:", r.Form)
 
     // Récupère l'ID du post à supprimer
     postIDStr := r.FormValue("id-post-to-delete")
@@ -36,7 +36,7 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    fmt.Printf("Deleting post ID: %d\n", postID)
+    //fmt.Printf("Deleting post ID: %d\n", postID)
 
     // Supprime le post en appelant la fonction appropriée
     if err := db.DeletePostByID(postID); err != nil {
