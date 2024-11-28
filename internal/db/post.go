@@ -280,6 +280,12 @@ func FetchFollowPosts(senderID int) []Post {
 		post.Likes = likes
 		post.Dislikes = dislikes
 
+		post.NbComments, err = NbCommentsFromPost(post.ID)
+		if err != nil {
+			post.NbComments = 0
+			fmt.Println("Error at fetching nb comments: ", err)
+		}
+
 		posts = append(posts, post)
 	}
 	if err = rows.Err(); err != nil {
@@ -533,32 +539,40 @@ func SelectPostByID(postID int) (Post, error) {
 }
 
 func DeletePostByID(postID int) error {
-    db := GetDB()
-    defer db.Close()
+	db := GetDB()
+	defer db.Close()
 
-    tx, err := db.Begin()
-    if err != nil {
-        return err
-    }
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
 
-    queries := []string{
-        "DELETE FROM post_category WHERE post_id = ?;",
-        "DELETE FROM reactions WHERE post = ?;",
-		"DELETE FROM posts WHERE parent_id = ?",
-        "DELETE FROM activity WHERE post = ?;", // Supprime les sous-posts
-        "DELETE FROM posts WHERE id = ?;",        // Supprime le post lui-même
-    }
+	recursive := `
+		WITH RECURSIVE comments_tree AS (
+    		SELECT id FROM posts WHERE id = ?
+    		UNION ALL
+    		SELECT p.id FROM posts p
+    		JOIN comments_tree ct ON p.parent_id = ct.id
+		)`
 
-    for _, query := range queries {
-        if _, err := tx.Exec(query, postID); err != nil {
-            tx.Rollback()
-            return err
-        }
-    }
+	queries := []string{
+		"DELETE FROM post_category WHERE post_id IN (SELECT id FROM comments_tree);",
+		"DELETE FROM reactions WHERE post IN (SELECT id FROM comments_tree);",
+		"DELETE FROM activity WHERE post IN (SELECT id FROM comments_tree);",
+		"DELETE FROM posts WHERE id IN (SELECT id FROM comments_tree);",
+	}
 
-    err = tx.Commit()
-    if err != nil {
-        return err
-    }
-    return nil
+	for _, query := range queries {
+		query = recursive + query
+		if _, err := tx.Exec(query, postID); err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
 }

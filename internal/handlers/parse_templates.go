@@ -6,9 +6,29 @@ import (
 	"net/http"
 )
 
+func dict(values ...interface{}) (map[string]interface{}, error) {
+	if len(values)%2 != 0 {
+		return nil, fmt.Errorf("invalid dict call")
+	}
+	dict := make(map[string]interface{}, len(values)/2)
+	for i := 0; i < len(values); i += 2 {
+		key, ok := values[i].(string)
+		if !ok {
+			return nil, fmt.Errorf("dict keys must be strings")
+		}
+		dict[key] = values[i+1]
+	}
+	return dict, nil
+}
+
 func Parse(w http.ResponseWriter, data map[string]interface{}) {
-	// Parse the HTML templates
-	tmpl, err := template.ParseFiles(
+	funcMap := template.FuncMap{
+		"dict": dict,
+	}
+
+	tmpl := template.New("").Funcs(funcMap)
+
+	tmpl, err := tmpl.ParseFiles(
 		"web/pages/index.html",
 		"web/templates/header.html",
 		"web/templates/left-bar.html",
@@ -20,16 +40,13 @@ func Parse(w http.ResponseWriter, data map[string]interface{}) {
 		"web/templates/comment.html",
 	)
 	if err != nil {
-		// Log the error for debugging
 		fmt.Println("Error parsing templates:", err)
 		panic(err)
 	}
-	// Execute the template with data, including user and posts
-	err = tmpl.Execute(w, data)
+
+	err = tmpl.ExecuteTemplate(w, "index.html", data)
 	if err != nil {
-		// Log the error for debugging
 		fmt.Println("Error executing template:", err)
-		// Only call panic() if nothing has been written to the response yet
 		if w.Header().Get("Content-Type") == "" {
 			panic(err)
 		}

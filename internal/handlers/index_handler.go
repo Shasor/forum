@@ -48,5 +48,4 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		"comments":      db.FetchComments(),
 	}
 	Parse(w, data)
-
 }
