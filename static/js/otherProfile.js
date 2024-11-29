@@ -2,32 +2,48 @@ const div = document.querySelector(".posts-container");
 
 // Fonction pour récupérer les informations d'un utilisateur
 export async function GetOtherProfile() {
-  const otherID = event.target.getAttribute("other_id");
-  let user = {
-    id: event.target.getAttribute("user_id"),
-    role: event.target.getAttribute("user_role"),
-  };
   try {
-    // Envoi de la requête GET avec l'ID de l'utilisateur
+    // Récupération des attributs depuis l'événement
+    const otherID = event.target.getAttribute("other_id");
+    const userID = event.target.getAttribute("user_id");
+    const userRole = event.target.getAttribute("user_role");
+
+    console.log(otherID)
+
+    if (!otherID) {
+      console.error("L'attribut 'other_id' est manquant !");
+      return;
+    }
+
+    const user = {
+      id: userID,
+      role: userRole,
+    };
+
+    // Envoi de la requête au serveur
     const response = await fetch(`https://localhost:8080/users`, {
-      method: "POST",
+      method: "POST", // Changez en GET si nécessaire
+
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ otherID: otherID }),
+      body: JSON.stringify({ otherID }),
     });
 
-    // Si la réponse est ok, on la transforme en JSON
+    // Traitement de la réponse
     if (response.ok) {
       const data = await response.json();
+      console.log(data.otherActivity);
       displayProfile(data.otherData, data.otherActivity, user);
     } else {
-      console.error("Erreur de récupération des données:", response.status);
+      const errorDetails = await response.text();
+      console.error("Erreur de récupération des données:", response.status, errorDetails);
     }
   } catch (error) {
-    console.error("Erreur lors de la requête :", error);
+    console.error("Erreur lors de la requête :", error.message, error.stack);
   }
 }
+
 
 async function displayProfile(otherData, otherActivity, user) {
   let picture;
