@@ -13,13 +13,13 @@ export function GetProfile() {
           </header>
         <div class="profile-menu">
             <nav>
-              <ul>
+              <ul id="profile-menu-list">
                 <li><a href="#profil" id="header-profile-link">Voir mon profil</a></li>
                 <li><a href="#myposts" id="header-profile-posts">My Posts</a></li>
                 <li><a href="#likedposts" id="header-profile-liked">My Liked Posts</a></li>
                 <li><a href="#edit" id="header-profile-edit">Edit Profile</a></li>
                 <form method="post" action="/logout">
-                  <li><button type="submit">Se déconnecter</button></li>
+                <li><button type="submit">Se déconnecter</button></li>
                 </form>
                 </ul>
             </nav>
@@ -29,6 +29,27 @@ export function GetProfile() {
                 <p>Role: ${window.userData.role}</p>
             </div>
         </div>`;
+
+  console.log(window.userData.role)
+  if (window.userData.role === "admin") {
+      const adminListItem = document.createElement("li");
+     const adminButton = document.createElement("button");
+      adminButton.textContent = "Admin Panel";
+      adminButton.className = "admin-button";
+      adminButton.addEventListener("click", () => {
+          // Fonctionnalité du bouton admin
+          console.log(" Admin clicked..."); // Rediriger vers le panneau d'administration
+        });
+      
+        adminListItem.appendChild(adminButton)
+          // Ajouter le bouton dans la section profil
+        const profileMenu = div.querySelector(".profile-menu");
+        const profileMenuList = div.querySelector("#profile-menu-list");
+    if (profileMenuList) {
+        profileMenuList.appendChild(adminListItem);
+    }
+  }
+
 
   // Attach event listener for "Edit Profile" after updating inner HTML
   const editProfileLink = document.getElementById("header-profile-edit");
@@ -156,3 +177,30 @@ export function GetLikedPosts() {
   document.getElementById("my-posts-link").addEventListener("click", GetMyPosts);
   document.getElementById("edit-profile-link").addEventListener("click", GetEditProfile);
 }
+
+export function SeeEveryUser(){{
+  div.className = "posts-container";
+  div.innerHTML = `
+      <header>
+          <h1>Manage users : </h1>
+      </header>
+  
+      <nav>
+          <a href="#" id="my-profile-link">My Profile</a>
+          <a href="#" id="my-posts-link">My Posts</a>
+          <a href="#" id="my-liked-posts-link">My Liked Posts</a>
+          <a href="#" id="edit-profile-link">Edit Profile</a>
+      </nav>
+  
+  
+      <div id="posts-content">
+        ${window.userData.myposts}
+      </div>
+    `;
+
+  // Add event listeners for nav links
+  document.getElementById("my-profile-link").addEventListener("click", GetProfile);
+  document.getElementById("my-liked-posts-link").addEventListener("click", GetLikedPosts);
+  document.getElementById("edit-profile-link").addEventListener("click", GetEditProfile);
+
+}}

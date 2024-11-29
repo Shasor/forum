@@ -91,6 +91,31 @@ function CreatePost(new_post, bttn_new_post) {
   }
 }
 
+// ╔════════════════════ modify post ════════════════════╗
+
+const buttons = document.querySelectorAll(".create-post-to-modify-button");
+
+// Ajouter des écouteurs d'événements à chaque bouton
+buttons.forEach((button) => {
+  const modifyPostDiv = document.querySelector(`#${button.dataset.target}`); // Cible la div associée via un attribut data-target
+
+  button.addEventListener("click", function (event) {
+    event.stopPropagation(); // Empêche le clic de se propager au document
+    if (modifyPostDiv.style.display === "none" || modifyPostDiv.style.display === "") {
+      modifyPostDiv.style.display = "block";
+    } else {
+      modifyPostDiv.style.display = "none";
+    }
+  });
+
+  // Fermer la div si un clic se produit en dehors
+  document.addEventListener("click", function (event) {
+    if (!modifyPostDiv.contains(event.target) && event.target !== button) {
+      modifyPostDiv.style.display = "none";
+    }
+  });
+});
+
 // ╔════════════════════ Login-Signup ════════════════════╗
 document.addEventListener("DOMContentLoaded", function () {
   const login_link = document.getElementById("header-login-link");

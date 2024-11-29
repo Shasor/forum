@@ -275,7 +275,7 @@ func FetchFollowPosts(senderID int) []Post {
         LEFT JOIN users u ON p.sender = u.id
         WHERE f.user = ?
 		GROUP BY p.id
-        ORDER BY p.date DESC;`
+        ORDER BY p.id DESC;`
 
 	rows, err := db.Query(query, senderID)
 	if err != nil {
@@ -591,6 +591,29 @@ func DeletePostByID(postID int) error {
 			tx.Rollback()
 			return err
 		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func ModifyContentPostByID(postID int, content string) error {
+	db := GetDB()
+	defer db.Close()
+
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+
+	update := `UPDATE posts SET content = ? WHERE id = ?;`
+
+	if _, err := tx.Exec(update, content, postID); err != nil {
+		tx.Rollback()
+		return err
 	}
 
 	err = tx.Commit()

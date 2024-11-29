@@ -106,10 +106,10 @@ async function displayProfile(otherData, otherActivity, user) {
       typeHTML = `<p>${otherData.Username} commented to someone post <a href="/?postID=${otherActivity[i].Post.ParentID}">here</a>:</p>`;
     }
     if (otherActivity[i].Action === "LIKE") {
-      typeHTML = `<p>${otherData.Username} liked:</p>`;
+      typeHTML = `<p>${otherData.Username} <a href="/?postID=${otherActivity[i].Post.ID}">liked</a> :</p>`;
     }
     if (otherActivity[i].Action === "DISLIKE") {
-      typeHTML = `<p>${otherData.Username} disliked:</p>`;
+      typeHTML = `<p>${otherData.Username} <a href="/?postID=${otherActivity[i].Post.ID}"> disliked</a> :</p>`;
     }
 
     // Set the correct Avatar on the post
