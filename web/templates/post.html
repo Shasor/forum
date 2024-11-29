@@ -32,6 +32,9 @@
       {{end}}
     </div>
     {{if .user}}
+    {{if eq .user.ID .post.Sender.ID}}
+      {{template "modify" $.post}}
+    {{end}}
     {{if or (eq .user.Role "admin") (and (eq .user.Role "moderator") (not (eq .post.Sender.Role "admin"))) (eq .user.ID .post.Sender.ID)}}
       <div class="reaction">
         <form class="delete-post-form" method="POST" action="/delete-post">

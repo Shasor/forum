@@ -253,3 +253,62 @@
   position: absolute;
   right: 40px;
 }
+
+/* Le conteneur du pop-up */
+.modify-post {
+  display: none; /* Le pop-up est caché par défaut */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000; 
+  transition: all 0.3s ease;
+}
+
+.modify-post.active {
+  display: block;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.modify-post input,
+.modify-post textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.modify-post textarea {
+  resize: vertical; /* Autoriser uniquement l'agrandissement en hauteur */
+}
+
+.modify-post input:focus,
+.modify-post textarea:focus {
+  border-color: var(--SECOND-COLOR);
+  outline: none;
+}
+
+/* Bouton de soumission */
+.modify-post button[type="submit"] {
+  background-color: var(--SECOND-COLOR);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.modify-post button[type="submit"]:hover {
+  background-color: var(--THIRD-COLOR);
+  transform: scale(1.05);
+}
