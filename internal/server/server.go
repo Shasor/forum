@@ -18,7 +18,10 @@ func InitServer() {
 
 	password, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
 	if err ==nil{
-		_, _ := db.CreateUser("admin", "admin", "admin@admin", "", string(password))
+		_, err := db.CreateUser("admin", "admin", "admin@admin", "", string(password))
+		if err != nil{
+			fmt.Printf(" ")
+		}
 	}else {
 		fmt.Println("Error creating admin : ", err)
 	}

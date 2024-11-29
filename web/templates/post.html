@@ -31,6 +31,16 @@
       <a href="/?catID={{.ID}}">#{{.Name}}</a>
       {{end}}
     </div>
+    {{if .user}}
+    {{if or (eq .user.Role "admin") (eq .user.Role "moderator") (eq .user.ID .post.Sender.ID)}}
+      <div class="reaction">
+        <form class="delete-post-form" method="POST" action="/delete-post">
+        <input type="hidden" name="id-post-to-delete" value="{{.post.ID}}"/>
+        <button type="submit" class="reaction-button" id="post-to-delete-button"> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg> </button>
+      </form>
+      </div>
+      {{end}}
+    {{end}}
     <form class="reaction-form" method="POST">
       <input type="hidden" name="postId" value="{{.post.ID}}" />
       <input type="hidden" name="reaction" value="LIKE" />
