@@ -103,3 +103,15 @@ func FetchCategories() []Category {
 	}
 	return categories
 }
+
+func GetCategoryIDByName(name string) (int, error) {
+	db := GetDB()
+	defer db.Close()
+
+	var id int
+	err := db.QueryRow("SELECT id FROM categories WHERE name = ?", name).Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}

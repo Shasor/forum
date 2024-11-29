@@ -79,7 +79,6 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	categories := strings.Split(category, "#")
-	postAlreadyCreated := false
 	for _, cat := range categories {
 		if !db.CategoryExist(capitalize(cat)) {
 			err := db.CreateCategory(capitalize(cat))
@@ -87,24 +86,9 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 				panic(err)
 			}
 		}
-		if !postAlreadyCreated {
-			_ = db.CreatePost(sender, cat, title, content, base64image, date, parentID)
-			postAlreadyCreated = true
-		}
-		category_cat, err := db.SelectCategoryByName(capitalize(cat))
-		if err != nil {
-			panic(err)
-		}
-		var postID int
-		postID, err = db.GetLastPostIDByUserID(sender)
-		if err != nil {
-			panic(err)
-		}
-		err = db.LinkPostToCategory(postID, category_cat)
-		if err != nil {
-			panic(err)
-		}
 	}
+
+	_ = db.CreatePost(sender, categories, title, content, base64image, date, parentID)
 
 	Resp.Msg = append(Resp.Msg, "Your post has been successfully sent!")
 	if parentID != nil {

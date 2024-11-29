@@ -4,16 +4,17 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"strings"
 	"time"
 )
 
 // CreatePost handles both posts and comments, depending on parentID
-func CreatePost(sender int, categoryName, title, content, picture, date string, parentID *int) error {
+func CreatePost(sender int, categories []string, title, content, picture, date string, parentID *int) error {
 	// Open the database connection
 	db := GetDB()
 	defer db.Close()
 
-	category, _ := SelectCategoryByName(categoryName)
+	category, _ := SelectCategoryByName(categories[0])
 
 	// Start a database transaction
 	tx, err := db.Begin()
@@ -46,12 +47,34 @@ func CreatePost(sender int, categoryName, title, content, picture, date string, 
 	if err != nil {
 		return err
 	}
+
 	postID, _ := GetLastPostIDByUserID(sender)
-	if parentID == nil {
-		addActivity(sender, postID, "post")
-	} else {
-		addActivity(sender, postID, "comment")
+	post, _ := SelectPostByID(postID)
+
+	var categoriesID []int
+	for i, category := range categories {
+		category = strings.TrimSpace(category)
+		id, _ := GetCategoryIDByName(category)
+		categoriesID = append(categoriesID, id)
+		err = LinkPostToCategory(post.ID, categoriesID[i])
+		if err != nil {
+			panic(err)
+		}
 	}
+	if parentID == nil {
+		addActivity(sender, post.ID, "post")
+		for _, categoryID := range categoriesID {
+			receivers, _ := GetUsersByFollowedCategory(categoryID)
+			for _, receiver := range receivers {
+				addNotification("category", date, sender, receiver.ID, post.ID, 0)
+			}
+		}
+	} else {
+		addActivity(sender, post.ID, "comment")
+		parentPost, _ := SelectPostByID(post.ParentID)
+		addNotification("post", date, sender, parentPost.Sender.ID, post.ID, parentPost.ID)
+	}
+
 	return nil
 }
 

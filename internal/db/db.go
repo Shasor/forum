@@ -41,7 +41,6 @@ func GetDB() *sql.DB {
 		); CREATE TABLE IF NOT EXISTS post_category (
             post_id INTEGER,
             category_id INTEGER,
-            PRIMARY KEY (post_id, category_id),
             FOREIGN KEY (post_id) REFERENCES post(id),
             FOREIGN KEY (category_id) REFERENCES categories(id)
 		); CREATE TABLE IF NOT EXISTS reactions (
@@ -69,6 +68,18 @@ func GetDB() *sql.DB {
     		action TEXT NOT NULL,
     		FOREIGN KEY (user) REFERENCES users(id),
     		FOREIGN KEY (post) REFERENCES posts(id)
+		); CREATE TABLE IF NOT EXISTS notifications (
+    		id INTEGER PRIMARY KEY AUTOINCREMENT,
+    		sort TEXT NOT NULL,
+    		sender INTEGER NOT NULL,
+    		receiver INTEGER NOT NULL,
+    		post INTEGER,
+			parentPost INTEGER,
+			date TEXT NOT NULL,
+    		FOREIGN KEY (sender) REFERENCES users(id),
+    		FOREIGN KEY (receiver) REFERENCES users(id),
+    		FOREIGN KEY (post) REFERENCES posts(id)
+    		FOREIGN KEY (parentPost) REFERENCES posts(id)
 		)`
 
 	// Start a transaction

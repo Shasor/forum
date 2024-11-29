@@ -2,11 +2,12 @@ package server
 
 import (
 	"fmt"
+	"forum/internal/db"
 	"forum/internal/handlers"
 	"forum/internal/middlewares"
-	"forum/internal/db"
 	"log"
 	"time"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,16 +17,13 @@ func InitServer() {
 		log.Fatalf("Error generating certificate: %v", err)
 	}
 
+	// to delete after test
 	password, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
-	if err ==nil{
-		_, err := db.CreateUser("admin", "admin", "admin@admin", "", string(password))
-		if err != nil{
-			fmt.Printf(" ")
-		}
-	}else {
+	if err == nil {
+		_, _ = db.CreateUser("admin", "admin", "admin@admin", "", string(password))
+	} else {
 		fmt.Println("Error creating admin : ", err)
 	}
-
 
 	// Create the HTTP server
 	server := NewServer(":8080", 10*time.Second, 10*time.Second, 30*time.Second, 10*time.Second, 1<<20)

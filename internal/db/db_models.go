@@ -42,3 +42,13 @@ type Activity struct {
 	Post   Post
 	Action string
 }
+
+type Notification struct {
+	ID       int
+	Type     string
+	Sender   User
+	Receiver User
+	Post     Post
+	Content  string
+	Date     string
+}

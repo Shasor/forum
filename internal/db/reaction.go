@@ -2,12 +2,17 @@ package db
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"time"
 )
 
 func UpdatePostReaction(userID int, postID int, reaction string) error {
 	db := GetDB()
 	defer db.Close()
+
+	date := fmt.Sprintf("%02d:%02d | %02d/%02d/%d", time.Now().Hour(), time.Now().Minute(), time.Now().Day(), time.Now().Month(), time.Now().Year())
+	post, _ := SelectPostByID(postID)
 
 	var existingReaction string
 	err := db.QueryRow(`SELECT value FROM reactions WHERE user = ? AND post = ?`, userID, postID).Scan(&existingReaction)
@@ -16,6 +21,7 @@ func UpdatePostReaction(userID int, postID int, reaction string) error {
 		// No previous reaction: Insert new
 		_, err = db.Exec(`INSERT INTO reactions (user, post, value) VALUES (?, ?, ?)`, userID, postID, reaction)
 		addActivity(userID, postID, reaction)
+		addNotification(reaction, date, userID, post.Sender.ID, post.ID, 0)
 		if err != nil {
 			log.Println("Error inserting new reaction:", err)
 			return err
@@ -41,6 +47,7 @@ func UpdatePostReaction(userID int, postID int, reaction string) error {
 				delActivity(userID, postID, "LIKE")
 			}
 			addActivity(userID, postID, reaction)
+			addNotification(reaction, date, userID, post.Sender.ID, post.ID, 0)
 			if err != nil {
 				log.Println("Error updating existing reaction:", err)
 				return err

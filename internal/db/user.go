@@ -203,9 +203,9 @@ func UserExist(id int) bool {
 	var exist bool
 	err := db.QueryRow("SELECT EXISTS( SELECT 1 FROM users WHERE id = ?)", id).Scan(&exist)
 	if err != nil {
-		return false
+		return exist
 	}
-	return true
+	return exist
 }
 
 func UpdateUserRole(id int, role string) error {
@@ -220,4 +220,36 @@ func UpdateUserRole(id int, role string) error {
 		return err
 	}
 	return nil
+}
+
+func GetUsersByFollowedCategory(id int) ([]User, error) {
+	db := GetDB()
+	defer db.Close()
+
+	query := `
+        SELECT u.id, u.role, u.username, u.email, u.picture
+        FROM users u
+		JOIN follows f ON u.id = f.user
+		WHERE category = ?;`
+
+	rows, err := db.Query(query, id)
+	if err != nil {
+		log.Printf("Error executing query: %v", err)
+		return []User{}, err
+	}
+	defer rows.Close()
+
+	var users []User
+	for rows.Next() {
+		var user User
+		// Scan each row's values, including placeholders for missing user info
+		if err := rows.Scan(&user.ID, &user.Role, &user.Username, &user.Email, &user.Picture); err != nil {
+			log.Printf("Error scanning row: %v", err)
+			return []User{}, err
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
 }

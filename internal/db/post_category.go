@@ -4,7 +4,7 @@ import (
 	"log"
 )
 
-func LinkPostToCategory(postID int, category Category) error {
+func LinkPostToCategory(postID int, categoryID int) error {
 	db := GetDB()
 	defer db.Close()
 
@@ -22,7 +22,7 @@ func LinkPostToCategory(postID int, category Category) error {
 	defer stmt.Close()
 
 	// Exécuter l'insertion
-	_, err = stmt.Exec(&postID, category.ID)
+	_, err = stmt.Exec(&postID, categoryID)
 	if err != nil {
 		tx.Rollback()
 		return err
