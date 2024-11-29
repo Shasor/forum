@@ -92,11 +92,12 @@ function CreatePost(new_post, bttn_new_post) {
 }
 
 // ╔════════════════════ modify post ════════════════════╗
+
 const button = document.getElementById('create-post-to-modify-button');
 const modifyPostDiv = document.getElementById('modify-post');
 
 // Ouvrir/fermer la div quand le bouton est cliqué
-button.addEventListener('click', function(event) {
+button?.addEventListener('click', function(event) {
     event.stopPropagation(); // Empêche le clic sur le bouton de se propager au document
     if (modifyPostDiv.style.display === 'none' || modifyPostDiv.style.display === '') {
         modifyPostDiv.style.display = 'block';
@@ -106,11 +107,12 @@ button.addEventListener('click', function(event) {
 });
 
 // Fermer la div si un clic se produit en dehors
-document.addEventListener('click', function(event) {
-    if (!modifyPostDiv.contains(event.target) && event.target !== button) {
+document?.addEventListener('click', function(event) {
+    if (!modifyPostDiv?.contains(event.target) && event.target !== button) {
         modifyPostDiv.style.display = 'none';
     }
 });
+
 
 // ╔════════════════════ Login-Signup ════════════════════╗
 document.addEventListener("DOMContentLoaded", function () {

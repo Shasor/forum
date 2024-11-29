@@ -9,11 +9,11 @@
 
     <!-- Formulaire caché par défaut -->
     <div class="modify-post" id="modify-post" style="display: none;">
-        <form enctype="multipart/form-data" class="modify-post-form" method="POST" action="modify-post">
-            <input type="hidden" name="id-post-to-modify" value="{{.ID}}"/>
+        <form enctype="multipart/form-data" class="modify-post-form" method="POST" action="/modify-post">
+            <input type="hidden" name="post-to-modify" value="{{.ID}}"/>
             <input type="text" id="categorie_post" name="categorie_post" placeholder={{(index .Categories 0).Name}} maxlength="25" readonly />
             <input type="text" id="title_post" name="title_post" placeholder={{.Title}} maxlength="75" readonly />
-            <textarea id="content_post" name="content_post" placeholder={{.Content}} ></textarea>
+            <textarea id="content_post" name="content_post" placeholder="{{.Content}}">{{.Content}}</textarea>
             <input type="file" name="image_post" id="image_post" accept=".jpg, .jpeg, .png, .gif" />
             <button type="submit">Post</button>
         </form>
