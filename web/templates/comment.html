@@ -1,11 +1,10 @@
 {{ define "comment"}}
 <div class="comments">
   <form enctype="multipart/form-data" action="/create-post" method="post" autocomplete="off">
-  <input type="hidden" name="parent_id" value="{{.ID}}" />
-  <input type="hidden" name="sender_post" value="{{$.user.ID}}" />
-  <input type="hidden" name="categorie_post" value="{{(index .Categories 0).Name}}" />
-  <textarea id="content_post" name="content_post" placeholder="Write your comment here..." required></textarea></textarea> 
-  <button type="submit">Comment</button>
-</form>
+    <input type="hidden" name="parent_id" value="{{.ID}}" />
+    <input type="hidden" name="sender_post" value="{{$.user.ID}}" />
+    <input type="hidden" name="categorie_post" value="{{(index .Categories 0).Name}}" />
+    <textarea id="content_post" name="content_post" placeholder="Write your comment here..." required></textarea></textarea> 
+  </form>
 </div>
 {{end}}

@@ -33,9 +33,9 @@
     </div>
     {{if .user}} {{if eq .user.ID .post.Sender.ID}} {{template "modify" $.post}} {{end}} {{if or (eq .user.Role "admin") (and (eq .user.Role "moderator") (not (eq .post.Sender.Role "admin"))) (eq .user.ID .post.Sender.ID)}}
     <div class="reaction">
-      <form class="delete-post-form" method="POST" action="/delete-post">
+      <form method="POST" action="/delete-post">
         <input type="hidden" name="id-post-to-delete" value="{{.post.ID}}" />
-        <button type="submit" class="reaction-button" id="post-to-delete-button">
+        <button type="submit" class="reaction-button">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#000000"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" /></svg>
         </button>
       </form>
@@ -45,7 +45,7 @@
       <input type="hidden" name="postId" value="{{.post.ID}}" />
       <input type="hidden" name="reaction" value="LIKE" />
       <div class="reaction">
-        <button type="submit" class="reaction-button" id="like">
+        <button type="submit" class="reaction-button">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="m480-120-58-52q-101-91-167-157T150-447.5Q111-500 95.5-544T80-634q0-94 63-157t157-63q52 0 99 22t81 62q34-40 81-62t99-22q94 0 157 63t63 157q0 46-15.5 90T810-447.5Q771-395 705-329T538-172l-58 52Zm0-108q96-86 158-147.5t98-107q36-45.5 50-81t14-70.5q0-60-40-100t-100-40q-47 0-87 26.5T518-680h-76q-15-41-55-67.5T300-774q-60 0-100 40t-40 100q0 35 14 70.5t50 81q36 45.5 98 107T480-228Zm0-273Z" /></svg>
         </button>
         <span class="like-count" data-postid="{{.post.ID}}">{{.post.Likes}}</span>
@@ -55,17 +55,24 @@
       <input type="hidden" name="postId" value="{{.post.ID}}" />
       <input type="hidden" name="reaction" value="DISLIKE" />
       <div class="reaction">
-        <button type="submit" class="reaction-button" id="dislike">
+        <button type="submit" class="reaction-button">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M240-840h440v520L400-40l-50-50q-7-7-11.5-19t-4.5-23v-14l44-174H120q-32 0-56-24t-24-56v-80q0-7 2-15t4-15l120-282q9-20 30-34t44-14Zm360 80H240L120-480v80h360l-54 220 174-174v-406Zm0 406v-406 406Zm80 34v-80h120v-360H680v-80h200v520H680Z" /></svg>
         </button>
         <span class="dislike-count" data-postid="{{.post.ID}}">{{.post.Dislikes}}</span>
       </div>
     </form>
-    <div class="reaction">
+    <form class="reaction-form" method="POST">
+      <div class="reaction">
+        <button type="submit" class="reaction-button">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M480-280q17 0 28.5-11.5T520-320q0-17-11.5-28.5T480-360q-17 0-28.5 11.5T440-320q0 17 11.5 28.5T480-280Zm-40-160h80v-240h-80v240ZM330-120 120-330v-300l210-210h300l210 210v300L630-120H330Zm34-80h232l164-164v-232L596-760H364L200-596v232l164 164Zm116-280Z" /></svg>
+        </button>
+      </div>
+    </form>
+    <div id="comments">
       <span id="nb_comments">{{.post.NbComments}}</span>
       <form action="" method="get">
         <input type="hidden" name="postID" value="{{.post.ID}}" />
-        <button type="submit" class="reaction-button" id="comments">
+        <button type="submit" class="reaction-button">
           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentcolor"><path d="M880-80 720-240H320q-33 0-56.5-23.5T240-320v-40h440q33 0 56.5-23.5T760-440v-280h40q33 0 56.5 23.5T880-640v560ZM160-473l47-47h393v-280H160v327ZM80-280v-520q0-33 23.5-56.5T160-880h440q33 0 56.5 23.5T680-800v280q0 33-23.5 56.5T600-440H240L80-280Zm80-240v-280 280Z" /></svg>
         </button>
       </form>
