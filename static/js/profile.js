@@ -13,30 +13,30 @@ export function GetProfile() {
             <h1>Profile of ${window.userData.pseudo}</h1>
           </header>
         <div class="profile-menu">
-            <nav>
-              <ul id="profile-menu-list">
-                <li><a href="#profil-activity" other_id="${window.userData.id}"  user_id="${window.userData.id}" user_role="${window.userData.role}" id="header-profile-activity-link">Lastest activities</a></li>
-                <li><a href="#myposts" id="header-profile-posts">My Posts</a></li>
-                <li><a href="#likedposts" id="header-profile-liked">My Liked Posts</a></li>
-                <li><a href="#edit" id="header-profile-edit">Edit Profile</a></li>
-                <form method="post" action="/logout">
+          <nav>
+            <ul id="profile-menu-list">
+              <li><a href="#profil-activity" other_id="${window.userData.id}"  user_id="${window.userData.id}" user_role="${window.userData.role}" id="header-profile-activity-link">Lastest activities</a></li>
+              <li><a href="#myposts" id="header-profile-posts">My Posts</a></li>
+              <li><a href="#likedposts" id="header-profile-liked">My Liked Posts</a></li>
+              <li><a href="#edit" id="header-profile-edit">Edit Profile</a></li>
+              <form method="post" action="/logout">
                 <li><button type="submit"> Logout </button></li>
-                </form>
-                </ul>
-            </nav>
-            <div>
-                <img src="${window.userData.profilePicture}" alt="Profile Picture of ${window.userData.pseudo}">
-                <p>Email: ${window.userData.email}</p>
-                <p>Role: ${window.userData.role}</p>
-            </div>
+              </form>
+            </ul>
+          </nav>
+          <div>
+            <img src="${window.userData.profilePicture}" alt="Profile Picture of ${window.userData.pseudo}">
+            <p>Email: ${window.userData.email}</p>
+            <p>Role: ${window.userData.role}</p>
+            ${window.userData.request}
+          </div>
         </div>`;
 
-  
   const activitiesLink = document.getElementById("header-profile-activity-link");
-  activitiesLink?.addEventListener("click",(event)=> {
+  activitiesLink?.addEventListener("click", (event) => {
     event.preventDefault();
     GetOtherProfile();
-  })
+  });
 
   // Attach event listener for "Edit Profile" after updating inner HTML
   const editProfileLink = document.getElementById("header-profile-edit");
@@ -165,9 +165,10 @@ export function GetLikedPosts() {
   document.getElementById("edit-profile-link").addEventListener("click", GetEditProfile);
 }
 
-export function SeeEveryUser(){{
-  div.className = "posts-container";
-  div.innerHTML = `
+export function SeeEveryUser() {
+  {
+    div.className = "posts-container";
+    div.innerHTML = `
       <header>
           <h1>Manage users : </h1>
       </header>
@@ -185,9 +186,9 @@ export function SeeEveryUser(){{
       </div>
     `;
 
-  // Add event listeners for nav links
-  document.getElementById("my-profile-link").addEventListener("click", GetProfile);
-  document.getElementById("my-liked-posts-link").addEventListener("click", GetLikedPosts);
-  document.getElementById("edit-profile-link").addEventListener("click", GetEditProfile);
-
-}}
+    // Add event listeners for nav links
+    document.getElementById("my-profile-link").addEventListener("click", GetProfile);
+    document.getElementById("my-liked-posts-link").addEventListener("click", GetLikedPosts);
+    document.getElementById("edit-profile-link").addEventListener("click", GetEditProfile);
+  }
+}

@@ -42,6 +42,7 @@ func InitServer() {
 	server.Handle("/role", handlers.RoleHandler)
 	server.Handle("/modify-post", handlers.ModifyPostHandler)
 	server.Handle("/report", handlers.ReportHandler)
+	server.Handle("/request", handlers.RequestHandler)
 
 	server.Use(middlewares.NotFoundMiddleware)
 	server.Use(middlewares.RecoverMiddleware)
