@@ -156,6 +156,7 @@ body {
 }
 
 .left-bar #item {
+  list-style: none;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -173,8 +174,15 @@ body {
 
 .left-bar li {
   margin-top: 25px;
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
+.left-bar li:hover {
+  background-color: var(--SECOND-COLOR);
+  color:white;
+}
 .left-bar li:last-child {
   margin-bottom: 25px;
 }
@@ -204,6 +212,7 @@ body {
 .left-bar a {
   color: inherit;
   text-decoration: none;
+  display: block;
 }
 
 #search_bar {
