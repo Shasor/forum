@@ -19,7 +19,7 @@
     <ul class="no-bullets">
       {{ range .user.Follows }}
       <li>
-        <span><a href="?catID={{ .ID }}">{{ .Name }}</a></span>
+        <span class=""><a href="?catID={{ .ID }}">{{ .Name }}</a></span>
       </li>
       {{ else }}
       <li>No categories follow yet, start following some, you will see them display here</li>
