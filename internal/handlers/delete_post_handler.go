@@ -9,13 +9,16 @@ import (
 
 func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost || !IsCookieValid(w, r) {
-		msg := "Method not Allowed"
-		if !IsCookieValid(w, r) {
-			msg = "You are not connected"
-		}
-		http.Error(w, msg, http.StatusForbidden)
+		Resp = Response{Msg: []string{
+			map[bool]string{
+				true:  "Method not Allowed",
+				false: "You are not connected",
+			}[r.Method != http.MethodPost],
+		}}
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
+	Resp = Response{}
 
 	// Analyse les données du formulaire
 	if err := r.ParseForm(); err != nil {
@@ -24,25 +27,21 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Debug : Affiche toutes les données du formulaire
-	//fmt.Println("Form data:", r.Form)
-
 	// Récupère l'ID du post à supprimer
 	postIDStr := r.FormValue("id-post-to-delete")
 	postID, err := strconv.Atoi(postIDStr)
-	if err != nil || postID <= 0 {
-		http.Error(w, "Invalid post ID", http.StatusBadRequest)
-		return
+	if err != nil {
+		panic(err)
 	}
-
-	//fmt.Printf("Deleting post ID: %d\n", postID)
 
 	// Supprime le post en appelant la fonction appropriée
 	if err := db.DeletePostByID(postID); err != nil {
-		http.Error(w, fmt.Sprintf("Failed to delete post: %v", err), http.StatusInternalServerError)
-		return
+		Resp.Msg = append(Resp.Msg, err.Error())
 	}
 
+	if Resp.Msg == nil {
+		Resp.Msg = append(Resp.Msg, "Post successfully deleted!")
+	}
 	// Redirige après la suppression
-	http.Redirect(w, r, "/edit", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

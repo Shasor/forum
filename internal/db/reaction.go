@@ -21,7 +21,7 @@ func UpdatePostReaction(userID int, postID int, reaction string) error {
 		// No previous reaction: Insert new
 		_, err = db.Exec(`INSERT INTO reactions (user, post, value) VALUES (?, ?, ?)`, userID, postID, reaction)
 		addActivity(userID, postID, reaction)
-		addNotification(reaction, date, userID, post.Sender.ID, post.ID, 0)
+		AddNotification(reaction, date, userID, post.Sender.ID, post.ID, 0)
 		if err != nil {
 			log.Println("Error inserting new reaction:", err)
 			return err
@@ -47,7 +47,7 @@ func UpdatePostReaction(userID int, postID int, reaction string) error {
 				delActivity(userID, postID, "LIKE")
 			}
 			addActivity(userID, postID, reaction)
-			addNotification(reaction, date, userID, post.Sender.ID, post.ID, 0)
+			AddNotification(reaction, date, userID, post.Sender.ID, post.ID, 0)
 			if err != nil {
 				log.Println("Error updating existing reaction:", err)
 				return err

@@ -1,10 +1,11 @@
 package db
 
 import (
+	"errors"
 	"log"
 )
 
-func addNotification(sort, date string, sender, receiver, post, parentPost int) error {
+func AddNotification(sort, date string, sender, receiver, post, parentPost int) error {
 	db := GetDB()
 	defer db.Close()
 
@@ -12,10 +13,10 @@ func addNotification(sort, date string, sender, receiver, post, parentPost int) 
 		return nil
 	}
 
-	if sort == "LIKE" || sort == "DISLIKE" {
-		if isSpam(sender, receiver, post) {
-			delSpamNotification(sender, receiver, post)
-		}
+	if isSpam(sender, receiver, post) && sort == "report" {
+		return errors.New("you have already reported this message")
+	} else if isSpam(sender, receiver, post) {
+		delSpamNotification(sender, receiver, post)
 	}
 
 	tx, err := db.Begin()
@@ -61,7 +62,7 @@ func isSpam(sender, receiver, post int) bool {
 	defer db.Close()
 
 	var isSpam bool
-	err := db.QueryRow(`SELECT CASE WHEN EXISTS (SELECT * FROM notifications WHERE sender = ? AND receiver = ? AND post = ?) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END;`, sender, receiver, post).Scan(&isSpam)
+	err := db.QueryRow(`SELECT CASE WHEN EXISTS (SELECT * FROM notifications WHERE sort IN ('LIKE', 'DISLIKE', 'report') AND sender = ? AND receiver = ? AND post = ?) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END;`, sender, receiver, post).Scan(&isSpam)
 	if err != nil {
 		return isSpam
 	}

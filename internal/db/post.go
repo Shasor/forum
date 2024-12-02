@@ -1,6 +1,8 @@
 package db
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"sort"
@@ -66,13 +68,13 @@ func CreatePost(sender int, categories []string, title, content, picture, date s
 		for _, categoryID := range categoriesID {
 			receivers, _ := GetUsersByFollowedCategory(categoryID)
 			for _, receiver := range receivers {
-				addNotification("category", date, sender, receiver.ID, post.ID, 0)
+				AddNotification("category", date, sender, receiver.ID, post.ID, 0)
 			}
 		}
 	} else {
 		addActivity(sender, post.ID, "comment")
 		parentPost, _ := SelectPostByID(post.ParentID)
-		addNotification("post", date, sender, parentPost.Sender.ID, post.ID, parentPost.ID)
+		AddNotification("post", date, sender, parentPost.Sender.ID, post.ID, parentPost.ID)
 	}
 
 	return nil
@@ -521,42 +523,29 @@ func SelectPostByID(postID int) (Post, error) {
 			LEFT JOIN users u ON p.sender = u.id
 			WHERE p.id = ?;`
 
-	rows, err := db.Query(query, postID)
+	var post Post
+	err := db.QueryRow(query, postID).Scan(&post.ID, &post.Sender.ID, &post.ParentID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture)
 	if err != nil {
-		log.Printf("Error executing query: %v", err)
+		if err == sql.ErrNoRows {
+			return Post{}, errors.New("post not found")
+		}
 		return Post{}, err
 	}
-	defer rows.Close()
-
-	var post Post
-	for rows.Next() {
-		err := rows.Scan(&post.ID, &post.Sender.ID, &post.ParentID, &post.Title, &post.Content, &post.Picture, &post.Date, &post.Sender.Role, &post.Sender.Username, &post.Sender.Email, &post.Sender.Picture)
-		if err != nil {
-			log.Printf("Error scanning row: %v", err)
-			continue
-		}
-
-		// Get post reactions
-		likes, dislikes, err := GetPostReactions(post.ID)
-		if err != nil {
-			log.Printf("Error fetching reactions: %v", err)
-			continue
-		}
-		post.Likes = likes
-		post.Dislikes = dislikes
-
-		post.Categories, _ = GetPostCategories(post.ID)
-
-		post.NbComments, err = NbCommentsFromPost(post.ID)
-		if err != nil {
-			post.NbComments = 0
-			fmt.Println("Error at fetching nb comments: ", err)
-		}
-
+	// Get post reactions
+	likes, dislikes, err := GetPostReactions(post.ID)
+	if err != nil {
+		log.Printf("Error fetching reactions: %v", err)
+		return Post{}, err
 	}
+	post.Likes = likes
+	post.Dislikes = dislikes
 
-	if err = rows.Err(); err != nil {
-		log.Printf("Error during row iteration: %v", err)
+	post.Categories, _ = GetPostCategories(post.ID)
+
+	post.NbComments, err = NbCommentsFromPost(post.ID)
+	if err != nil {
+		post.NbComments = 0
+		fmt.Println("Error at fetching nb comments: ", err)
 	}
 	return post, nil
 }
@@ -585,12 +574,21 @@ func DeletePostByID(postID int) error {
 		"DELETE FROM posts WHERE id IN (SELECT id FROM comments_tree);",
 	}
 
+	rowsAffected := int64(0)
 	for _, query := range queries {
 		query = recursive + query
-		if _, err := tx.Exec(query, postID); err != nil {
+		result, err := tx.Exec(query, postID)
+		if err != nil {
 			tx.Rollback()
 			return err
 		}
+		affected, _ := result.RowsAffected()
+		rowsAffected += affected
+	}
+
+	if rowsAffected == 0 {
+		tx.Rollback()
+		return fmt.Errorf("the requested post doesn't exist")
 	}
 
 	err = tx.Commit()
