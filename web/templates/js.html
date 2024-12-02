@@ -8,6 +8,7 @@
 
   // Check if the user is nil before trying to access its properties
   window.userData = {
+    id: "{{if .user}} {{.user.ID | js}}{{else}} '0' {{end}}",
     pseudo: "{{ if .user }}{{ .user.Username | js }}{{ else }}'Guest'{{ end }}",
     email: "{{ if .user }}{{ .user.Email | js }}{{ else }}'Not logged in'{{ end }}",
     role: "{{ if .user }}{{ .user.Role | js }}{{ else }}'visitor'{{ end }}",

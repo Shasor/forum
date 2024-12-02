@@ -8,7 +8,7 @@ export async function GetOtherProfile() {
     const userID = event.target.getAttribute("user_id");
     const userRole = event.target.getAttribute("user_role");
 
-    console.log(otherID)
+    console.log(otherID, userID, userRole);
 
     if (!otherID) {
       console.error("L'attribut 'other_id' est manquant !");
@@ -46,6 +46,9 @@ export async function GetOtherProfile() {
 
 
 async function displayProfile(otherData, otherActivity, user) {
+
+  div.className = "posts-container"; 
+  
   let picture;
   if (otherData.Picture) {
     picture = `data:image/jpeg;base64,${otherData.Picture}`;

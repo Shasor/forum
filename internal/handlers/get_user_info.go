@@ -5,6 +5,7 @@ import (
 	"forum/internal/db"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 func GetUserInfo(w http.ResponseWriter, r *http.Request) {
@@ -21,10 +22,15 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	otherID, _ := strconv.Atoi(data["otherID"]) // to do: error handle
+	purgedOtherID := strings.ReplaceAll(data["otherID"], " ", "")
+	otherID, err := strconv.Atoi(purgedOtherID) // to do: error handle
+	if err != nil{
+		http.Error(w, "error while processing data ", http.StatusInternalServerError)
+		return
+	}
 	other, _ := db.SelectUserById(otherID)
-
 	otherActivities := db.GetUserActivitiesByID(other.ID)
+
 
 	dataUser := map[string]interface{}{
 		"otherData":     other,

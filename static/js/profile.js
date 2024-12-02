@@ -1,3 +1,4 @@
+import { GetOtherProfile } from "./otherProfile.js";
 const div = document.querySelector(".posts-container");
 
 export function GetProfile() {
@@ -14,12 +15,12 @@ export function GetProfile() {
         <div class="profile-menu">
             <nav>
               <ul id="profile-menu-list">
-                <li><a href="#profil" id="header-profile-link">Voir mon profil</a></li>
+                <li><a href="#profil-activity" other_id="${window.userData.id}"  user_id="${window.userData.id}" user_role="${window.userData.role}" id="header-profile-activity-link">Lastest activities</a></li>
                 <li><a href="#myposts" id="header-profile-posts">My Posts</a></li>
                 <li><a href="#likedposts" id="header-profile-liked">My Liked Posts</a></li>
                 <li><a href="#edit" id="header-profile-edit">Edit Profile</a></li>
                 <form method="post" action="/logout">
-                <li><button type="submit">Se déconnecter</button></li>
+                <li><button type="submit"> Logout </button></li>
                 </form>
                 </ul>
             </nav>
@@ -30,26 +31,12 @@ export function GetProfile() {
             </div>
         </div>`;
 
-  console.log(window.userData.role)
-  if (window.userData.role === "admin") {
-      const adminListItem = document.createElement("li");
-     const adminButton = document.createElement("button");
-      adminButton.textContent = "Admin Panel";
-      adminButton.className = "admin-button";
-      adminButton.addEventListener("click", () => {
-          // Fonctionnalité du bouton admin
-          console.log(" Admin clicked..."); // Rediriger vers le panneau d'administration
-        });
-      
-        adminListItem.appendChild(adminButton)
-          // Ajouter le bouton dans la section profil
-        const profileMenu = div.querySelector(".profile-menu");
-        const profileMenuList = div.querySelector("#profile-menu-list");
-    if (profileMenuList) {
-        profileMenuList.appendChild(adminListItem);
-    }
-  }
-
+  
+  const activitiesLink = document.getElementById("header-profile-activity-link");
+  activitiesLink?.addEventListener("click",(event)=> {
+    event.preventDefault();
+    GetOtherProfile();
+  })
 
   // Attach event listener for "Edit Profile" after updating inner HTML
   const editProfileLink = document.getElementById("header-profile-edit");
