@@ -365,7 +365,7 @@ body {
   display: block;
   width: 100%;
   text-decoration: none;
-  background-color: var(--LIGHT-MAIN-COLOR);
+  background-color: var(--SECOND-COLOR);
   border-radius: 7px;
   text-align: center;
   padding: 5px 0;
@@ -374,7 +374,7 @@ body {
 }
 
 .profile-menu li:hover {
-  background-color: var(--SECOND-COLOR);
+  background-color: var(--LIGHT-MAIN-COLOR);
   transform: translateY(-5px);
 }
 
@@ -481,13 +481,49 @@ body {
 }
 
 #header-profile-link {
-  background-color: var(--LIGHT-MAIN-COLOR);
+  background-color: var(--SECOND-COLOR);
   padding: 5px 15px 5px 15px;
   border-radius: 5px;
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
   align-self: center;
+  width: 100%;
+  text-align: center;
 }
 
 #header-profile-link:hover {
+  background-color: var(--LIGHT-MAIN-COLOR);
+}
+
+#header-login-link {
   background-color: var(--SECOND-COLOR);
+  padding: 5px 15px 5px 15px;
+  border-radius: 5px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  align-self: center;
+  width: 100%;
+  text-align: center;
+}
+
+#header-login-link:hover {
+  background-color: var(--LIGHT-MAIN-COLOR);
+}
+
+#header-signup-link {
+  background-color: var(--SECOND-COLOR);
+  padding: 5px 15px 5px 15px;
+  border-radius: 5px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.3);
+  align-self: center;
+  width: 100%;
+  text-align: center;
+}
+
+#header-signup-link:hover {
+  background-color: var(--LIGHT-MAIN-COLOR);
+}
+
+.activity-post{
+  margin-left: 10px;
+  margin-top: 10px;
+  text-align: left;
 }

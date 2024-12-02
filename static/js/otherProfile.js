@@ -103,16 +103,16 @@ async function displayProfile(otherData, otherActivity, user) {
 
     let typeHTML;
     if (otherActivity[i].Action === "post") {
-      typeHTML = `<p>${otherActivity[i].Post.Sender.Username} posted on ${categoriesHTML} :</p>`;
+      typeHTML = `<span class="activity-post"><p>${otherActivity[i].Post.Sender.Username} posted on ${categoriesHTML} :</p></span>`;
     }
     if (otherActivity[i].Action === "comment") {
-      typeHTML = `<p>${otherData.Username} commented to someone post <a href="/?postID=${otherActivity[i].Post.ParentID}">here</a>:</p>`;
+      typeHTML = `<span class="activity-post"><p>${otherData.Username} commented to someone post <a href="/?postID=${otherActivity[i].Post.ParentID}">here</a> :</p></span>`;
     }
     if (otherActivity[i].Action === "LIKE") {
-      typeHTML = `<p>${otherData.Username} <a href="/?postID=${otherActivity[i].Post.ID}">liked</a> :</p>`;
+      typeHTML = `<span class="activity-post"><p>${otherData.Username} <a href="/?postID=${otherActivity[i].Post.ID}">liked</a> :</p></span>`;
     }
     if (otherActivity[i].Action === "DISLIKE") {
-      typeHTML = `<p>${otherData.Username} <a href="/?postID=${otherActivity[i].Post.ID}"> disliked</a> :</p>`;
+      typeHTML = `<span class="activity-post"><p>${otherData.Username} <a href="/?postID=${otherActivity[i].Post.ID}"> disliked</a> :</p></span>`;
     }
 
     // Set the correct Avatar on the post

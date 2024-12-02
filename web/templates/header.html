@@ -14,18 +14,20 @@
 
     <div id="popup">
       {{if .user}}
-      <p>Vous êtes connecté !</p>
+      <p> {{ .user.Username}} connected</p>
+      {{else}}
+      <p>Login or Signup :</p>
       {{end}}
       <nav>
         <ul>
           {{if .user}}
-          <li><a href="#profile" id="header-profile-link">Voir mon profil</a></li>
+          <li><a href="#profile" id="header-profile-link">Your Profil</a></li>
           <form method="post" action="/logout">
-            <li><button type="submit">Se déconnecter</button></li>
+            <li><button type="submit">Logout</button></li>
           </form>
           {{else}}
-          <li><a href="#" id="header-login-link">Se connecter</a></li>
-          <li><a href="#" id="header-signup-link">Créer un compte</a></li>
+          <li><a href="#" id="header-login-link" class="button-header">  Login  </a></li>
+          <li><a href="#" id="header-signup-link" class="button-header"> Signup </a></li>
           {{end}}
         </ul>
       </nav>

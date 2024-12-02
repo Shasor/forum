@@ -8,17 +8,17 @@ export function GetLogin() {
   div.innerHTML = `
   <div class="auth">
       <buttons id="close">x</buttons>
-      <h2>Connexion</h2>
+      <h2>Sign in</h2>
       <form action="/login" method="post">
-          <label for="username">Nom d'utilisateur</label>
+          <label for="username">Username</label>
           <input type="text" id="username" name="username" required autocomplete="username">
-          <label for="password">Mot de passe</label>
+          <label for="password">Password</label>
           <input type="password" id="password" name="password" required autocomplete="password">
-          <button type="submit">Se connecter</button>
+          <button type="submit">Login</button>
       </form>
       <div id="redirect">
-          <p>Pas encore de compte ?</p>
-            <button type="button" id="signup-link">Créer un compte</button>
+          <p>Not registered yet ?</p>
+            <button type="button" id="signup-link">Create an account</button>
       </div>
   </div>`;
   const signup_bttn = document.getElementById("signup-link");
@@ -38,16 +38,16 @@ export function GetSignup(formValue) {
   div.className = "auth-container";
   div.innerHTML = `
     <div class="auth">
-        <h2>Créer un compte</h2>
+        <h2>Sign up</h2>
         <buttons id="close">x</buttons>
         <form action="/signup" method="post">
             <label for="email">Email</label>
             <input type="email" id="email" name="email" required autocomplete="email" ${formValue.email}>
-            <label for="username">Nom d'utilisateur</label>
+            <label for="username">Enter an Username</label>
             <input type="text" id="username" maxlength="15" name="username" required autocomplete="username" ${formValue.username}>
-            <label for="password">Mot de passe</label>
+            <label for="password">Enter a password </label>
             <input type="password" id="password" name="password" required autocomplete="new-password">
-            <button type="submit">S'inscrire</button>
+            <button type="submit">Register</button>
         </form>
     </div>`;
   const close = document.getElementById("close");
