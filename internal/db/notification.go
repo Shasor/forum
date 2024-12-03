@@ -91,7 +91,6 @@ func FetchNotificationsByUserId(userID int) ([]Notification, error){
 		return nil, err
 	}
 
-	fmt.Println(userID, "là tout va bien", rows )
 	defer rows.Close()
 	var notifs []Notification
 	for rows.Next() {
