@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"forum/internal/auth"
 	"forum/internal/db"
 	"forum/internal/handlers"
 	"forum/internal/middlewares"
@@ -15,6 +16,9 @@ func InitServer() {
 	err := checkAndCreateCert("certs/server.crt", "certs/server.key")
 	if err != nil {
 		log.Fatalf("Error generating certificate: %v", err)
+	}
+	if err := loadEnv(".env"); err != nil {
+		fmt.Printf("Error load .env: %v\n", err)
 	}
 
 	// to delete after test
@@ -44,6 +48,10 @@ func InitServer() {
 	server.Handle("/report", handlers.ReportHandler)
 	server.Handle("/request", handlers.RequestHandler)
 	server.Handle("/notifications", handlers.NotificationHandler)
+	server.Handle("/auth/google/login", auth.GoogleLoginHandler)
+	server.Handle("/auth/google/callback", auth.GoogleCallbackHandler)
+	server.Handle("/auth/github/login", auth.GithubLoginHandler)
+	server.Handle("/auth/github/callback", auth.GithubCallbackHandler)
 
 	server.Use(middlewares.NotFoundMiddleware)
 	server.Use(middlewares.RecoverMiddleware)

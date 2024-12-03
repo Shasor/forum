@@ -19,7 +19,7 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request) {
 	user := GetUserFromCookie(w, r)
 
 	Resp = Response{Msg: []string{"Your account has successfully been deleted"}}
-	ClearSession(w, r)
+	ClearSession(w, r, "session_token")
 	db.DeleteUserByUsername(user.Username)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

@@ -18,7 +18,12 @@ export function GetLogin() {
       </form>
       <div id="redirect">
           <p>Not registered yet ?</p>
-            <button type="button" id="signup-link">Create an account</button>
+          <button type="button" id="signup-link">Create an account</button>
+      </div>
+      <div id="auths">
+        <a href="auth/google/login">Google</a>
+        <a href="auth/github/login">Github</a>
+        <a href="">Discord</a>
       </div>
   </div>`;
   const signup_bttn = document.getElementById("signup-link");
@@ -49,6 +54,11 @@ export function GetSignup(formValue) {
             <input type="password" id="password" name="password" required autocomplete="new-password">
             <button type="submit">Register</button>
         </form>
+        <div id="auths">
+          <a href="auth/google/login">Google</a>
+          <a href="auth/github/login">Github</a>
+          <a href="">Discord</a>
+      </div>
     </div>`;
   const close = document.getElementById("close");
   close.addEventListener("click", CloseLogin);

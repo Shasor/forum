@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"forum/internal/db"
+	"forum/internal/utils"
 	"net/http"
 	"strconv"
 	"strings"
@@ -27,9 +28,9 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Retrieve form values
 	sender, _ := strconv.Atoi(r.FormValue("sender_post"))
-	category := capitalize(r.FormValue("categorie_post"))
-	title := normalizeSpaces(r.FormValue("title_post"))
-	content := normalizeSpaces(r.FormValue("content_post"))
+	category := utils.Capitalize(r.FormValue("categorie_post"))
+	title := utils.NormalizeSpaces(r.FormValue("title_post"))
+	content := utils.NormalizeSpaces(r.FormValue("content_post"))
 
 	// Check if the form has an image (if it does, convert it to base64)
 	var base64image string
@@ -37,7 +38,7 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 		defer file.Close()
 		// If header is not empty, encode the image
 		if header.Size > 0 {
-			base64image, err = ImageToBase64(file, header, false)
+			base64image, err = utils.ImageToBase64(file, header, false)
 			if err != nil {
 				panic(err)
 			}
@@ -79,9 +80,10 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	categories := strings.Split(category, "#")
-	for _, cat := range categories {
-		if !db.CategoryExist(capitalize(cat)) {
-			err := db.CreateCategory(capitalize(cat))
+	for i := range categories {
+		categories[i] = utils.Capitalize(categories[i])
+		if !db.CategoryExist(categories[i]) {
+			err := db.CreateCategory(categories[i])
 			if err != nil {
 				panic(err)
 			}

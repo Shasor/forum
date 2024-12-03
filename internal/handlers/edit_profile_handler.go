@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/internal/db"
+	"forum/internal/utils"
 	"net/http"
 	"strings"
 )
@@ -42,7 +43,7 @@ func EditProfileHandler(w http.ResponseWriter, r *http.Request) {
 	// Update picture if a new file is uploaded
 	if pictureFile != nil {
 		defer pictureFile.Close()
-		encodedPicture, err := ImageToBase64(pictureFile, header, true)
+		encodedPicture, err := utils.ImageToBase64(pictureFile, header, true)
 		if err != nil {
 			panic(err)
 		}

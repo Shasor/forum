@@ -89,7 +89,7 @@ func GetUserActivitiesByID(userID int) []Activity {
 			return nil
 		}
 
-		activity.User, _ = SelectUserById(userID)
+		activity.User, _ = SelectUserByID(userID)
 		activity.Post, _ = SelectPostByID(postID)
 
 		activities = append(activities, activity)

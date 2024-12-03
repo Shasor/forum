@@ -104,7 +104,7 @@ func GetReactionsByPostID(id int) []Reaction {
 			return nil
 		}
 
-		reaction.Sender, _ = SelectUserById(senderID)
+		reaction.Sender, _ = SelectUserByID(senderID)
 
 		reactions = append(reactions, reaction)
 	}
