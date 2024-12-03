@@ -51,4 +51,5 @@ type Notification struct {
 	Post     Post
 	Content  string
 	Date     string
+	Readed	 bool
 }

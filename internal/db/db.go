@@ -75,6 +75,7 @@ func GetDB() *sql.DB {
     		receiver INTEGER NOT NULL,
     		post INTEGER,
 			parentPost INTEGER,
+			readed INTERGER NOT NULL DEFAULT 0,
 			date TEXT NOT NULL,
     		FOREIGN KEY (sender) REFERENCES users(id),
     		FOREIGN KEY (receiver) REFERENCES users(id),

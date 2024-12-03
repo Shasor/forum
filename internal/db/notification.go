@@ -3,6 +3,7 @@ package db
 import (
 	"errors"
 	"log"
+	"fmt"
 )
 
 func AddNotification(sort, date string, sender, receiver, post, parentPost int) error {
@@ -69,4 +70,58 @@ func isSpam(sender, receiver, post int) bool {
 		return isSpam
 	}
 	return isSpam
+}
+
+
+func FetchNotificationsByUserId(userID int) ([]Notification, error){
+
+	db:= GetDB()
+	defer db.Close()
+
+	query := `
+	SELECT id, sort, sender, receiver, post, parentPost, readed, date 
+	FROM notifications 
+	WHERE receiver = ? AND readed = 0
+	ORDER BY id DESC;
+	`
+
+	rows, err := db.Query(query, userID)
+	if err != nil {
+		log.Printf("Error executing the query: %v", err)
+		return nil, err
+	}
+
+	fmt.Println(userID, "là tout va bien", rows )
+	defer rows.Close()
+	var notifs []Notification
+	for rows.Next() {
+		var noti Notification
+		err := rows.Scan(&noti.ID, &noti.Type, &noti.Sender.ID, &noti.Receiver.ID, &noti.Post.ID, &noti.Content, &noti.Readed,  &noti.Date)
+		if err != nil{
+			fmt.Println("Error executing request : ", err)
+		}
+
+
+		noti.Sender, err = SelectUserByID(noti.Sender.ID)
+		if err != nil{
+			fmt.Println("Error at fetching Sender User: ", err)
+			return nil, err
+		}
+		noti.Post, err = SelectPostByID(noti.Post.ID)
+		if err != nil {
+			fmt.Println("Error Fetching Post : ", err)
+			return nil, err
+		}
+
+		if err = rows.Err(); err != nil {
+			log.Printf("Error during row iteration: %v", err)
+			return nil, err
+		}
+
+		notifs = append(notifs, noti)
+
+	}
+
+	return notifs, nil
+
 }
