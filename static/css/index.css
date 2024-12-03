@@ -50,54 +50,6 @@ body {
   width: 100vw;
 }
 
-.header {
-  display: flex;
-  z-index: 2;
-  padding: 0 1vw;
-  background-color: var(--BODY-COLOR);
-  position: fixed;
-}
-
-.header #avatar {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  position: fixed;
-  right: 10px;
-  top: 5px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
-}
-
-.header #avatar:hover {
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-}
-
-/*Popup quand on clique sur l'avatar*/
-#popup {
-  display: none;
-  position: fixed; /* Positionner le pop-up */
-  top: 40px; /* Ajustez la position verticale */
-  right: 40px; /* Ajustez la position horizontale */
-  border: 1px solid var(--c); /* Bordure pour le pop-up */
-  background-color: white; /* Couleur de fond */
-  padding: 30px; /* Espacement interne */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ombre */
-  z-index: 1000; /* S'assurer qu'il est au-dessus des autres éléments */
-  scrollbar-width: none;
-  border-radius: 8px;
-}
-.header #popup button {
-  background-color: var(--SECOND-COLOR);
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  width: 100%;
-}
-
 .main-container {
   display: flex;
   overflow: hidden;

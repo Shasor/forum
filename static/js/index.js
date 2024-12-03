@@ -93,27 +93,42 @@ function CreatePost(new_post, bttn_new_post) {
 
 // ╔════════════════════ modify post ════════════════════╗
 
-const buttons = document.querySelectorAll(".create-post-to-modify-button");
+document.addEventListener('DOMContentLoaded', () => {
+  const notifIcon = document.getElementById('notif-pic-none');
+  const notifContainer = document.getElementById('notification-container');
 
-// Ajouter des écouteurs d'événements à chaque bouton
-buttons.forEach((button) => {
-  const modifyPostDiv = document.querySelector(`#${button.dataset.target}`); // Cible la div associée via un attribut data-target
-
-  button.addEventListener("click", function (event) {
-    event.stopPropagation(); // Empêche le clic de se propager au document
-    if (modifyPostDiv.style.display === "none" || modifyPostDiv.style.display === "") {
-      modifyPostDiv.style.display = "block";
-    } else {
-      modifyPostDiv.style.display = "none";
-    }
+  notifIcon.addEventListener('click', () => {
+    // Basculer la classe "active" pour afficher/masquer
+    notifContainer.style.display = notifContainer.style.display === 'none' ? 'block' : 'none';
   });
 
-  // Fermer la div si un clic se produit en dehors
-  document.addEventListener("click", function (event) {
-    if (!modifyPostDiv.contains(event.target) && event.target !== button) {
-      modifyPostDiv.style.display = "none";
+  // Optionnel : Cacher la notification si on clique ailleurs
+  document.addEventListener('click', (event) => {
+    if (!notifIcon.contains(event.target) && !notifContainer.contains(event.target)) {
+      notifContainer.style.display = 'none';
     }
   });
+});
+
+// ╔════════════════════ Notification Poppup ════════════════════╗
+
+document.addEventListener('DOMContentLoaded', () => {
+  const notifIcon = document.getElementById('notif-pic-none');
+  const notifContainer = document.getElementById('notification-container');
+
+  notifIcon?.addEventListener('click', () => {
+    // Basculer la classe "action" pour afficher/masquer la notification
+    notifContainer.classList.toggle('action');
+  });
+});
+
+document?.addEventListener('click', (event) => {
+  const notifContainer = document.getElementById('notification-container');
+  const notifIcon = document.getElementById('notif-pic-none');
+
+  if (!notifContainer.contains(event.target) && event.target !== notifIcon) {
+    notifContainer.classList.remove('action'); // Fermer la div
+  }
 });
 
 // ╔════════════════════ Login-Signup ════════════════════╗
