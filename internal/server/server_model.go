@@ -1,11 +1,13 @@
 package server
 
 import (
+	"bufio"
 	"fmt"
 	"forum/internal/middlewares"
 	"net/http"
 	"os"
 	"os/exec"
+	"strings"
 	"time"
 )
 
@@ -106,7 +108,7 @@ func checkAndCreateCert(certFile, keyFile string) error {
 
 func generateCertFromScript() error {
 	// Execute the generate_cert.sh script
-	cmd := exec.Command("./generate_cert.sh")
+	cmd := exec.Command("/bin/sh", "./generate_cert.sh")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
@@ -117,4 +119,23 @@ func generateCertFromScript() error {
 	}
 
 	return nil
+}
+
+func loadEnv(filename string) error {
+	file, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		parts := strings.SplitN(line, "=", 2)
+		if len(parts) == 2 {
+			os.Setenv(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
+		}
+	}
+
+	return scanner.Err()
 }
