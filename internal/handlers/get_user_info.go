@@ -24,13 +24,12 @@ func GetUserInfo(w http.ResponseWriter, r *http.Request) {
 
 	purgedOtherID := strings.ReplaceAll(data["otherID"], " ", "")
 	otherID, err := strconv.Atoi(purgedOtherID) // to do: error handle
-	if err != nil{
+	if err != nil {
 		http.Error(w, "error while processing data ", http.StatusInternalServerError)
 		return
 	}
-	other, _ := db.SelectUserById(otherID)
+	other, _ := db.SelectUserByID(otherID)
 	otherActivities := db.GetUserActivitiesByID(other.ID)
-
 
 	dataUser := map[string]interface{}{
 		"otherData":     other,

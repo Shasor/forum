@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"forum/internal/db"
+	"forum/internal/handlers"
 	"net/http"
 	"net/url"
 	"os"
@@ -26,8 +27,7 @@ func GoogleLoginHandler(w http.ResponseWriter, r *http.Request) {
 	params.Add("response_type", "code")
 	params.Add("scope", "openid profile email")
 	params.Add("state", state)
-
-	http.SetCookie(w, &http.Cookie{Name: "oauth_state", Value: state, HttpOnly: true})
+	http.SetCookie(w, &http.Cookie{Name: "oauth_state", Value: state, HttpOnly: true, Secure: true})
 	http.Redirect(w, r, googleAuthURL+"?"+params.Encode(), http.StatusFound)
 }
 
@@ -53,14 +53,15 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = createOrUpdateUser(userInfo)
+	user, err := createOrUpdateUser(userInfo)
 	if err != nil {
 		http.Error(w, "Failed to create or update user", http.StatusInternalServerError)
 		return
 	}
 
 	// Créer une session pour l'utilisateur
-	fmt.Println("OK")
+	handlers.ClearSession(w, r, "oauth_state")
+	handlers.SetSession(w, user.Username)
 	// ...
 
 	http.Redirect(w, r, "/", http.StatusFound)
@@ -115,8 +116,25 @@ func createOrUpdateUser(userInfo map[string]interface{}) (*db.User, error) {
 	// Retournez l'utilisateur créé ou mis à jour
 	fmt.Println(userInfo)
 	fmt.Println()
-	// ...
-	return nil, nil
+
+	var user *db.User
+	if !db.UserExistByEmail(userInfo["email"].(string)) {
+		picture, err := handlers.GetFileFromURL(userInfo["picture"].(string))
+		if err != nil {
+			panic(err)
+		}
+		user, err = db.CreateUser("user", userInfo["given_name"].(string), userInfo["email"].(string), picture, "")
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		var err error
+		user, err = db.SelectUserByEmail(userInfo["email"].(string))
+		if err != nil {
+			panic(err)
+		}
+	}
+	return user, nil
 }
 
 func generateRandomState() string {

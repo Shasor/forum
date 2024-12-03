@@ -117,11 +117,6 @@ func resizeImage(img image.Image, maxWidth, maxHeight int) image.Image {
 	ratioH := float64(maxHeight) / float64(height)
 	ratio := math.Min(ratioW, ratioH)
 
-	// If the image is already within bounds, return it unchanged
-	if ratio >= 1 {
-		return img
-	}
-
 	newWidth := int(float64(width) * ratio)
 	newHeight := int(float64(height) * ratio)
 
@@ -136,7 +131,6 @@ func resizeImage(img image.Image, maxWidth, maxHeight int) image.Image {
 			dst.Set(x, y, img.At(srcX, srcY))
 		}
 	}
-
 	return dst
 }
 
@@ -165,4 +159,34 @@ func capitalize(s string) string {
 
 	// Rejoindre les mots en une seule chaîne
 	return strings.Join(words, " ")
+}
+
+func GetFileFromURL(url string) (string, error) {
+	// Effectuer une requête GET vers le lien
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", fmt.Errorf("erreur lors de la requête GET : %v", err)
+	}
+	defer resp.Body.Close()
+
+	// Vérifier le code de statut HTTP
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("échec de la requête : statut HTTP %d", resp.StatusCode)
+	}
+
+	img, _, err := image.Decode(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	resizedImg := resizeImage(img, 500, 500)
+
+	// Encode resized image to JPEG format
+	buf := new(bytes.Buffer)
+	err = jpeg.Encode(buf, resizedImg, nil)
+	if err != nil {
+		return "", fmt.Errorf("error encoding image to JPEG: %v", err)
+	}
+
+	// Base64-encode the JPEG image
+	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
 }

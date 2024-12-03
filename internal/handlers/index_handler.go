@@ -35,7 +35,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 	if user != nil {
 		likedposts = db.FetchPostsLiked(user.ID)
 		followedposts = db.FetchFollowPosts(user.ID)
-	} 
+	}
 	get := GetFormGET(w, r)
 	data := map[string]interface{}{
 		"resp":          Resp,

@@ -16,6 +16,6 @@ func LogoutHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Resp = Response{Msg: []string{"You've successfully disconnected!"}}
-	ClearSession(w, r)
+	ClearSession(w, r, "session_token")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

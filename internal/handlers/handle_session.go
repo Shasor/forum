@@ -38,24 +38,27 @@ func SetSession(w http.ResponseWriter, username string) {
 		Value:    sessionUUID.String(),
 		Expires:  time.Now().Add(1 * time.Hour),
 		HttpOnly: true,
+		Path:     "/",
 	}
 
 	http.SetCookie(w, &cookie)
 }
 
-func ClearSession(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("session_token")
+func ClearSession(w http.ResponseWriter, r *http.Request, name string) {
+	cookie, err := r.Cookie(name)
 	if err != nil {
 		panic(err)
 	}
 
-	err = db.DeleteConnectedUser(cookie.Value)
-	if err != nil {
-		panic(err)
+	if name == "session_token" {
+		err = db.DeleteConnectedUser(cookie.Value)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	cookie = &http.Cookie{
-		Name:   "session_token",
+		Name:   name,
 		MaxAge: -1,
 	}
 	http.SetCookie(w, cookie)
@@ -69,13 +72,13 @@ func GetUserFromCookie(w http.ResponseWriter, r *http.Request) *db.User {
 
 	userID, err := db.GetUserIDBySessionUUID(cookie.Value)
 	if err != nil {
-		ClearSession(w, r)
+		ClearSession(w, r, "session_token")
 		return nil
 	}
 
 	user, err := db.SelectUserByID(userID)
 	if err != nil {
-		ClearSession(w, r)
+		ClearSession(w, r, "session_token")
 		return nil
 	}
 
