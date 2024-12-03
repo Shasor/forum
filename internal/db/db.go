@@ -17,12 +17,11 @@ func GetDB() *sql.DB {
 	tables := `CREATE TABLE IF NOT EXISTS users (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			role TEXT NOT NULL,
-			username TEXT NOT NULL UNIQUE,
-			email TEXT NOT NULL UNIQUE,
-			picture TEXT NOT NULL,
-			password TEXT NOT NULL,
+			username TEXT UNIQUE,
+			email TEXT,
+			picture TEXT,
+			password TEXT,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			FOREIGN KEY (role) REFERENCES role(string)
 		); CREATE TABLE IF NOT EXISTS categories (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL
