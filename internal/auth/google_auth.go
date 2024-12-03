@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"forum/internal/db"
 	"forum/internal/handlers"
+	"forum/internal/utils"
 	"net/http"
 	"net/url"
 	"os"
@@ -119,7 +120,7 @@ func createOrUpdateUser(userInfo map[string]interface{}) (*db.User, error) {
 
 	var user *db.User
 	if !db.UserExistByEmail(userInfo["email"].(string)) {
-		picture, err := handlers.GetFileFromURL(userInfo["picture"].(string))
+		picture, err := utils.GetFileFromURL(userInfo["picture"].(string))
 		if err != nil {
 			panic(err)
 		}

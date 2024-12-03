@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"forum/internal/db"
+	"forum/internal/utils"
 	"net/http"
 	"strconv"
 )
@@ -16,7 +17,7 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 		// Récupère la valeur de l'input `search_bar`
 		searchValue := r.FormValue("search_bar")
 
-		categorySearched, err := db.SelectCategoryByName(capitalize(searchValue))
+		categorySearched, err := db.SelectCategoryByName(utils.Capitalize(searchValue))
 		categoryID := strconv.Itoa(categorySearched.ID)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusSeeOther)
