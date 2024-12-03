@@ -80,9 +80,10 @@ func CreatePostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	categories := strings.Split(category, "#")
-	for _, cat := range categories {
-		if !db.CategoryExist(utils.Capitalize(cat)) {
-			err := db.CreateCategory(utils.Capitalize(cat))
+	for i := range categories {
+		categories[i] = utils.Capitalize(categories[i])
+		if !db.CategoryExist(categories[i]) {
+			err := db.CreateCategory(categories[i])
 			if err != nil {
 				panic(err)
 			}

@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"forum/internal/db"
 	"forum/internal/handlers"
 	"forum/internal/utils"
@@ -112,12 +111,6 @@ func getUserInfo(token string) (map[string]interface{}, error) {
 }
 
 func createOrUpdateUser(userInfo map[string]interface{}) (*db.User, error) {
-	// Implémentez la logique pour créer ou mettre à jour l'utilisateur dans votre base de données
-	// Utilisez les informations de userInfo pour remplir les champs de l'utilisateur
-	// Retournez l'utilisateur créé ou mis à jour
-	fmt.Println(userInfo)
-	fmt.Println()
-
 	var user *db.User
 	if !db.UserExistByEmail(userInfo["email"].(string)) {
 		picture, err := utils.GetFileFromURL(userInfo["picture"].(string))

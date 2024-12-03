@@ -6,7 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"image"
+	_ "image/gif" // Import pour le décodage GIF
 	"image/jpeg"
+	_ "image/png" // Import pour le décodage PNG
 	"io"
 	"math"
 	"mime/multipart"
@@ -62,14 +64,12 @@ func ImageToBase64(file multipart.File, header *multipart.FileHeader, is_pfp boo
 }
 
 func GetFileFromURL(url string) (string, error) {
-	// Effectuer une requête GET vers le lien
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", fmt.Errorf("erreur lors de la requête GET : %v", err)
 	}
 	defer resp.Body.Close()
 
-	// Vérifier le code de statut HTTP
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("échec de la requête : statut HTTP %d", resp.StatusCode)
 	}
@@ -80,14 +80,12 @@ func GetFileFromURL(url string) (string, error) {
 	}
 	resizedImg := resizeImage(img, 500, 500)
 
-	// Encode resized image to JPEG format
 	buf := new(bytes.Buffer)
 	err = jpeg.Encode(buf, resizedImg, nil)
 	if err != nil {
-		return "", fmt.Errorf("error encoding image to JPEG: %v", err)
+		return "", fmt.Errorf("erreur lors de l'encodage de l'image en JPEG : %v", err)
 	}
 
-	// Base64-encode the JPEG image
 	return base64.StdEncoding.EncodeToString(buf.Bytes()), nil
 }
 

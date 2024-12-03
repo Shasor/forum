@@ -12,6 +12,7 @@ func NormalizeSpaces(s string) string {
 
 func Capitalize(s string) string {
 	// Diviser la chaîne en mots
+	s = strings.TrimSpace(s)
 	words := strings.Fields(s)
 
 	// Parcourir chaque mot
