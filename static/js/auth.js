@@ -22,7 +22,7 @@ export function GetLogin() {
       </div>
       <div id="auths">
         <a href="auth/google/login">Google</a>
-        <a href="">Github</a>
+        <a href="auth/github/login">Github</a>
         <a href="">Discord</a>
       </div>
   </div>`;
@@ -56,7 +56,7 @@ export function GetSignup(formValue) {
         </form>
         <div id="auths">
           <a href="auth/google/login">Google</a>
-          <a href="">Github</a>
+          <a href="auth/github/login">Github</a>
           <a href="">Discord</a>
       </div>
     </div>`;

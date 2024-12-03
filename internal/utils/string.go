@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"strings"
 	"unicode"
 )
@@ -31,4 +33,10 @@ func Capitalize(s string) string {
 
 	// Rejoindre les mots en une seule chaîne
 	return strings.Join(words, " ")
+}
+
+func GenerateRandomState() string {
+	b := make([]byte, 32)
+	rand.Read(b)
+	return base64.StdEncoding.EncodeToString(b)
 }

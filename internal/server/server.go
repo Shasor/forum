@@ -49,6 +49,8 @@ func InitServer() {
 	server.Handle("/request", handlers.RequestHandler)
 	server.Handle("/auth/google/login", auth.GoogleLoginHandler)
 	server.Handle("/auth/google/callback", auth.GoogleCallbackHandler)
+	server.Handle("/auth/github/login", auth.GithubLoginHandler)
+	server.Handle("/auth/github/callback", auth.GithubCallbackHandler)
 
 	server.Use(middlewares.NotFoundMiddleware)
 	server.Use(middlewares.RecoverMiddleware)

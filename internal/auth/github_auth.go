@@ -8,22 +8,23 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
-func GoogleLoginHandler(w http.ResponseWriter, r *http.Request) {
+func GithubLoginHandler(w http.ResponseWriter, r *http.Request) {
 	state := utils.GenerateRandomState()
 
 	params := url.Values{}
-	params.Add("client_id", os.Getenv("GOOGLE_CLIENT_ID"))
-	params.Add("redirect_uri", "https://localhost:8080/auth/google/callback")
-	params.Add("response_type", "code")
-	params.Add("scope", "openid profile email")
+	params.Add("client_id", os.Getenv("GITHUB_CLIENT_ID"))
+	params.Add("redirect_uri", "https://localhost:8080/auth/github/callback")
+	params.Add("scope", "user:email")
 	params.Add("state", state)
+
 	http.SetCookie(w, &http.Cookie{Name: "oauth_state", Value: state, HttpOnly: true, Secure: true})
-	http.Redirect(w, r, GoogleAuthURL+"?"+params.Encode(), http.StatusFound)
+	http.Redirect(w, r, GithubAuthURL+"?"+params.Encode(), http.StatusFound)
 }
 
-func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	state := r.FormValue("state")
 	code := r.FormValue("code")
 
@@ -33,19 +34,19 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := GoogleExchangeCodeForToken(code)
+	token, err := GithubExchangeCodeForToken(code)
 	if err != nil {
 		http.Error(w, "Failed to exchange code for token", http.StatusInternalServerError)
 		return
 	}
 
-	userInfo, err := GoogleGetUserInfo(token)
+	userInfo, err := GithubGetUserInfo(token)
 	if err != nil {
 		http.Error(w, "Failed to get user info", http.StatusInternalServerError)
 		return
 	}
 
-	user, err := GoogleCreateOrUpdateUser(userInfo)
+	user, err := GithubCreateOrUpdateUser(userInfo)
 	if err != nil {
 		http.Error(w, "Failed to create or update user", http.StatusInternalServerError)
 		return
@@ -59,15 +60,22 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func GoogleExchangeCodeForToken(code string) (string, error) {
+func GithubExchangeCodeForToken(code string) (string, error) {
 	values := url.Values{}
 	values.Add("code", code)
-	values.Add("client_id", os.Getenv("GOOGLE_CLIENT_ID"))
-	values.Add("client_secret", os.Getenv("GOOGLE_CLIENT_SECRET"))
-	values.Add("redirect_uri", "https://localhost:8080/auth/google/callback")
-	values.Add("grant_type", "authorization_code")
+	values.Add("client_id", os.Getenv("GITHUB_CLIENT_ID"))
+	values.Add("client_secret", os.Getenv("GITHUB_CLIENT_SECRET"))
+	values.Add("redirect_uri", "https://localhost:8080/auth/github/callback")
 
-	resp, err := http.PostForm(GoogleTokenURL, values)
+	req, err := http.NewRequest("POST", GithubTokenURL, strings.NewReader(values.Encode()))
+	if err != nil {
+		return "", err
+	}
+
+	req.Header.Set("Accept", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
 	if err != nil {
 		return "", err
 	}
@@ -83,8 +91,8 @@ func GoogleExchangeCodeForToken(code string) (string, error) {
 	return result.AccessToken, nil
 }
 
-func GoogleGetUserInfo(token string) (map[string]interface{}, error) {
-	req, _ := http.NewRequest("GET", GoogleUserInfoURL, nil)
+func GithubGetUserInfo(token string) (map[string]interface{}, error) {
+	req, _ := http.NewRequest("GET", GithubUserInfoURL, nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	client := &http.Client{}
@@ -102,14 +110,14 @@ func GoogleGetUserInfo(token string) (map[string]interface{}, error) {
 	return userInfo, nil
 }
 
-func GoogleCreateOrUpdateUser(userInfo map[string]interface{}) (*db.User, error) {
+func GithubCreateOrUpdateUser(userInfo map[string]interface{}) (*db.User, error) {
 	var user *db.User
 	if !db.UserExistByEmail(userInfo["email"].(string)) {
-		picture, err := utils.GetFileFromURL(userInfo["picture"].(string))
+		picture, err := utils.GetFileFromURL(userInfo["avatar_url"].(string))
 		if err != nil {
 			panic(err)
 		}
-		user, err = db.CreateUser("user", userInfo["given_name"].(string), userInfo["email"].(string), picture, "")
+		user, err = db.CreateUser("user", userInfo["login"].(string), userInfo["email"].(string), picture, "")
 		if err != nil {
 			panic(err)
 		}
