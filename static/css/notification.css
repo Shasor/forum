@@ -102,10 +102,22 @@
 }
 
 #notification-ul li {
+  display: ruby;
   margin: 0;
   padding-left: 20px;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+#notification-ul li a { 
+  text-decoration: none;
+  color: #f4acb7;
+  margin-left: 5px;
+}
+
+#notification-ul li a:hover { 
+  text-decoration: none;
+  color: white;
 }
 
 #notification-ul li:hover {

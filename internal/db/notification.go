@@ -78,12 +78,25 @@ func FetchNotificationsByUserId(userID int) ([]Notification, error){
 	db:= GetDB()
 	defer db.Close()
 
-	query := `
-	SELECT id, sort, sender, receiver, post, parentPost, readed, date 
-	FROM notifications 
-	WHERE receiver = ? AND readed = 0
-	ORDER BY id DESC;
-	`
+
+	var query string
+	if IsUserAdmin(userID){
+		query = `
+		SELECT id, sort, sender, receiver, post, parentPost, readed, date 
+		FROM notifications 
+		WHERE (receiver = ? OR receiver = 0) AND readed = 0 
+		ORDER BY id DESC;
+		`
+
+	} else {
+		query = `
+		SELECT id, sort, sender, receiver, post, parentPost, readed, date 
+		FROM notifications 
+		WHERE receiver = ? AND readed = 0
+		ORDER BY id DESC;
+		`
+	}
+
 
 	rows, err := db.Query(query, userID)
 	if err != nil {
@@ -106,11 +119,15 @@ func FetchNotificationsByUserId(userID int) ([]Notification, error){
 			fmt.Println("Error at fetching Sender User: ", err)
 			return nil, err
 		}
-		noti.Post, err = SelectPostByID(noti.Post.ID)
-		if err != nil {
-			fmt.Println("Error Fetching Post : ", err)
-			return nil, err
+		//fmt.Println("noti post id :", noti.Post.ID)
+		if noti.Post.ID != 0{
+			noti.Post, err = SelectPostByID(noti.Post.ID)
+			if err != nil {
+				fmt.Println("Error Fetching Post : ", err)
+				return nil, err
+			}
 		}
+			
 
 		if err = rows.Err(); err != nil {
 			log.Printf("Error during row iteration: %v", err)

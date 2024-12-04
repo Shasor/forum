@@ -5,8 +5,8 @@ export async function GetOtherProfile() {
   try {
     // Récupération des attributs depuis l'événement
     const otherID = event.target.getAttribute("other_id");
-    const userID = event.target.getAttribute("user_id");
-    const userRole = event.target.getAttribute("user_role");
+    const userID = window.userData.id;
+    const userRole =  window.userData.role;
 
     console.log(otherID, userID, userRole);
 
