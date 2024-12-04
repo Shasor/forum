@@ -7,7 +7,7 @@
   window.ShowError = ShowError;
 
   // Check if the user is nil before trying to access its properties
-  window.userData = {
+  window.userData = Object.freeze({
     id: "{{if .user}} {{.user.ID | js}}{{else}} '0' {{end}}",
     pseudo: "{{ if .user }}{{ .user.Username | js }}{{ else }}'Guest'{{ end }}",
     email: "{{ if .user }}{{ .user.Email | js }}{{ else }}'Not logged in'{{ end }}",
@@ -130,6 +130,6 @@
       </div>
     </div>
   </div> {{ end}} {{ end }}`,
-  };
+  });
 </script>
 {{end}}

@@ -57,6 +57,17 @@ Array.from(other_profile_links).forEach((link) => {
   });
 });
 
+const notificationList = document.getElementById("notification-ul");
+if (notificationList) {
+  notificationList.addEventListener("click", (event) => {
+    // Vérifiez si l'élément cliqué a la classe "sender"
+    if (event.target.classList.contains("sender")) {
+      GetOtherProfile();
+      event.preventDefault(); // Facultatif, selon votre logique
+    }
+  });
+};
+
 // ╔════════════════════ left bar ════════════════════╗
 const leftBar = document.querySelector(".left-bar");
 const toggleButton = leftBar.querySelector("#logo");
@@ -127,13 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const notifIcon = document?.getElementById('notif-pic-none');
   const notifContainer = document?.getElementById('notification-container');
 
-  notifIcon.addEventListener('click', () => {
+  notifIcon?.addEventListener('click', () => {
     // Basculer la classe "active" pour afficher/masquer
     notifContainer.style.display = notifContainer.style.display === 'none' ? 'block' : 'none';
   });
 
   // Optionnel : Cacher la notification si on clique ailleurs
-  document.addEventListener('click', (event) => {
+  document?.addEventListener('click', (event) => {
     if (!notifIcon.contains(event.target) && !notifContainer.contains(event.target)) {
       notifContainer.style.display = 'none';
     }

@@ -1,8 +1,10 @@
 export function PollForNotifications() {
 
-    
-if (window.userData.role === "visitor"){
-  return
+console.log("user role : ", window.userData.role)
+if (!window.userData || window.userData.role.trim().toLowerCase() === 'visitor') {
+    console.log()
+    console.log("Role is visitor, stopping execution.");
+    return; // Arrêter si le rôle est 'visitor'
 }
 
     fetch("https://localhost:8080/notifications")
@@ -30,20 +32,23 @@ if (window.userData.role === "visitor"){
                     // Construire un texte descriptif pour la notification
                     let notificationText;
                     if (Type === 'post') {
-                        notificationText = `${Sender.Username} commented on your post ${Post.ParentID}.`;
+                        notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span>commented on your post<a href="/?postID=${Post.ParentID}">here.</a>`;
                     } else if (Type === 'LIKE') {
-                        notificationText = `${Sender.Username} liked ${Post.Title}.`;
+                        notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span>liked <a href="/?postID=${Post.ID}">${Post.Title}.</a>`;
                     } else if(Type ==='DISLIKE') {
-                        notificationText = `${Sender.Username} disliked ${Post.Title}.`;
+                        notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span>disliked<a href="/?postID=${Post.ID}">${Post.Title}.</a>`;
                     } else if(Type ==='category'){
-                        notificationText = `${Sender.Username} posted ${Post.Title} on ${Post.Categories["0"].Name}.`;
-
+                        notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span>posted ${Post.Title} on <a href="/?catID=${Post.ParentID}">a followed category.</a>`;
+                    }else if (Type === 'report'){
+                        notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span>reported : <a href="/?postID=${Post.ID}">${Post.Title}.</a>`;
+                    }else if (Type === 'request'){
+                        notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span>ask to be Moderator.</a>`; 
                     } else {
                         notificationText = `Unknown type : ${Type}.`;
                     }
 
                     // Ajouter le texte à l'élément <li>
-                    notificationItem.textContent = notificationText;
+                    notificationItem.innerHTML = notificationText;
 
                     // Ajouter l'élément <li> en haut de la liste
                     notificationList.insertBefore(notificationItem, notificationList.firstChild);
@@ -52,7 +57,7 @@ if (window.userData.role === "visitor"){
                 console.error("Conteneur de notifications introuvable !");
             }
             // Relancer le long polling pour recevoir la prochaine notification
-            //PollForNotifications();
+           //PollForNotifications();
         })
         .catch((error) => {
             console.error("Erreur lors de la récupération de la notification :", error);

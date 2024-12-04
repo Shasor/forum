@@ -266,3 +266,15 @@ func SelectUserByEmail(email string) (*User, error) {
 
 	return &user, nil
 }
+
+func IsUserAdmin(id int) (bool){
+	db := GetDB()
+	defer db.Close()
+
+	var exist bool
+	err := db.QueryRow("SELECT EXISTS( SELECT 1 FROM users WHERE role = 'admin' AND id = ?)", id).Scan(&exist)
+	if err != nil {
+		return exist
+	}
+	return exist
+}
