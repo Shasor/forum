@@ -21,7 +21,7 @@ func GetDB() *sql.DB {
 			email TEXT,
 			picture TEXT,
 			password TEXT,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		); CREATE TABLE IF NOT EXISTS categories (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT NOT NULL
