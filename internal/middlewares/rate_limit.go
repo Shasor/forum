@@ -42,7 +42,6 @@ func (rl *RateLimiter) allow() bool {
 		rl.tokens = min(rl.limit, rl.tokens+refillTokens) // Refill the tokens
 		rl.lastRefill = now                               // Reset the refill time
 	}
-
 	// If tokens are available, consume one and allow the request
 	if rl.tokens > 0 {
 		rl.tokens--
@@ -83,7 +82,7 @@ func (rlm *RateLimiterMap) getRateLimiter(ip string) *RateLimiter {
 	limiter, exists := rlm.clients[ip]
 	if !exists {
 		// Create a new rate limiter (e.g., 5 requests per second)
-		limiter = newRateLimiter(5, time.Second)
+		limiter = newRateLimiter(60, time.Second)
 		rlm.clients[ip] = limiter
 	}
 
