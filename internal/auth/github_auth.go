@@ -17,7 +17,7 @@ func GithubLoginHandler(w http.ResponseWriter, r *http.Request) {
 	params := url.Values{}
 	params.Add("client_id", os.Getenv("GITHUB_CLIENT_ID"))
 	params.Add("redirect_uri", "https://localhost:8080/auth/github/callback")
-	params.Add("scope", "user:email")
+	params.Add("scope", "user")
 	params.Add("state", state)
 
 	http.SetCookie(w, &http.Cookie{Name: "oauth_state", Value: state, HttpOnly: true, Secure: true})
