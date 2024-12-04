@@ -48,6 +48,7 @@ func InitServer() {
 	server.Handle("/report", handlers.ReportHandler)
 	server.Handle("/request", handlers.RequestHandler)
 	server.Handle("/notifications", handlers.NotificationHandler)
+	server.Handle("/notifications/clear",handlers.NotificationClearHandler)
 	server.Handle("/auth/google/login", auth.GoogleLoginHandler)
 	server.Handle("/auth/google/callback", auth.GoogleCallbackHandler)
 	server.Handle("/auth/github/login", auth.GithubLoginHandler)

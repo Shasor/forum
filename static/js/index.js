@@ -2,7 +2,7 @@ import { ShowError } from "./other.js";
 import { GetLogin, GetSignup } from "./auth.js";
 import { GetProfile, GetEditProfile, GetMyPosts, GetLikedPosts } from "./profile.js";
 import { GetOtherProfile } from "./otherProfile.js";
-import { PollForNotifications } from "./notifications.js";
+import { PollForNotifications, ClearNotifications } from "./notifications.js";
 
 
 PollForNotifications();
@@ -151,6 +151,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// ╔════════════════════ Notification Poppup Delete ════════════════════╗
+
+document.addEventListener("DOMContentLoaded", function () {
+  const delete_post_link = document.getElementById("delete-post");
+  delete_post_link?.addEventListener("click", ClearNotifications);
+
+});
 
 // ╔════════════════════ Login-Signup ════════════════════╗
 document.addEventListener("DOMContentLoaded", function () {

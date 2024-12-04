@@ -65,3 +65,44 @@ if (!window.userData || window.userData.role.trim().toLowerCase() === 'visitor')
             //setTimeout(PollForNotifications, 5000);
         });
 }
+
+export function ClearNotifications() {
+    const notificationList = document.getElementById("notification-ul");
+
+    if (!notificationList) {
+        console.error("Conteneur de notifications introuvable !");
+        return;
+    }
+
+    // Supprimer toutes les notifications de la liste
+    while (notificationList.firstChild) {
+        notificationList.removeChild(notificationList.firstChild);
+    }
+
+    console.log("Toutes les notifications ont été supprimées de l'interface utilisateur.");
+    console.log(window.userData.id)
+
+    // Envoyer une mise à jour au serveur pour notifier la suppression
+    fetch("https://localhost:8080/notifications/clear", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            userID: String(window.userData.id), 
+        }),
+    })
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error("Erreur lors de l'envoi de la mise à jour au serveur.");
+        }
+        return response.json();
+    })
+    .then((data) => {
+        console.log("Réponse du serveur après suppression des notifications :", data);
+    })
+    .catch((error) => {
+        console.error("Erreur lors de la suppression des notifications sur le serveur :", error);
+    });
+    
+}
