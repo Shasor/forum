@@ -2,7 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"fmt"
 	"forum/internal/db"
 	"forum/internal/handlers"
 	"forum/internal/utils"
@@ -26,6 +25,7 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 	code := r.FormValue("code")
 	state := r.FormValue("state")
 
+
 	oauthCookie, err := r.Cookie("oauth_state")
 	if err != nil || state != oauthCookie.Value {
 		http.Error(w, "Invalid state", http.StatusBadRequest)
@@ -37,14 +37,14 @@ func DiscordCallbackHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to exchange code for token", http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(token)
 
 	userInfo, err := DiscordGetUserInfo(token)
 	if err != nil {
 		http.Error(w, "Failed to get user info", http.StatusInternalServerError)
 		return
 	}
-	
+
+
 	user, err := DiscordCreateOrUpdateUser(userInfo)
 	if err != nil {
 		http.Error(w, "Failed to create or update user", http.StatusInternalServerError)
@@ -65,11 +65,13 @@ func DiscordExchangeCodeForToken(code string) (string, error) {
 	values.Add("client_id", os.Getenv("DISCORD_CLIENT_ID"))
 	values.Add("client_secret", os.Getenv("DISCORD_CLIENT_SECRET"))
 	values.Add("redirect_uri", "https://localhost:8080/auth/discord/callback")
+	values.Add("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", DiscordTokenURL, strings.NewReader(values.Encode()))
 	if err != nil {
 		return "", err
 	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -77,9 +79,7 @@ func DiscordExchangeCodeForToken(code string) (string, error) {
 		return "", err
 	}
 	defer resp.Body.Close()
-
-	fmt.Println(resp.Body)
-
+	
 	var result struct {
 		AccessToken string `json:"access_token"`
 	}
@@ -111,12 +111,9 @@ func DiscordGetUserInfo(token string) (map[string]interface{}, error) {
 
 func DiscordCreateOrUpdateUser(userInfo map[string]interface{}) (*db.User, error) {
 	var user *db.User
+	var err error
 	if !db.UserExistByEmail(userInfo["email"].(string)) {
-		picture, err := utils.GetFileFromURL(userInfo["avatar_url"].(string))
-		if err != nil {
-			panic(err)
-		}
-		user, err = db.CreateUser("user", userInfo["login"].(string), userInfo["email"].(string), picture, "")
+		user, err = db.CreateUser("user", userInfo["username"].(string), userInfo["email"].(string), "", "")
 		if err != nil {
 			panic(err)
 		}
