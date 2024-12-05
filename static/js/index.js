@@ -135,18 +135,27 @@ buttons.forEach((button) => {
 // ╔════════════════════ Notification Poppup ════════════════════╗
 
 document.addEventListener('DOMContentLoaded', () => {
-  const notifIcon = document?.getElementById('notif-pic-none');
-  const notifContainer = document?.getElementById('notification-container');
+  const notifIcon = document?.getElementById('notif-pic-none'); // Utilisez l'identifiant correct
+  const notifContainer = document?.getElementById('notification-container'); // Utilisez l'identifiant correct
 
-  notifIcon?.addEventListener('click', () => {
-    // Basculer la classe "active" pour afficher/masquer
-    notifContainer.style.display = notifContainer.style.display === 'none' ? 'block' : 'none';
+  notifIcon?.addEventListener('click', (event) => {
+    // Empêcher l'événement de se propager pour éviter de masquer immédiatement
+    event.stopPropagation();
+
+    // Basculer la visibilité
+    notifContainer.style.display = notifContainer.style.display === 'none' || !notifContainer.style.display
+      ? 'block'
+      : 'none';
   });
 
-  // Optionnel : Cacher la notification si on clique ailleurs
-  document?.addEventListener('click', (event) => {
-    if (!notifIcon.contains(event.target) && !notifContainer.contains(event.target)) {
-      notifContainer.style.display = 'none';
+  // Cacher la notification si on clique ailleurs
+  document.addEventListener('click', (event) => {
+    // Vérifiez si les éléments existent avant de continuer
+    if (notifIcon && notifContainer) {
+      // Si le clic n'est ni sur l'icône ni sur le conteneur, masquer le conteneur
+      if (!notifIcon.contains(event.target) && !notifContainer.contains(event.target)) {
+        notifContainer.style.display = 'none';
+      }
     }
   });
 });
