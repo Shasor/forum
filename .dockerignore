@@ -1,4 +1,7 @@
 internal/db/database.db
+README.md
+Makefile
+.gitignore
 
 tmp/
 .air.toml

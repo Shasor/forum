@@ -2,12 +2,14 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 	"forum/internal/db"
 	"forum/internal/handlers"
 	"forum/internal/utils"
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
 func GoogleLoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,6 +26,7 @@ func GoogleLoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
+	handlers.Resp = handlers.Response{}
 	state := r.FormValue("state")
 	code := r.FormValue("code")
 
@@ -47,7 +50,8 @@ func GoogleCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := GoogleCreateOrUpdateUser(userInfo)
 	if err != nil {
-		http.Error(w, "Failed to create or update user", http.StatusInternalServerError)
+		handlers.Resp.Msg = append(handlers.Resp.Msg, err.Error())
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -103,22 +107,42 @@ func GoogleGetUserInfo(token string) (map[string]interface{}, error) {
 }
 
 func GoogleCreateOrUpdateUser(userInfo map[string]interface{}) (*db.User, error) {
+	var errMsg []string
+	if userInfo["email"] == nil {
+		errMsg = append(errMsg, "email")
+	}
+	if userInfo["given_name"] == nil {
+		errMsg = append(errMsg, "given_name")
+	}
+	if userInfo["picture"] == nil {
+		errMsg = append(errMsg, "picture")
+	}
+	if errMsg != nil {
+		str1 := "Unable to retrieve certain information :"
+		str2 := "You have not been logged in."
+		return nil, fmt.Errorf("%v %v. %v", str1, strings.Join(errMsg, ", "), str2)
+	}
 	var user *db.User
-	if !db.UserExistByEmail(userInfo["email"].(string)) {
+	if !db.UserExistByEmail(userInfo["email"].(string)) || !db.UserExistByUsername(userInfo["given_name"].(string)) {
 		picture, err := utils.GetFileFromURL(userInfo["picture"].(string))
 		if err != nil {
 			panic(err)
 		}
-		user, err = db.CreateUser("user", userInfo["given_name"].(string), userInfo["email"].(string), picture, "")
+		user, err = db.CreateUser("google", "user", userInfo["given_name"].(string), userInfo["email"].(string), picture, "")
 		if err != nil {
-			panic(err)
+			return nil, fmt.Errorf("%v", err)
 		}
 	} else {
-		var err error
-		user, err = db.SelectUserByEmail(userInfo["email"].(string))
-		if err != nil {
-			panic(err)
+		if db.UserExistByEmail(userInfo["email"].(string)) {
+			user, _ = db.SelectUserByEmail(userInfo["email"].(string))
+		} else {
+			user, _ = db.SelectUserByUsername(userInfo["given_name"].(string))
 		}
+		if user.Provider == "google" {
+			return user, nil
+		}
+		str := "The email address or username already exists!"
+		return nil, fmt.Errorf("%v", str)
 	}
 	return user, nil
 }

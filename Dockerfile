@@ -4,7 +4,7 @@ RUN apk add --no-cache gcc musl-dev
 WORKDIR /app
 COPY . .
 RUN go mod download
-RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -o main cmd/forum/main.go
+RUN go build -o main cmd/forum/main.go
 
 FROM alpine:latest
 

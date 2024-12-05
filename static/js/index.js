@@ -4,9 +4,7 @@ import { GetProfile, GetEditProfile, GetMyPosts, GetLikedPosts } from "./profile
 import { GetOtherProfile } from "./otherProfile.js";
 import { PollForNotifications } from "./notifications.js";
 
-
 PollForNotifications();
-
 
 // ╔════════════════════ avatar ════════════════════╗
 const avatar = document.getElementById("avatar");
@@ -66,7 +64,7 @@ if (notificationList) {
       event.preventDefault(); // Facultatif, selon votre logique
     }
   });
-};
+}
 
 // ╔════════════════════ left bar ════════════════════╗
 const leftBar = document.querySelector(".left-bar");
@@ -134,23 +132,22 @@ buttons.forEach((button) => {
 
 // ╔════════════════════ Notification Poppup ════════════════════╗
 
-document.addEventListener('DOMContentLoaded', () => {
-  const notifIcon = document?.getElementById('notif-pic-none');
-  const notifContainer = document?.getElementById('notification-container');
+document.addEventListener("DOMContentLoaded", () => {
+  const notifIcon = document?.getElementById("notif-pic-none");
+  const notifContainer = document?.getElementById("notification-container");
 
-  notifIcon?.addEventListener('click', () => {
+  notifIcon?.addEventListener("click", () => {
     // Basculer la classe "active" pour afficher/masquer
-    notifContainer.style.display = notifContainer.style.display === 'none' ? 'block' : 'none';
+    notifContainer.style.display = notifContainer.style.display === "none" ? "block" : "none";
   });
 
   // Optionnel : Cacher la notification si on clique ailleurs
-  document?.addEventListener('click', (event) => {
+  document?.addEventListener("click", (event) => {
     if (!notifIcon.contains(event.target) && !notifContainer.contains(event.target)) {
-      notifContainer.style.display = 'none';
+      notifContainer.style.display = "none";
     }
   });
 });
-
 
 // ╔════════════════════ Login-Signup ════════════════════╗
 document.addEventListener("DOMContentLoaded", function () {
@@ -200,7 +197,7 @@ async function UpdateReaction(postId, reaction) {
   }
 
   // Ensure JSON response before returning
-  location.reload();
+  // location.reload();
   const contentType = response.headers.get("content-type");
   if (contentType && contentType.includes("application/json")) {
     return response.json();

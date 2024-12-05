@@ -24,7 +24,7 @@ func InitServer() {
 	// to delete after test
 	password, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
 	if err == nil {
-		_, _ = db.CreateUser("admin", "admin", "admin@admin", "", string(password))
+		_, _ = db.CreateUser("", "admin", "admin", "admin@admin", "", string(password))
 	} else {
 		fmt.Println("Error creating admin : ", err)
 	}

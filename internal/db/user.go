@@ -3,12 +3,13 @@ package db
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(role, username, email, picture, password string) (*User, error) {
+func CreateUser(provider, role, username, email, picture, password string) (*User, error) {
 	// Ouvrir la connexion à la base de données
 	db := GetDB()
 	defer db.Close()
@@ -20,17 +21,18 @@ func CreateUser(role, username, email, picture, password string) (*User, error) 
 	}
 
 	// Préparer la requête d'insertion
-	stmt, err := tx.Prepare("INSERT INTO users(role, username, email, picture, password) VALUES(?, ?, ?, ?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO users(provider, role, username, email, picture, password) VALUES(?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
 	// Exécuter l'insertion
-	_, err = stmt.Exec(role, username, email, picture, password)
+	_, err = stmt.Exec(provider, role, username, email, picture, password)
 	if err != nil {
 		tx.Rollback()
-		return nil, errors.New("l'email ou le pseudo existe déjà")
+		str := "The email address or username already exists!"
+		return nil, fmt.Errorf("%v", str)
 	}
 
 	// Commit de la transaction
@@ -40,7 +42,7 @@ func CreateUser(role, username, email, picture, password string) (*User, error) 
 	}
 
 	user, _ := SelectUserByUsername(username)
-	return &user, nil
+	return user, nil
 }
 
 func SelectUserByID(userID int) (User, error) {
@@ -65,26 +67,26 @@ func SelectUserByID(userID int) (User, error) {
 	return user, nil
 }
 
-func SelectUserByUsername(username string) (User, error) {
+func SelectUserByUsername(username string) (*User, error) {
 	db := GetDB()
 	defer db.Close()
 
 	var user User
 	err := db.QueryRow(`
-	SELECT u.id, u.role, u.username, u.email, u.picture, u.password
+	SELECT u.id, u.provider, u.role, u.username, u.email, u.picture, u.password
 	FROM users u
 	WHERE username = ?`,
-		username).Scan(&user.ID, &user.Role, &user.Username, &user.Email, &user.Picture, &user.Password)
+		username).Scan(&user.ID, &user.Provider, &user.Role, &user.Username, &user.Email, &user.Picture, &user.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return User{}, errors.New("user not found")
+			return nil, errors.New("user not found")
 		}
-		return User{}, err
+		return nil, err
 	}
 
 	user.Follows = GetUserFollows(user.ID)
 
-	return user, nil
+	return &user, nil
 }
 
 func DeleteUserByUsername(username string) error {
@@ -175,7 +177,6 @@ func GetUserFollows(id int) []Category {
 }
 
 func UserExist(id int) bool {
-
 	db := GetDB()
 	defer db.Close()
 
@@ -251,10 +252,10 @@ func SelectUserByEmail(email string) (*User, error) {
 
 	var user User
 	err := db.QueryRow(`
-	SELECT u.id, u.role, u.username, u.email, u.picture
+	SELECT u.id, u.provider, u.role, u.username, u.email, u.picture, u.password
 	FROM users u
 	WHERE email = ?`,
-		email).Scan(&user.ID, &user.Role, &user.Username, &user.Email, &user.Picture)
+		email).Scan(&user.ID, &user.Provider, &user.Role, &user.Username, &user.Email, &user.Picture, &user.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("user not found")
@@ -267,12 +268,24 @@ func SelectUserByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-func IsUserAdmin(id int) (bool){
+func IsUserAdmin(id int) bool {
 	db := GetDB()
 	defer db.Close()
 
 	var exist bool
 	err := db.QueryRow("SELECT EXISTS( SELECT 1 FROM users WHERE role = 'admin' AND id = ?)", id).Scan(&exist)
+	if err != nil {
+		return exist
+	}
+	return exist
+}
+
+func UserExistByUsername(username string) bool {
+	db := GetDB()
+	defer db.Close()
+
+	var exist bool
+	err := db.QueryRow("SELECT EXISTS( SELECT 1 FROM users WHERE username = ?)", username).Scan(&exist)
 	if err != nil {
 		return exist
 	}
