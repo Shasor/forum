@@ -8,7 +8,7 @@ export function PollForNotifications() {
     fetch("https://localhost:8080/notifications")
         .then((response) => response.json())
         .then((data) => {
-            console.log("Notification reçue :", data);
+            //console.log("Notification reçue :", data);
 
             const notificationList = document?.getElementById("notification-ul");
             if (!notificationList) {
@@ -74,7 +74,7 @@ export function ClearNotifications() {
 
     console.log("Toutes les notifications ont été supprimées de l'interface utilisateur.");
     console.log(window.userData.id)
-    
+
     fetch("https://localhost:8080/notifications/clear", {
         method: "POST",
         headers: {
