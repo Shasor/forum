@@ -141,3 +141,39 @@ func FetchNotificationsByUserId(userID int) ([]Notification, error){
 	return notifs, nil
 
 }
+
+func MarkAllNotificationsAsRead(userID int) error {
+	
+	db := GetDB()
+	defer db.Close()
+
+	query := "UPDATE notifications SET readed = 1 WHERE receiver = ? AND readed = 0"
+	if IsUserAdmin(userID){
+		query = "UPDATE notifications SET readed = 1 WHERE (receiver = ? OR receiver = 0) AND readed = 0  "
+	}
+
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+
+	stmt, err := tx.Prepare(query)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(userID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
