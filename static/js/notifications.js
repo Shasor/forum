@@ -18,8 +18,6 @@ if (!window.userData || window.userData.role.trim().toLowerCase() === 'visitor')
             notificationElement.textContent = notification;
             document.body.appendChild(notificationElement);
 
-
-
             const notificationList = document.getElementById("notification-ul");
             if (notificationList) {
                 // Parcourir les notifications reçues

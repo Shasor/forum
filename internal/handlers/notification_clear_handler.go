@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"forum/internal/db"
 	"net/http"
 	"encoding/json"
@@ -29,7 +28,7 @@ func NotificationClearHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	fmt.Println(req.UserID)
+	//fmt.Println(req.UserID)
 
 	userId, err := strconv.Atoi(req.UserID[1:])
 	if err != nil {

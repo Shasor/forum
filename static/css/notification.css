@@ -83,7 +83,7 @@
     position: fixed;
     top: 50px; /* Ajustez pour être juste sous le bouton de notification */
     right: 10px;
-    width: 350px;
+    width: 370px;
     height: 175px;
     background-color: white;
     border: 2px solid var(--c);
@@ -109,7 +109,7 @@
   padding-bottom: 10px;
 }
 
-#notification-ul li a { 
+#notification- ul li a { 
   text-decoration: none;
   color: #f4acb7;
   margin-left: 5px;
@@ -126,5 +126,23 @@
 }
 
 #notification-ul li:first-child {
-  margin-top: 15px; /* Supprimer la bordure sur le dernier élément */
+  margin-top: 10px; /* Supprimer la bordure sur le dernier élément */
+}
+
+#notification h3{
+  margin-bottom: 5px;
+}
+
+#delete-post{
+  margin-left: 150px;
+}
+
+.sender{
+  text-decoration-line: underline black;
+
+  text-decoration-color: black !important;
+}
+
+.sender:hover{
+  color:var(--THIRD-COLOR);
 }
