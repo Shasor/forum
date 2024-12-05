@@ -17,7 +17,7 @@ func DiscordLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	params := url.Values{}
 	params.Add("client_id", os.Getenv("DISCORD_CLIENT_ID"))
-	params.Add("redirect_uri", "https://localhost:8080/auth/discord/callback")
+	params.Add("redirect_uri", "https://forum.shasor.fr/auth/discord/callback")
 	params.Add("scope", "email identify")
 	params.Add("response_type", "code")
 	params.Add("state", state)
@@ -68,7 +68,7 @@ func DiscordExchangeCodeForToken(code string) (string, error) {
 	values.Add("code", code)
 	values.Add("client_id", os.Getenv("DISCORD_CLIENT_ID"))
 	values.Add("client_secret", os.Getenv("DISCORD_CLIENT_SECRET"))
-	values.Add("redirect_uri", "https://localhost:8080/auth/discord/callback")
+	values.Add("redirect_uri", "https://forum.shasor.fr/auth/discord/callback")
 	values.Add("grant_type", "authorization_code")
 
 	req, err := http.NewRequest("POST", DiscordTokenURL, strings.NewReader(values.Encode()))

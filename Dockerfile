@@ -8,15 +8,12 @@ RUN go build -o main cmd/forum/main.go
 
 FROM alpine:latest
 
-RUN apk update && apk add --no-cache sqlite openssl
+RUN apk update && apk add --no-cache sqlite
 WORKDIR /root/
 COPY --from=builder /app/main .
-COPY --from=builder /app/.env .
 COPY --from=builder /app/internal/db internal/db
 COPY --from=builder /app/static static/
 COPY --from=builder /app/web web/
-COPY --from=builder /app/generate_cert.sh .
-COPY --from=builder /app/openssl.conf .
 
 EXPOSE 8080
 CMD ["./main"]

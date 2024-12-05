@@ -17,7 +17,7 @@ func GithubLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	params := url.Values{}
 	params.Add("client_id", os.Getenv("GITHUB_CLIENT_ID"))
-	params.Add("redirect_uri", "https://localhost:8080/auth/github/callback")
+	params.Add("redirect_uri", "https://forum.shasor.fr/auth/github/callback")
 	params.Add("scope", "user,user:email")
 	params.Add("state", state)
 
@@ -68,7 +68,7 @@ func GithubExchangeCodeForToken(code string) (string, error) {
 	values.Add("code", code)
 	values.Add("client_id", os.Getenv("GITHUB_CLIENT_ID"))
 	values.Add("client_secret", os.Getenv("GITHUB_CLIENT_SECRET"))
-	values.Add("redirect_uri", "https://localhost:8080/auth/github/callback")
+	values.Add("redirect_uri", "https://forum.shasor.fr/auth/github/callback")
 
 	req, err := http.NewRequest("POST", GithubTokenURL, strings.NewReader(values.Encode()))
 	if err != nil {

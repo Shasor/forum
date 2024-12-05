@@ -6,23 +6,14 @@ import (
 	"forum/internal/db"
 	"forum/internal/handlers"
 	"forum/internal/middlewares"
-	"log"
+	"os"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func InitServer() {
-	err := checkAndCreateCert("certs/server.crt", "certs/server.key")
-	if err != nil {
-		log.Fatalf("Error generating certificate: %v", err)
-	}
-	if err := loadEnv(".env"); err != nil {
-		fmt.Printf("Error load .env: %v\n", err)
-	}
-
-	// to delete after test
-	password, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
+	password, err := bcrypt.GenerateFromPassword([]byte(os.Getenv("ADMIN_PASSWORD")), bcrypt.DefaultCost)
 	if err == nil {
 		_, _ = db.CreateUser("", "admin", "admin", "admin@admin", "", string(password))
 	} else {
@@ -48,7 +39,7 @@ func InitServer() {
 	server.Handle("/report", handlers.ReportHandler)
 	server.Handle("/request", handlers.RequestHandler)
 	server.Handle("/notifications", handlers.NotificationHandler)
-	server.Handle("/notifications/clear",handlers.NotificationClearHandler)
+	server.Handle("/notifications/clear", handlers.NotificationClearHandler)
 	server.Handle("/auth/google/login", auth.GoogleLoginHandler)
 	server.Handle("/auth/google/callback", auth.GoogleCallbackHandler)
 	server.Handle("/auth/github/login", auth.GithubLoginHandler)

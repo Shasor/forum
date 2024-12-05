@@ -6,7 +6,7 @@ export async function GetOtherProfile() {
     // Récupération des attributs depuis l'événement
     const otherID = event.target.getAttribute("other_id");
     const userID = window.userData.id;
-    const userRole =  window.userData.role;
+    const userRole = window.userData.role;
 
     console.log(otherID, userID, userRole);
 
@@ -21,7 +21,7 @@ export async function GetOtherProfile() {
     };
 
     // Envoi de la requête au serveur
-    const response = await fetch(`https://localhost:8080/users`, {
+    const response = await fetch(`https://forum.shasor.fr/users`, {
       method: "POST", // Changez en GET si nécessaire
 
       headers: {
@@ -44,11 +44,9 @@ export async function GetOtherProfile() {
   }
 }
 
-
 async function displayProfile(otherData, otherActivity, user) {
+  div.className = "posts-container";
 
-  div.className = "posts-container"; 
-  
   let picture;
   if (otherData.Picture) {
     picture = `data:image/jpeg;base64,${otherData.Picture}`;

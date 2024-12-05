@@ -1,15 +1,11 @@
 package server
 
 import (
-	"bufio"
 	"fmt"
 	"forum/internal/middlewares"
 	"io"
 	"log"
 	"net/http"
-	"os"
-	"os/exec"
-	"strings"
 	"time"
 )
 
@@ -85,61 +81,6 @@ func (s *Server) Start() error {
 		ErrorLog: log.New(io.Discard, "", 0),
 	}
 	mux.Handle("/static/", middlewares.StaticMiddleware(http.StripPrefix("/static/", http.FileServer(http.Dir("static")))))
-	fmt.Printf("Starting server on https://localhost%s\n", s.port)
-	return server.ListenAndServeTLS("certs/server.crt", "certs/server.key")
-}
-
-func checkAndCreateCert(certFile, keyFile string) error {
-	// Check if the certificate file exists
-	_, err := os.Stat(certFile)
-	if os.IsNotExist(err) {
-		// If the certificate does not exist, create it using the shell script
-		fmt.Println("Certificate not found, generating new one...")
-		return generateCertFromScript()
-	}
-
-	// Check if the key file exists
-	_, err = os.Stat(keyFile)
-	if os.IsNotExist(err) {
-		// If the key file does not exist, create it using the shell script
-		fmt.Println("Key file not found, generating new one...")
-		return generateCertFromScript()
-	}
-
-	// If both the certificate and key exist, return nil (no error)
-	return nil
-}
-
-func generateCertFromScript() error {
-	// Execute the generate_cert.sh script
-	cmd := exec.Command("/bin/sh", "./generate_cert.sh")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	// Run the script and wait for it to finish
-	err := cmd.Run()
-	if err != nil {
-		return fmt.Errorf("failed to execute generate_cert.sh: %v", err)
-	}
-
-	return nil
-}
-
-func loadEnv(filename string) error {
-	file, err := os.Open(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		parts := strings.SplitN(line, "=", 2)
-		if len(parts) == 2 {
-			os.Setenv(strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1]))
-		}
-	}
-
-	return scanner.Err()
+	fmt.Println("Starting server on https://forum.shasor.fr")
+	return server.ListenAndServe()
 }

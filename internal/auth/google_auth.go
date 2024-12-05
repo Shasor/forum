@@ -17,7 +17,7 @@ func GoogleLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	params := url.Values{}
 	params.Add("client_id", os.Getenv("GOOGLE_CLIENT_ID"))
-	params.Add("redirect_uri", "https://localhost:8080/auth/google/callback")
+	params.Add("redirect_uri", "https://forum.shasor.fr/auth/google/callback")
 	params.Add("response_type", "code")
 	params.Add("scope", "openid profile email")
 	params.Add("state", state)
@@ -68,7 +68,7 @@ func GoogleExchangeCodeForToken(code string) (string, error) {
 	values.Add("code", code)
 	values.Add("client_id", os.Getenv("GOOGLE_CLIENT_ID"))
 	values.Add("client_secret", os.Getenv("GOOGLE_CLIENT_SECRET"))
-	values.Add("redirect_uri", "https://localhost:8080/auth/google/callback")
+	values.Add("redirect_uri", "https://forum.shasor.fr/auth/google/callback")
 	values.Add("grant_type", "authorization_code")
 
 	resp, err := http.PostForm(GoogleTokenURL, values)
