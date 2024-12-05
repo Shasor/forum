@@ -1,7 +1,7 @@
 export function PollForNotifications() {
 
 console.log("user role : ", window.userData.role)
-if (!window.userData || window.userData.role.trim().toLowerCase() === 'visitor') {
+if (!window.userData || window.userData.role.trim().toLowerCase() === "'visitor'") {
     console.log()
     console.log("Role is visitor, stopping execution.");
     return; // Arrêter si le rôle est 'visitor'
