@@ -2,6 +2,7 @@ package db
 
 type User struct {
 	ID       int
+	Provider string
 	Role     string
 	Follows  []Category
 	Username string
@@ -51,5 +52,5 @@ type Notification struct {
 	Post     Post
 	Content  string
 	Date     string
-	Readed	 bool
+	Readed   bool
 }

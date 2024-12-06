@@ -16,9 +16,10 @@ func GetDB() *sql.DB {
 	// SQL statement to create the users table
 	tables := `CREATE TABLE IF NOT EXISTS users (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			provider TEXT,
 			role TEXT NOT NULL,
 			username TEXT UNIQUE,
-			email TEXT,
+			email TEXT UNIQUE,
 			picture TEXT,
 			password TEXT,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP

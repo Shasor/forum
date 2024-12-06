@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 	"forum/internal/db"
 	"forum/internal/handlers"
 	"forum/internal/utils"
@@ -17,7 +18,7 @@ func GithubLoginHandler(w http.ResponseWriter, r *http.Request) {
 	params := url.Values{}
 	params.Add("client_id", os.Getenv("GITHUB_CLIENT_ID"))
 	params.Add("redirect_uri", "https://localhost:8080/auth/github/callback")
-	params.Add("scope", "user:email")
+	params.Add("scope", "user,user:email")
 	params.Add("state", state)
 
 	http.SetCookie(w, &http.Cookie{Name: "oauth_state", Value: state, HttpOnly: true, Secure: true})
@@ -25,6 +26,7 @@ func GithubLoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
+	handlers.Resp = handlers.Response{}
 	state := r.FormValue("state")
 	code := r.FormValue("code")
 
@@ -48,7 +50,8 @@ func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	user, err := GithubCreateOrUpdateUser(userInfo)
 	if err != nil {
-		http.Error(w, "Failed to create or update user", http.StatusInternalServerError)
+		handlers.Resp.Msg = append(handlers.Resp.Msg, err.Error())
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
@@ -92,11 +95,34 @@ func GithubExchangeCodeForToken(code string) (string, error) {
 }
 
 func GithubGetUserInfo(token string) (map[string]interface{}, error) {
+	// Requête pour obtenir les emails de l'utilisateur
+	reqEmails, _ := http.NewRequest("GET", GithubEmailsURL, nil)
+	reqEmails.Header.Add("Authorization", "Bearer "+token)
+
+	respEmails, err := http.DefaultClient.Do(reqEmails)
+	if err != nil {
+		return nil, err
+	}
+	defer respEmails.Body.Close()
+
+	var emails []map[string]interface{}
+	if err := json.NewDecoder(respEmails.Body).Decode(&emails); err != nil {
+		return nil, err
+	}
+
+	var primaryEmail string
+	for _, email := range emails {
+		if primary, ok := email["primary"].(bool); ok && primary {
+			primaryEmail = email["email"].(string)
+			break
+		}
+	}
+
+	// Requête pour obtenir les autres informations de l'utilisateur
 	req, _ := http.NewRequest("GET", GithubUserInfoURL, nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -107,26 +133,48 @@ func GithubGetUserInfo(token string) (map[string]interface{}, error) {
 		return nil, err
 	}
 
+	// Ajouter l'email primaire aux informations de l'utilisateur
+	userInfo["email"] = primaryEmail
 	return userInfo, nil
 }
 
 func GithubCreateOrUpdateUser(userInfo map[string]interface{}) (*db.User, error) {
+	var errMsg []string
+	if userInfo["email"] == nil {
+		errMsg = append(errMsg, "email")
+	}
+	if userInfo["login"] == nil {
+		errMsg = append(errMsg, "login")
+	}
+	if userInfo["avatar_url"] == nil {
+		errMsg = append(errMsg, "avatar_url")
+	}
+	if errMsg != nil {
+		str1 := "Unable to retrieve certain information :"
+		str2 := "You have not been logged in."
+		return nil, fmt.Errorf("%v %v. %v", str1, strings.Join(errMsg, ", "), str2)
+	}
 	var user *db.User
-	if !db.UserExistByEmail(userInfo["email"].(string)) {
+	if !db.UserExistByEmail(userInfo["email"].(string)) || !db.UserExistByUsername(userInfo["login"].(string)) {
 		picture, err := utils.GetFileFromURL(userInfo["avatar_url"].(string))
 		if err != nil {
 			panic(err)
 		}
-		user, err = db.CreateUser("user", userInfo["login"].(string), userInfo["email"].(string), picture, "")
+		user, err = db.CreateUser("github", "user", userInfo["login"].(string), userInfo["email"].(string), picture, "")
 		if err != nil {
-			panic(err)
+			return nil, fmt.Errorf("%v", err)
 		}
 	} else {
-		var err error
-		user, err = db.SelectUserByEmail(userInfo["email"].(string))
-		if err != nil {
-			panic(err)
+		if db.UserExistByEmail(userInfo["email"].(string)) {
+			user, _ = db.SelectUserByEmail(userInfo["email"].(string))
+		} else {
+			user, _ = db.SelectUserByUsername(userInfo["login"].(string))
 		}
+		if user.Provider == "github" {
+			return user, nil
+		}
+		str := "The email address or username already exists!"
+		return nil, fmt.Errorf("%v", str)
 	}
 	return user, nil
 }

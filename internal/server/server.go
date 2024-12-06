@@ -24,7 +24,7 @@ func InitServer() {
 	// to delete after test
 	password, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
 	if err == nil {
-		_, _ = db.CreateUser("admin", "admin", "admin@admin", "", string(password))
+		_, _ = db.CreateUser("", "admin", "admin", "admin@admin", "", string(password))
 	} else {
 		fmt.Println("Error creating admin : ", err)
 	}
@@ -53,6 +53,8 @@ func InitServer() {
 	server.Handle("/auth/google/callback", auth.GoogleCallbackHandler)
 	server.Handle("/auth/github/login", auth.GithubLoginHandler)
 	server.Handle("/auth/github/callback", auth.GithubCallbackHandler)
+	server.Handle("/auth/discord/login", auth.DiscordLoginHandler)
+	server.Handle("/auth/discord/callback", auth.DiscordCallbackHandler)
 
 	server.Use(middlewares.NotFoundMiddleware)
 	server.Use(middlewares.RecoverMiddleware)

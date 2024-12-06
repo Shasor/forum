@@ -21,13 +21,13 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	Resp = Response{}
-	email := r.FormValue("email")
+	email := strings.TrimSpace(r.FormValue("email"))
 	username := strings.TrimSpace(r.FormValue("username"))
 	password := r.FormValue("password")
 	if email != "" && username != "" && password != "" {
 		password, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 		if err == nil {
-			_, err := db.CreateUser("user", username, email, "", string(password))
+			_, err := db.CreateUser("", "user", username, email, "", string(password))
 			if err == nil {
 				SetSession(w, username)
 			} else {

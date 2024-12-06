@@ -23,7 +23,7 @@ export function GetLogin() {
       <div id="auths">
         <a href="auth/google/login">Google</a>
         <a href="auth/github/login">Github</a>
-        <a href="">Discord</a>
+        <a href="auth/discord/login">Discord</a>
       </div>
   </div>`;
   const signup_bttn = document.getElementById("signup-link");
@@ -57,7 +57,7 @@ export function GetSignup(formValue) {
         <div id="auths">
           <a href="auth/google/login">Google</a>
           <a href="auth/github/login">Github</a>
-          <a href="">Discord</a>
+          <a href="auth/discord/login">Discord</a>
       </div>
     </div>`;
   const close = document.getElementById("close");

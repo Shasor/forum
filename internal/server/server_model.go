@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"forum/internal/middlewares"
+	"io"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -79,6 +81,8 @@ func (s *Server) Start() error {
 		MaxHeaderBytes:    s.maxHeaderBytes,
 		Handler:           mux,
 		TLSConfig:         loadTLSConfig(),
+
+		ErrorLog: log.New(io.Discard, "", 0),
 	}
 	mux.Handle("/static/", middlewares.StaticMiddleware(http.StripPrefix("/static/", http.FileServer(http.Dir("static")))))
 	fmt.Printf("Starting server on https://localhost%s\n", s.port)

@@ -4,9 +4,7 @@ import { GetProfile, GetEditProfile, GetMyPosts, GetLikedPosts } from "./profile
 import { GetOtherProfile } from "./otherProfile.js";
 import { PollForNotifications, ClearNotifications } from "./notifications.js";
 
-
 PollForNotifications();
-
 
 // ╔════════════════════ avatar ════════════════════╗
 const avatar = document.getElementById("avatar");
@@ -66,7 +64,7 @@ if (notificationList) {
       event.preventDefault(); // Facultatif, selon votre logique
     }
   });
-};
+}
 
 // ╔════════════════════ left bar ════════════════════╗
 const leftBar = document.querySelector(".left-bar");
@@ -134,27 +132,25 @@ buttons.forEach((button) => {
 
 // ╔════════════════════ Notification Poppup ════════════════════╗
 
-document.addEventListener('DOMContentLoaded', () => {
-  const notifIcon = document?.getElementById('notif-pic-none'); // Utilisez l'identifiant correct
-  const notifContainer = document?.getElementById('notification-container'); // Utilisez l'identifiant correct
+document.addEventListener("DOMContentLoaded", () => {
+  const notifIcon = document?.getElementById("notif-pic-none"); // Utilisez l'identifiant correct
+  const notifContainer = document?.getElementById("notification-container"); // Utilisez l'identifiant correct
 
-  notifIcon?.addEventListener('click', (event) => {
+  notifIcon?.addEventListener("click", (event) => {
     // Empêcher l'événement de se propager pour éviter de masquer immédiatement
     event.stopPropagation();
 
     // Basculer la visibilité
-    notifContainer.style.display = notifContainer.style.display === 'none' || !notifContainer.style.display
-      ? 'block'
-      : 'none';
+    notifContainer.style.display = notifContainer.style.display === "none" || !notifContainer.style.display ? "block" : "none";
   });
 
   // Cacher la notification si on clique ailleurs
-  document.addEventListener('click', (event) => {
+  document.addEventListener("click", (event) => {
     // Vérifiez si les éléments existent avant de continuer
     if (notifIcon && notifContainer) {
       // Si le clic n'est ni sur l'icône ni sur le conteneur, masquer le conteneur
       if (!notifIcon.contains(event.target) && !notifContainer.contains(event.target)) {
-        notifContainer.style.display = 'none';
+        notifContainer.style.display = "none";
       }
     }
   });
@@ -165,7 +161,6 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener("DOMContentLoaded", function () {
   const delete_post_link = document.getElementById("delete-post");
   delete_post_link?.addEventListener("click", ClearNotifications);
-
 });
 
 // ╔════════════════════ Login-Signup ════════════════════╗
@@ -216,7 +211,7 @@ async function UpdateReaction(postId, reaction) {
   }
 
   // Ensure JSON response before returning
-  location.reload();
+  // location.reload();
   const contentType = response.headers.get("content-type");
   if (contentType && contentType.includes("application/json")) {
     return response.json();
