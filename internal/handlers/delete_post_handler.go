@@ -5,6 +5,7 @@ import (
 	"forum/internal/db"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
@@ -19,6 +20,7 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Resp = Response{}
+	date := fmt.Sprintf("%02d:%02d | %02d/%02d/%d", time.Now().Hour(), time.Now().Minute(), time.Now().Day(), time.Now().Month(), time.Now().Year())
 
 	// Analyse les données du formulaire
 	if err := r.ParseForm(); err != nil {
@@ -34,6 +36,11 @@ func DeletePostHandler(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
+	senderID := db.CheckReport(postID)
+	if senderID != 0 {
+		db.AddNotification("reportdone", date, 0, senderID, postID, 0)
+		db.ReadNotification("report", senderID, 0, postID)
+	}
 	// Supprime le post en appelant la fonction appropriée
 	if err := db.DeletePostByID(postID); err != nil {
 		Resp.Msg = append(Resp.Msg, err.Error())
