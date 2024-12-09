@@ -2,112 +2,54 @@ package middlewares
 
 import (
 	"forum/internal/handlers"
-	"net"
 	"net/http"
 	"sync"
 	"time"
 )
 
-// RateLimiter stores rate-limiting information for clients
-type RateLimiter struct {
-	limit      int           // Max tokens available (bucket size)
-	refillRate time.Duration // How often tokens are refilled
-	tokens     int           // Current available tokens
-	lastRefill time.Time     // Last time tokens were refilled
-	mu         sync.Mutex    // To synchronize access to tokens
+type client struct {
+	count      int
+	lastAccess time.Time
+	blocked    bool
+	blockUntil time.Time
 }
 
-// NewRateLimiter creates a new RateLimiter
-func newRateLimiter(limit int, refillRate time.Duration) *RateLimiter {
-	return &RateLimiter{
-		limit:      limit,
-		refillRate: refillRate,
-		tokens:     limit,
-		lastRefill: time.Now(),
-	}
-}
+var (
+	clients     = make(map[string]*client)
+	mu          sync.Mutex
+	maxRequests = 5
+	interval    = time.Second
+	banDuration = 10 * time.Second
+)
 
-// Allow checks if a request is allowed or rate-limited
-func (rl *RateLimiter) allow() bool {
-	rl.mu.Lock()
-	defer rl.mu.Unlock()
-
-	// Calculate time since the last refill
-	now := time.Now()
-	elapsed := now.Sub(rl.lastRefill)
-
-	// Refill tokens based on elapsed time
-	refillTokens := int(elapsed / rl.refillRate)
-	if refillTokens > 0 {
-		rl.tokens = min(rl.limit, rl.tokens+refillTokens) // Refill the tokens
-		rl.lastRefill = now                               // Reset the refill time
-	}
-	// If tokens are available, consume one and allow the request
-	if rl.tokens > 0 {
-		rl.tokens--
-		return true
-	}
-
-	// No tokens available, reject the request
-	return false
-}
-
-// Helper function to find the minimum of two integers
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
-// RateLimiterMap keeps track of rate limiters for each client (IP address)
-type RateLimiterMap struct {
-	clients map[string]*RateLimiter
-	mu      sync.Mutex
-}
-
-// NewRateLimiterMap initializes a new map for tracking rate limiters
-func NewRateLimiterMap() *RateLimiterMap {
-	return &RateLimiterMap{
-		clients: make(map[string]*RateLimiter),
-	}
-}
-
-// GetRateLimiter retrieves or creates a rate limiter for the given IP address
-func (rlm *RateLimiterMap) getRateLimiter(ip string) *RateLimiter {
-	rlm.mu.Lock()
-	defer rlm.mu.Unlock()
-
-	// Check if there's already a rate limiter for this IP
-	limiter, exists := rlm.clients[ip]
-	if !exists {
-		// Create a new rate limiter (e.g., 5 requests per second)
-		limiter = newRateLimiter(60, time.Second)
-		rlm.clients[ip] = limiter
-	}
-
-	return limiter
-}
-
-// RateLimitMiddleware applies rate limiting based on the client's IP address
-func (rlm *RateLimiterMap) RateLimitMiddleware(next http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Get the client's IP address
-		ip, _, err := net.SplitHostPort(r.RemoteAddr)
-		if err != nil {
-			panic(err)
+func RateLimit(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ip := r.RemoteAddr
+		now := time.Now()
+		mu.Lock()
+		defer mu.Unlock()
+		if _, exists := clients[ip]; !exists {
+			clients[ip] = &client{count: 0, lastAccess: now}
 		}
-
-		// Get or create a rate limiter for this IP address
-		limiter := rlm.getRateLimiter(ip)
-
-		// Check if the request is allowed
-		if !limiter.allow() {
-			handlers.ErrorsHandler(w, r, http.StatusTooManyRequests, "Too Many Requests")
+		c := clients[ip]
+		if c.blocked {
+			if now.Before(c.blockUntil) {
+				handlers.ErrorsHandler(w, r, http.StatusTooManyRequests, "")
+				return
+			}
+			c.blocked = false
+		}
+		if now.Sub(c.lastAccess) >= interval {
+			c.count = 0
+			c.lastAccess = now
+		}
+		if c.count >= maxRequests {
+			c.blocked = true
+			c.blockUntil = now.Add(banDuration)
+			http.Error(w, "Rate limit exceeded. Try again later.", http.StatusTooManyRequests)
 			return
 		}
-
-		// If allowed, pass the request to the next handler
+		c.count++
 		next.ServeHTTP(w, r)
-	})
+	}
 }

@@ -48,7 +48,7 @@ func InitServer() {
 	server.Handle("/report", handlers.ReportHandler)
 	server.Handle("/request", handlers.RequestHandler)
 	server.Handle("/notifications", handlers.NotificationHandler)
-	server.Handle("/notifications/clear",handlers.NotificationClearHandler)
+	server.Handle("/notifications/clear", handlers.NotificationClearHandler)
 	server.Handle("/auth/google/login", auth.GoogleLoginHandler)
 	server.Handle("/auth/google/callback", auth.GoogleCallbackHandler)
 	server.Handle("/auth/github/login", auth.GithubLoginHandler)
@@ -56,9 +56,9 @@ func InitServer() {
 	server.Handle("/auth/discord/login", auth.DiscordLoginHandler)
 	server.Handle("/auth/discord/callback", auth.DiscordCallbackHandler)
 
+	server.Use(middlewares.RateLimit)
 	server.Use(middlewares.NotFoundMiddleware)
 	server.Use(middlewares.RecoverMiddleware)
-	server.Use(middlewares.NewRateLimiterMap().RateLimitMiddleware)
 
 	if err := server.Start(); err != nil {
 		fmt.Printf("Error starting server: %v\n", err)
