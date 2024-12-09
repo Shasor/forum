@@ -81,16 +81,14 @@ func FetchNotificationsByUserId(userID int) ([]Notification, error) {
 		query = `
 		SELECT id, sort, sender, receiver, post, parentPost, readed, date 
 		FROM notifications 
-		WHERE (receiver = ? OR receiver = 0) AND readed = 0 
-		ORDER BY id DESC;
+		WHERE (receiver = ? OR receiver = 0) AND readed = 0 ;
 		`
 
 	} else {
 		query = `
 		SELECT id, sort, sender, receiver, post, parentPost, readed, date 
 		FROM notifications 
-		WHERE receiver = ? AND readed = 0
-		ORDER BY id DESC;
+		WHERE receiver = ? AND readed = 0;
 		`
 	}
 	rows, err := db.Query(query, userID)
@@ -103,7 +101,7 @@ func FetchNotificationsByUserId(userID int) ([]Notification, error) {
 	var notifs []Notification
 	for rows.Next() {
 		var noti Notification
-		err := rows.Scan(&noti.ID, &noti.Type, &noti.Sender.ID, &noti.Receiver.ID, &noti.Post.ID, &noti.Content, &noti.Readed, &noti.Date)
+		err := rows.Scan(&noti.ID, &noti.Sort, &noti.Sender.ID, &noti.Receiver.ID, &noti.Post.ID, &noti.ParentID.ID, &noti.Readed, &noti.Date)
 		if err != nil {
 			fmt.Println("Error executing request : ", err)
 		}
@@ -112,7 +110,10 @@ func FetchNotificationsByUserId(userID int) ([]Notification, error) {
 			return nil, err
 		}
 		if noti.Post.ID != 0 {
-			noti.Post, _ = SelectPostByID(noti.Post.ID)
+			noti.Post, err = SelectPostByID(noti.Post.ID)
+			if err != nil {
+				continue
+			}
 		}
 
 		if err = rows.Err(); err != nil {

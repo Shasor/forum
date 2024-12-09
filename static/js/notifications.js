@@ -20,28 +20,28 @@ export function PollForNotifications() {
 
       if (Array.isArray(data.notifData) && data.notifData.length > 0) {
         data.notifData.forEach((notification) => {
-          const { ID, Type, Sender, Receiver, Post } = notification;
+          const { ID, Sort, Sender, Receiver, Post } = notification;
 
           const notificationItem = document.createElement("li");
 
           let notificationText;
-          if (Type === "post") {
+          if (Sort === "post") {
             notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span> commented on your post <a href="/?postID=${Post.ParentID}">here.</a>`;
-          } else if (Type === "LIKE") {
+          } else if (Sort === "LIKE") {
             notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span> liked : <a href="/?postID=${Post.ID}"> ${Post.Title}.</a>`;
-          } else if (Type === "DISLIKE") {
+          } else if (Sort === "DISLIKE") {
             notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span> disliked <a href="/?postID=${Post.ID}">${Post.Title}.</a>`;
-          } else if (Type === "category") {
+          } else if (Sort === "category") {
             console.log(Post);
             notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span> posted ${Post.Title} on <a href="/?catID=${Post.Categories[0].ID}">a followed category.</a>`;
-          } else if (Type === "report") {
+          } else if (Sort === "report") {
             notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span> reported: <a href="/?postID=${Post.ID}">${Post.Title}.</a>`;
-          } else if (Type === "request") {
+          } else if (Sort === "request") {
             notificationText = `<span class="sender" other_id="${Sender.ID}">${Sender.Username}</span> asked to be Moderator.</a>`;
-          } else if (Type === "reportdone") {
+          } else if (Sort === "reportdone") {
             notificationText = `The moderators have indeed deleted the message you reported.`;
           } else {
-            notificationText = `Unknown type: ${Type}.`;
+            notificationText = `Unknown Sort: ${Sort}.`;
           }
 
           notificationItem.innerHTML = notificationText;
@@ -80,7 +80,7 @@ export function ClearNotifications() {
   fetch("https://localhost:8080/notifications/clear", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      "Content-Sort": "application/json",
     },
     body: JSON.stringify({
       userID: String(window.userData.id),

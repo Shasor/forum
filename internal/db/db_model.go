@@ -46,11 +46,11 @@ type Activity struct {
 
 type Notification struct {
 	ID       int
-	Type     string
+	Sort     string
 	Sender   User
 	Receiver User
 	Post     Post
-	Content  string
-	Date     string
+	ParentID Post
 	Readed   bool
+	Date     string
 }
