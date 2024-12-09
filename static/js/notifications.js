@@ -51,11 +51,11 @@ export function PollForNotifications() {
                 notificationList.appendChild(noNotificationItem);
             }
 
-            setTimeout(PollForNotifications, 15000);
+            //setTimeout(PollForNotifications, 15000);
         })
         .catch((error) => {
             console.error("Erreur lors de la récupération de la notification :", error);
-            setTimeout(PollForNotifications, 15000);
+            //setTimeout(PollForNotifications, 15000);
         });
 }
 
