@@ -6,7 +6,7 @@ export async function GetOtherProfile() {
     // Récupération des attributs depuis l'événement
     const otherID = event.target.getAttribute("other_id");
     const userID = window.userData.id;
-    const userRole =  window.userData.role;
+    const userRole = window.userData.role;
 
     console.log(otherID, userID, userRole);
 
@@ -44,11 +44,9 @@ export async function GetOtherProfile() {
   }
 }
 
-
 async function displayProfile(otherData, otherActivity, user) {
+  div.className = "posts-container";
 
-  div.className = "posts-container"; 
-  
   let picture;
   if (otherData.Picture) {
     picture = `data:image/jpeg;base64,${otherData.Picture}`;
@@ -81,7 +79,7 @@ async function displayProfile(otherData, otherActivity, user) {
     <header>
       <h1>Profile of ${otherData.Username}</h1>
     </header>
-    <div class="profile-menu">
+    <div class="other-profile">
       <div>
         <img src="${picture}" alt="Profile Picture of ${otherData.Username}">
         ${role}
