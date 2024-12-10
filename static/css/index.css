@@ -22,7 +22,13 @@
   width: 100%;
   height: 100%;
   overflow-y: scroll;
-  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
 }
 
 body {
@@ -331,6 +337,12 @@ body {
   font-size: 16px;
   background-color: rgba(255, 255, 255, 0);
   cursor: pointer;
+  height: 100%;
+  width: 100%;
+}
+
+#profile-menu-list li {
+  justify-content: center;
 }
 
 .profile-container img {
