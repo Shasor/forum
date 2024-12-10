@@ -47,9 +47,9 @@ func ImageToBase64(file multipart.File, header *multipart.FileHeader, is_pfp boo
 	var resizedImg image.Image
 	// Resize the image (optional, depends on your requirements)
 	if is_pfp {
-		resizedImg = resizeImage(img, 500, 500)
+		resizedImg = resizeImage(img, 250, 250)
 	} else {
-		resizedImg = resizeImage(img, 800, 800)
+		resizedImg = resizeImage(img, 500, 500)
 	}
 
 	// Encode resized image to JPEG format
@@ -78,7 +78,7 @@ func GetFileFromURL(url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	resizedImg := resizeImage(img, 500, 500)
+	resizedImg := resizeImage(img, 250, 250)
 
 	buf := new(bytes.Buffer)
 	err = jpeg.Encode(buf, resizedImg, nil)

@@ -2,8 +2,8 @@ package db
 
 import (
 	"errors"
-	"log"
 	"fmt"
+	"log"
 )
 
 func AddNotification(sort, date string, sender, receiver, post, parentPost int) error {
@@ -72,32 +72,25 @@ func isSpam(sender, receiver, post int) bool {
 	return isSpam
 }
 
-
-func FetchNotificationsByUserId(userID int) ([]Notification, error){
-
-	db:= GetDB()
+func FetchNotificationsByUserId(userID int) ([]Notification, error) {
+	db := GetDB()
 	defer db.Close()
 
-
 	var query string
-	if IsUserAdmin(userID){
+	if IsUserAdmin(userID) {
 		query = `
 		SELECT id, sort, sender, receiver, post, parentPost, readed, date 
 		FROM notifications 
-		WHERE (receiver = ? OR receiver = 0) AND readed = 0 
-		ORDER BY id DESC;
+		WHERE (receiver = ? OR receiver = 0) AND readed = 0 ;
 		`
 
 	} else {
 		query = `
 		SELECT id, sort, sender, receiver, post, parentPost, readed, date 
 		FROM notifications 
-		WHERE receiver = ? AND readed = 0
-		ORDER BY id DESC;
+		WHERE receiver = ? AND readed = 0;
 		`
 	}
-
-
 	rows, err := db.Query(query, userID)
 	if err != nil {
 		log.Printf("Error executing the query: %v", err)
@@ -108,47 +101,36 @@ func FetchNotificationsByUserId(userID int) ([]Notification, error){
 	var notifs []Notification
 	for rows.Next() {
 		var noti Notification
-		err := rows.Scan(&noti.ID, &noti.Type, &noti.Sender.ID, &noti.Receiver.ID, &noti.Post.ID, &noti.Content, &noti.Readed,  &noti.Date)
-		if err != nil{
+		err := rows.Scan(&noti.ID, &noti.Sort, &noti.Sender.ID, &noti.Receiver.ID, &noti.Post.ID, &noti.ParentID.ID, &noti.Readed, &noti.Date)
+		if err != nil {
 			fmt.Println("Error executing request : ", err)
 		}
-
-
 		noti.Sender, err = SelectUserByID(noti.Sender.ID)
-		if err != nil{
-			fmt.Println("Error at fetching Sender User: ", err)
+		if err != nil && noti.Sender.ID != 0 {
 			return nil, err
 		}
-		//fmt.Println("noti post id :", noti.Post.ID)
-		if noti.Post.ID != 0{
+		if noti.Post.ID != 0 {
 			noti.Post, err = SelectPostByID(noti.Post.ID)
 			if err != nil {
-				fmt.Println("Error Fetching Post : ", err)
-				return nil, err
+				continue
 			}
 		}
-			
 
 		if err = rows.Err(); err != nil {
 			log.Printf("Error during row iteration: %v", err)
 			return nil, err
 		}
-
 		notifs = append(notifs, noti)
-
 	}
-
 	return notifs, nil
-
 }
 
 func MarkAllNotificationsAsRead(userID int) error {
-	
 	db := GetDB()
 	defer db.Close()
 
 	query := "UPDATE notifications SET readed = 1 WHERE receiver = ? AND readed = 0"
-	if IsUserAdmin(userID){
+	if IsUserAdmin(userID) {
 		query = "UPDATE notifications SET readed = 1 WHERE (receiver = ? OR receiver = 0) AND readed = 0  "
 	}
 
@@ -175,5 +157,30 @@ func MarkAllNotificationsAsRead(userID int) error {
 		return err
 	}
 
+	return nil
+}
+
+func CheckReport(id int) int {
+	db := GetDB()
+	defer db.Close()
+
+	var senderID int
+	err := db.QueryRow("SELECT sender FROM notifications WHERE post = ? AND sort = 'report'", id).Scan(&senderID)
+	if err != nil {
+		return 0
+	}
+
+	return senderID
+}
+
+func ReadNotification(sort string, sender, receiver, post int) error {
+	db := GetDB()
+	defer db.Close()
+
+	_, err := db.Exec(`UPDATE notifications SET readed = 1 WHERE sort = ? AND sender = ? AND receiver = ? AND post = ?`, sort, sender, receiver, post)
+	if err != nil {
+		log.Printf("Error when set notification to readed: %v", err)
+		return err
+	}
 	return nil
 }

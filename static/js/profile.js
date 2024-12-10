@@ -93,8 +93,8 @@ export function GetEditProfile() {
           <div>
               <label for="profile_picture">Profile Picture:</label>
               <input type="file" id="profile_picture" name="profile_picture" accept=".jpeg, .png, .gif">
-              <p>Current profile picture:</p>
-              <img src="${window.userData.profilePicture}" alt="Current Profile Picture" style="max-width: 150px; max-height: 150px;">
+              <p id="profile-picture-text">Current profile picture:</p>
+              <img id="current-profile-picture" src="${window.userData.profilePicture}" alt="Current Profile Picture" style="max-width: 150px; max-height: 150px;">
           </div>
   
           <button type="submit">Update Profile</button>
@@ -110,6 +110,24 @@ export function GetEditProfile() {
   document.getElementById("my-profile-link").addEventListener("click", GetProfile);
   document.getElementById("my-posts-link").addEventListener("click", GetMyPosts);
   document.getElementById("my-liked-posts-link").addEventListener("click", GetLikedPosts);
+
+
+  
+  const profilePictureInput = document.getElementById("profile_picture");
+  const profilePicturePreview = document.getElementById("current-profile-picture");
+  const profilePictureText = document.getElementById("profile-picture-text");
+  
+  profilePictureInput.addEventListener("change", (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        profilePicturePreview.src = e.target.result; // Update the image preview
+        profilePictureText.textContent = "Your new profile picture will be:"; // Update the text
+      };
+      reader.readAsDataURL(file);
+    }
+  });
 }
 
 // Function to display the My Posts section

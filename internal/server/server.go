@@ -47,9 +47,9 @@ func InitServer() {
 	server.Handle("/auth/discord/login", auth.DiscordLoginHandler)
 	server.Handle("/auth/discord/callback", auth.DiscordCallbackHandler)
 
+	server.Use(middlewares.RateLimit)
 	server.Use(middlewares.NotFoundMiddleware)
 	server.Use(middlewares.RecoverMiddleware)
-	server.Use(middlewares.NewRateLimiterMap().RateLimitMiddleware)
 
 	if err := server.Start(); err != nil {
 		fmt.Printf("Error starting server: %v\n", err)

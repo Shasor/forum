@@ -10,10 +10,9 @@
 
 * {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  /*user-select: none;*/
 }
 
 .left-bar ul {
@@ -23,24 +22,13 @@
   width: 100%;
   height: 100%;
   overflow-y: scroll;
-  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
-}
-
-* ul li {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-top: 20px;
-}
-
-* ul li span {
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-  flex: 1;
-  margin-right: 10px;
-  color: inherit;
-  text-decoration: none;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
 }
 
 body {
@@ -126,14 +114,12 @@ body {
 
 .left-bar li {
   margin-top: 25px;
-  padding-left: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 10px 0 10 20;
 }
 
 .left-bar li:hover {
   background-color: var(--SECOND-COLOR);
-  color:white;
+  color: white;
 }
 .left-bar li:last-child {
   margin-bottom: 25px;
@@ -322,8 +308,15 @@ body {
   flex-direction: column;
 }
 
+.profile-menu li,
+#popup li {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
 .profile-menu li {
-  display: block;
   width: 100%;
   text-decoration: none;
   background-color: var(--SECOND-COLOR);
@@ -344,6 +337,12 @@ body {
   font-size: 16px;
   background-color: rgba(255, 255, 255, 0);
   cursor: pointer;
+  height: 100%;
+  width: 100%;
+}
+
+#profile-menu-list li {
+  justify-content: center;
 }
 
 .profile-container img {
