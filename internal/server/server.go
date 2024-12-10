@@ -7,6 +7,7 @@ import (
 	"forum/internal/handlers"
 	"forum/internal/middlewares"
 	"log"
+	"os"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -22,7 +23,7 @@ func InitServer() {
 	}
 
 	// to delete after test
-	password, err := bcrypt.GenerateFromPassword([]byte("admin"), bcrypt.DefaultCost)
+	password, err := bcrypt.GenerateFromPassword([]byte(os.Getenv("ADMIN_PASSWORD")), bcrypt.DefaultCost)
 	if err == nil {
 		_, _ = db.CreateUser("", "admin", "admin", "admin@admin", "", string(password))
 	} else {
